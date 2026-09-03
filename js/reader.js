@@ -1,5 +1,5 @@
 /* =====================================================
-   STORYNEST - READER (COMPLETE)
+   STORYNEST - READER (COMPLETE WITH PAGE MODE)
    ===================================================== */
 
 /*
@@ -17,6 +17,9 @@ let chapterNumber = Number(params.get("chapter")) || 1;
 
 let novel = null;
 let chapters = [];
+let currentPage = 0;
+let totalPages = 0;
+let pageContent = [];
 
 /* =====================================================
    ELEMENTS
@@ -33,6 +36,13 @@ const progressBar = document.getElementById("readingProgress");
 const chapterProgress = document.getElementById("chapterProgress");
 const currentChapterNum = document.getElementById("currentChapterNum");
 const totalChaptersEl = document.getElementById("totalChapters");
+
+// Page mode elements
+const pageIndicator = document.getElementById("pageIndicator");
+const currentPageDisplay = document.getElementById("currentPageDisplay");
+const totalPagesDisplay = document.getElementById("totalPagesDisplay");
+const prevPageBtn = document.getElementById("prevPageBtn");
+const nextPageBtn = document.getElementById("nextPageBtn");
 
 /* =====================================================
    START
@@ -58,7 +68,6 @@ async function loadNovel() {
         .eq("status", "published")
         .single();
 
-    // Novel error
     if (novelError || !novelData) {
         console.error("Novel error:", novelError);
         showError("This novel could not be found.");
@@ -74,7 +83,6 @@ async function loadNovel() {
         .eq("novel_id", novelId)
         .order("chapter_number", { ascending: true });
 
-    // Chapter error
     if (chapterError) {
         console.error("Chapter error:", chapterError);
         showError("Could not load the chapters.");
@@ -83,27 +91,21 @@ async function loadNovel() {
 
     chapters = chapterData || [];
 
-    // No chapters
     if (chapters.length === 0) {
         showError("This novel does not have any chapters yet.");
         return;
     }
 
-    // Update total chapters display
     if (totalChaptersEl) {
         totalChaptersEl.textContent = chapters.length;
     }
 
-    // Validate chapter number
     if (chapterNumber < 1 || chapterNumber > chapters.length) {
         chapterNumber = 1;
         updateURL();
     }
 
-    // Display novel title
     readerNovelTitle.textContent = novel.title;
-
-    // Display chapter
     displayChapter();
 }
 
@@ -119,84 +121,253 @@ function displayChapter() {
         return;
     }
 
-    // Chapter number
+    // Update chapter info
     chapterNumberElement.textContent = chapter.chapter_number;
     if (currentChapterNum) {
         currentChapterNum.textContent = chapter.chapter_number;
     }
 
-    // Header
     chapterHeader.textContent = `Chapter ${chapter.chapter_number}`;
-
-    // Chapter title
     chapterTitle.textContent = chapter.title;
 
-    // Story content - convert to paragraphs
+    // Build content with proper novel formatting
+    buildChapterContent(chapter);
+
+    // Reset page mode
+    currentPage = 0;
+    calculatePages();
+
+    // Update navigation
+    previousButton.style.visibility = chapterNumber === 1 ? "hidden" : "visible";
+    nextButton.textContent = chapterNumber === chapters.length ? "Finish →" : "Next →";
+
+    document.title = `${chapter.title} — ${novel.title}`;
+
+    if (progressBar) {
+        progressBar.style.width = "0%";
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    updateURL();
+}
+
+/* =====================================================
+   BUILD CHAPTER CONTENT - NOVEL-STANDARD FORMATTING
+   ===================================================== */
+
+function buildChapterContent(chapter) {
     storyContent.innerHTML = "";
     
     const content = chapter.content || "";
+    
+    // Split into paragraphs (double newline separates paragraphs)
     const paragraphs = content.split(/\n\s*\n/);
     
-    paragraphs.forEach(paragraph => {
+    paragraphs.forEach((paragraph, index) => {
         const cleaned = paragraph.trim();
         if (!cleaned) return;
         
         const p = document.createElement("p");
         p.textContent = cleaned;
+        
+        // First paragraph no indent (standard novel formatting)
+        if (index === 0) {
+            p.classList.add("first-paragraph");
+        } else {
+            p.classList.add("indented");
+        }
+        
         storyContent.appendChild(p);
     });
-
-    // Previous button
-    previousButton.style.visibility = chapterNumber === 1 ? "hidden" : "visible";
-
-    // Next button text
-    nextButton.textContent = chapterNumber === chapters.length ? "Finish →" : "Next →";
-
-    // Page title
-    document.title = `${chapter.title} — ${novel.title}`;
-
-    // Reset reading progress
-    if (progressBar) {
-        progressBar.style.width = "0%";
-    }
-
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    // Update URL
-    updateURL();
 }
 
 /* =====================================================
-   NEXT CHAPTER
+   PAGE MODE - CALCULATE PAGES
    ===================================================== */
 
-nextButton.addEventListener("click", () => {
-    if (chapterNumber < chapters.length) {
-        chapterNumber++;
-        displayChapter();
+function calculatePages() {
+    if (!storyContent) return;
+    
+    const container = document.querySelector('.story-wrapper');
+    if (!container) return;
+    
+    // Get all paragraphs
+    const paragraphs = storyContent.querySelectorAll('p');
+    if (paragraphs.length === 0) {
+        totalPages = 1;
+        updatePageDisplay();
         return;
     }
-    window.location.href = `novel.html?id=${encodeURIComponent(novelId)}`;
-});
+    
+    // Get the container height for one page
+    const containerHeight = container.clientHeight;
+    if (containerHeight === 0) {
+        // If container not visible yet, retry after a moment
+        setTimeout(calculatePages, 200);
+        return;
+    }
+    
+    // Clone paragraphs to measure
+    const cloneContainer = document.createElement('div');
+    cloneContainer.style.cssText = `
+        position: absolute;
+        visibility: hidden;
+        width: ${container.clientWidth}px;
+        font-size: ${storyContent.style.fontSize || '18px'};
+        line-height: 1.9;
+        padding: 20px;
+    `;
+    document.body.appendChild(cloneContainer);
+    
+    // Reset page content
+    pageContent = [];
+    let currentPageParagraphs = [];
+    let currentHeight = 0;
+    const maxHeight = containerHeight - 40; // Account for padding
+    
+    // Calculate how many paragraphs fit per page
+    paragraphs.forEach((p, index) => {
+        const clone = document.createElement('p');
+        clone.textContent = p.textContent;
+        clone.style.cssText = p.style.cssText;
+        clone.className = p.className;
+        cloneContainer.appendChild(clone);
+        
+        const height = clone.offsetHeight;
+        const marginBottom = 24; // Approximate margin
+        
+        if (currentHeight + height + marginBottom > maxHeight && currentPageParagraphs.length > 0) {
+            // Save current page
+            pageContent.push([...currentPageParagraphs]);
+            currentPageParagraphs = [];
+            currentHeight = 0;
+        }
+        
+        currentPageParagraphs.push(index);
+        currentHeight += height + marginBottom;
+    });
+    
+    // Save last page
+    if (currentPageParagraphs.length > 0) {
+        pageContent.push([...currentPageParagraphs]);
+    }
+    
+    // Clean up
+    document.body.removeChild(cloneContainer);
+    
+    totalPages = pageContent.length || 1;
+    currentPage = 0;
+    updatePageDisplay();
+    showPage(0);
+}
 
 /* =====================================================
-   PREVIOUS CHAPTER
+   PAGE MODE - SHOW PAGE
    ===================================================== */
 
-previousButton.addEventListener("click", () => {
-    if (chapterNumber > 1) {
-        chapterNumber--;
-        displayChapter();
+function showPage(pageIndex) {
+    if (!storyContent) return;
+    if (pageIndex < 0 || pageIndex >= totalPages) return;
+    
+    currentPage = pageIndex;
+    
+    // Hide all paragraphs
+    const paragraphs = storyContent.querySelectorAll('p');
+    paragraphs.forEach(p => {
+        p.style.display = 'none';
+    });
+    
+    // Show only paragraphs for current page
+    const pageParagraphs = pageContent[currentPage] || [];
+    pageParagraphs.forEach(index => {
+        if (paragraphs[index]) {
+            paragraphs[index].style.display = 'block';
+        }
+    });
+    
+    updatePageDisplay();
+    
+    // Update progress bar
+    if (progressBar) {
+        const progress = ((currentPage + 1) / totalPages) * 100;
+        progressBar.style.width = `${progress}%`;
     }
-});
+}
 
 /* =====================================================
-   KEYBOARD NAVIGATION
+   PAGE MODE - NAVIGATION
+   ===================================================== */
+
+function nextPage() {
+    if (currentPage < totalPages - 1) {
+        showPage(currentPage + 1);
+    }
+}
+
+function previousPage() {
+    if (currentPage > 0) {
+        showPage(currentPage - 1);
+    }
+}
+
+/* =====================================================
+   UPDATE PAGE DISPLAY
+   ===================================================== */
+
+function updatePageDisplay() {
+    const displayText = `Page ${currentPage + 1} of ${totalPages}`;
+    if (pageIndicator) {
+        pageIndicator.textContent = displayText;
+    }
+    if (currentPageDisplay) {
+        currentPageDisplay.textContent = currentPage + 1;
+    }
+    if (totalPagesDisplay) {
+        totalPagesDisplay.textContent = totalPages;
+    }
+    
+    // Update button states
+    if (prevPageBtn) {
+        prevPageBtn.disabled = currentPage === 0;
+        prevPageBtn.style.opacity = currentPage === 0 ? '0.3' : '1';
+    }
+    if (nextPageBtn) {
+        nextPageBtn.disabled = currentPage === totalPages - 1;
+        nextPageBtn.style.opacity = currentPage === totalPages - 1 ? '0.3' : '1';
+    }
+}
+
+/* =====================================================
+   KEYBOARD NAVIGATION - UPDATED FOR PAGE MODE
    ===================================================== */
 
 document.addEventListener("keydown", (e) => {
-    // Left arrow or Page Up - previous chapter
+    // Page mode navigation
+    if (pageMode) {
+        if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === " ") {
+            e.preventDefault();
+            if (currentPage < totalPages - 1) {
+                nextPage();
+            } else if (chapterNumber < chapters.length) {
+                chapterNumber++;
+                displayChapter();
+            }
+            return;
+        }
+        
+        if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+            e.preventDefault();
+            if (currentPage > 0) {
+                previousPage();
+            } else if (chapterNumber > 1) {
+                chapterNumber--;
+                displayChapter();
+            }
+            return;
+        }
+    }
+    
+    // Legacy scroll mode navigation
     if (e.key === "ArrowLeft" || e.key === "PageUp") {
         if (chapterNumber > 1) {
             chapterNumber--;
@@ -205,8 +376,7 @@ document.addEventListener("keydown", (e) => {
         }
     }
     
-    // Right arrow or Page Down - next chapter
-    if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+    if (e.key === "ArrowRight" || e.key === "PageDown") {
         if (chapterNumber < chapters.length) {
             chapterNumber++;
             displayChapter();
@@ -218,6 +388,40 @@ document.addEventListener("keydown", (e) => {
 });
 
 /* =====================================================
+   CHAPTER NAVIGATION
+   ===================================================== */
+
+nextButton.addEventListener("click", () => {
+    if (chapterNumber < chapters.length) {
+        chapterNumber++;
+        displayChapter();
+        return;
+    }
+    window.location.href = `novel.html?id=${encodeURIComponent(novelId)}`;
+});
+
+previousButton.addEventListener("click", () => {
+    if (chapterNumber > 1) {
+        chapterNumber--;
+        displayChapter();
+    }
+});
+
+/* =====================================================
+   WINDOW RESIZE - RECALCULATE PAGES
+   ===================================================== */
+
+let resizeTimeout;
+window.addEventListener("resize", () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        if (pageMode) {
+            calculatePages();
+        }
+    }, 300);
+});
+
+/* =====================================================
    UPDATE URL
    ===================================================== */
 
@@ -225,25 +429,6 @@ function updateURL() {
     const newUrl = `reader.html?id=${encodeURIComponent(novelId)}&chapter=${chapterNumber}`;
     window.history.pushState({}, "", newUrl);
 }
-
-/* =====================================================
-   READING PROGRESS
-   ===================================================== */
-
-let progressTimeout;
-
-window.addEventListener("scroll", () => {
-    clearTimeout(progressTimeout);
-    progressTimeout = setTimeout(() => {
-        const scrollTop = window.scrollY;
-        const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = documentHeight > 0 ? (scrollTop / documentHeight) * 100 : 0;
-        
-        if (progressBar) {
-            progressBar.style.width = `${Math.min(progress, 100)}%`;
-        }
-    }, 200);
-});
 
 /* =====================================================
    BROWSER BACK / FORWARD
@@ -302,6 +487,12 @@ function showError(message) {
     if (chapterProgress) {
         chapterProgress.style.display = "none";
     }
+    
+    // Hide page controls
+    const pageControls = document.getElementById('pageControls');
+    if (pageControls) {
+        pageControls.style.display = 'none';
+    }
 }
 
 /* =====================================================
@@ -313,3 +504,10 @@ function escapeHTML(value) {
     div.textContent = value ?? "";
     return div.innerHTML;
 }
+
+// Export for menu functions
+window.pageMode = pageMode;
+window.nextPage = nextPage;
+window.previousPage = previousPage;
+window.calculatePages = calculatePages;
+window.showPage = showPage;
