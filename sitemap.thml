@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sitemap — StoryNest</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a href="index.html" class="logo">
+            <span class="logo-icon">📖</span>
+            Story<span>Nest</span>
+        </a>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="index.html#trending">Trending</a>
+            <a href="index.html#genres">Genres</a>
+            <a href="about.html">About</a>
+        </nav>
+        <div class="nav-actions">
+            <a href="login.html">
+                <button class="login-btn">Login</button>
+            </a>
+        </div>
+    </header>
+
+    <main class="page-container">
+        <div class="page-header">
+            <p class="section-label">NAVIGATION</p>
+            <h1>Sitemap</h1>
+            <p class="page-subtitle">Find your way around StoryNest.</p>
+        </div>
+
+        <div class="page-content">
+            <div class="sitemap-grid">
+                
+                <div class="sitemap-column">
+                    <h2>📚 Main Pages</h2>
+                    <ul>
+                        <li><a href="index.html">🏠 Home</a></li>
+                        <li><a href="index.html#trending">🔥 Trending</a></li>
+                        <li><a href="index.html#genres">🎭 Genres</a></li>
+                        <li><a href="index.html#new">🆕 New Releases</a></li>
+                    </ul>
+                </div>
+
+                <div class="sitemap-column">
+                    <h2>👤 Account</h2>
+                    <ul>
+                        <li><a href="login.html">🔑 Login</a></li>
+                        <li><a href="signup.html">✍️ Sign Up</a></li>
+                        <li><a href="author.html">📖 Author Studio</a></li>
+                    </ul>
+                </div>
+
+                <div class="sitemap-column">
+                    <h2>✍️ Writing</h2>
+                    <ul>
+                        <li><a href="add-novel.html">📝 Add Novel</a></li>
+                        <li><a href="edit-novel.html">📝 Edit Novel</a></li>
+                        <li><a href="chapters.html">📑 Chapters</a></li>
+                        <li><a href="characters.html">👤 Characters</a></li>
+                        <li><a href="statistics.html">📊 Statistics</a></li>
+                    </ul>
+                </div>
+
+                <div class="sitemap-column">
+                    <h2>📖 Reading</h2>
+                    <ul>
+                        <li><a href="novel.html">📚 Novel Details</a></li>
+                        <li><a href="reader.html">📖 Reader</a></li>
+                    </ul>
+                </div>
+
+                <div class="sitemap-column">
+                    <h2>ℹ️ Information</h2>
+                    <ul>
+                        <li><a href="about.html">📋 About</a></li>
+                        <li><a href="faq.html">❓ FAQ</a></li>
+                        <li><a href="contact.html">📧 Contact</a></li>
+                        <li><a href="guidelines.html">📋 Guidelines</a></li>
+                    </ul>
+                </div>
+
+                <div class="sitemap-column">
+                    <h2>⚖️ Legal</h2>
+                    <ul>
+                        <li><a href="privacy.html">🔒 Privacy</a></li>
+                        <li><a href="terms.html">📄 Terms</a></li>
+                        <li><a href="cookies.html">🍪 Cookies</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="sitemap-footer">
+                <p>Can't find what you're looking for? <a href="contact.html">Contact us</a> for help.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-logo">📖 StoryNest</div>
+        <p>Discover. Read. Imagine.</p>
+        <div class="footer-links">
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+            <a href="sitemap.html">Sitemap</a>
+        </div>
+        <p class="copyright">© 2026 StoryNest. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

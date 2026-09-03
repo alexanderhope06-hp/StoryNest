@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ — StoryNest</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a href="index.html" class="logo">
+            <span class="logo-icon">📖</span>
+            Story<span>Nest</span>
+        </a>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="index.html#trending">Trending</a>
+            <a href="index.html#genres">Genres</a>
+            <a href="about.html">About</a>
+        </nav>
+        <div class="nav-actions">
+            <a href="login.html">
+                <button class="login-btn">Login</button>
+            </a>
+        </div>
+    </header>
+
+    <main class="page-container">
+        <div class="page-header">
+            <p class="section-label">HELP CENTER</p>
+            <h1>Frequently Asked Questions</h1>
+            <p class="page-subtitle">Find answers to the most common questions about StoryNest.</p>
+        </div>
+
+        <div class="page-content faq-content">
+            
+            <!-- For Readers -->
+            <section class="faq-category">
+                <h2>📖 For Readers</h2>
+                
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        How do I find novels to read?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>You can browse novels on the homepage under "Trending" and "New Releases." You can also use the search bar to find specific titles, authors, or genres. Click on any novel card to view its details and start reading.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        Do I need an account to read?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>You can browse and read published novels without an account. However, creating a free account allows you to bookmark novels, save your reading progress, and support authors.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        How do I bookmark a novel?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>When viewing a novel's details page, click the "Bookmark" button. You'll need to be logged in to save bookmarks. Your bookmarks will appear in your profile once the feature is fully implemented.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        Can I read novels offline?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Currently, StoryNest requires an internet connection to read novels. We're working on an offline reading feature for future updates.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- For Writers -->
+            <section class="faq-category">
+                <h2>✍️ For Writers</h2>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        How do I start writing on StoryNest?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>First, create a free account and log in. Then visit your Author Dashboard and click "Add New Novel." Fill in the details, add chapters, and publish when you're ready. It's that simple!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        How do I earn money from my novels?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>StoryNest is building a monetization system where authors earn revenue from ad impressions and reader engagement. Stay tuned for updates on when monetization features will be fully available.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        Can I publish my novel in installments?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! You can publish chapters one at a time. Readers will see new chapters appear as you add them. You can also save chapters as drafts and publish them later.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        Who owns the rights to my stories?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>You retain full ownership of your stories. You're giving StoryNest a license to host and display your content, but you can delete it or publish elsewhere at any time. See our Terms of Service for details.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technical -->
+            <section class="faq-category">
+                <h2>🔧 Technical Support</h2>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        I forgot my password. How do I reset it?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>On the login page, look for a "Forgot Password" link. Click it and enter your email address. We'll send you instructions to reset your password. If you don't see the link, please contact support.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        Why can't I log in?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Common issues include: incorrect email/password, unconfirmed email address, or account suspension. Try resetting your password or contact support if the problem persists.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        How do I delete my account?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>To delete your account, please contact our support team at <a href="mailto:support@storynest.com">support@storynest.com</a>. Include your account email and we'll process the deletion. Note that this is permanent.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        Is my data secure?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! We use industry-standard security measures including encryption, secure authentication, and regular security audits. See our Privacy Policy for detailed information about how we protect your data.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Monetization -->
+            <section class="faq-category">
+                <h2>💰 Monetization & Earnings</h2>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        When will I start earning?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Earnings will begin when the monetization system is fully launched. We'll notify all authors when this happens. In the meantime, focus on building your readership!</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        How much can I earn?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Earnings depend on several factors: number of readers, engagement levels, ad impressions, and revenue share terms. We're working to create a fair and transparent system for all authors.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        How do I withdraw my earnings?
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Withdrawal features are currently in development. Once available, you'll be able to request withdrawals through your Author Dashboard. Stay tuned for updates!</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-logo">📖 StoryNest</div>
+        <p>Discover. Read. Imagine.</p>
+        <div class="footer-links">
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+            <a href="faq.html">FAQ</a>
+        </div>
+        <p class="copyright">© 2026 StoryNest. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function toggleFaq(element) {
+            const parent = element.parentElement;
+            const answer = parent.querySelector('.faq-answer');
+            const toggle = element.querySelector('.faq-toggle');
+            
+            // Toggle active class
+            parent.classList.toggle('active');
+            
+            // Toggle answer visibility
+            if (parent.classList.contains('active')) {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+                toggle.textContent = '−';
+            } else {
+                answer.style.maxHeight = '0';
+                toggle.textContent = '+';
+            }
+
+            // Close other items in the same category (optional)
+            const siblings = parent.parentElement.querySelectorAll('.faq-item');
+            siblings.forEach(sibling => {
+                if (sibling !== parent && sibling.classList.contains('active')) {
+                    sibling.classList.remove('active');
+                    const siblingAnswer = sibling.querySelector('.faq-answer');
+                    const siblingToggle = sibling.querySelector('.faq-toggle');
+                    if (siblingAnswer) siblingAnswer.style.maxHeight = '0';
+                    if (siblingToggle) siblingToggle.textContent = '+';
+                }
+            });
+        }
+
+        // Open first FAQ item by default
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstFaq = document.querySelector('.faq-item');
+            if (firstFaq) {
+                const button = firstFaq.querySelector('.faq-question');
+                if (button) toggleFaq(button);
+            }
+        });
+    </script>
+
+</body>
+</html>
