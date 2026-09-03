@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account — StoryNest</title>
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <a href="index.html" class="logo">
+        📖 Story<span>Nest</span>
+    </a>
+
+    <a href="login.html" class="login-btn">
+        Login
+    </a>
+
+</header>
+
+
+<main class="auth-container">
+
+    <div class="auth-card">
+
+        <p class="section-label">
+            JOIN STORYNEST
+        </p>
+
+        <h1>Create your account</h1>
+
+        <p class="auth-subtitle">
+            Start sharing your stories with readers.
+        </p>
+
+
+        <form id="signupForm">
+
+            <div class="form-group">
+
+                <label>
+                    Display Name
+                </label>
+
+                <input
+                    type="text"
+                    id="displayName"
+                    placeholder="Your author name"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="signupEmail"
+                    placeholder="you@example.com"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="signupPassword"
+                    placeholder="At least 6 characters"
+                    minlength="6"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary-btn auth-submit">
+
+                Create Account
+
+            </button>
+
+        </form>
+
+
+        <p id="authMessage"
+           class="auth-message">
+        </p>
+
+
+        <p class="auth-switch">
+
+            Already have an account?
+
+            <a href="login.html">
+                Login
+            </a>
+
+        </p>
+
+    </div>
+
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/supabase.js"></script>
+
+<script src="js/auth.js"></script>
+
+</body>
+</html>

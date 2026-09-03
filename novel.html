@@ -1,0 +1,431 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<meta charset="UTF-8">
+
+			<meta name="viewport"
+				  content="width=device-width, initial-scale=1.0">
+
+				<title>Loading — StoryNest</title>
+
+				<link rel="stylesheet"
+					  href="css/style.css">
+
+				</head>
+
+
+	<body>
+
+
+		<!-- ================= NAVIGATION ================= -->
+
+		<header class="navbar">
+
+			<a href="index.html"
+			   class="logo">
+
+				<span class="logo-icon">📖</span>
+				Story<span>Nest</span>
+
+			</a>
+
+
+			<nav class="nav-links">
+
+				<a href="index.html">
+					Home
+				</a>
+
+				<a href="index.html#trending">
+					Trending
+				</a>
+
+				<a href="index.html#genres">
+					Genres
+				</a>
+
+			</nav>
+
+
+			<div class="nav-actions">
+
+				<button class="search-btn">
+					🔍
+				</button>
+
+
+				<a href="login.html"
+				   class="login-btn">
+
+					Login
+
+				</a>
+
+			</div>
+
+		</header>
+
+
+
+		<main>
+
+
+			<!-- ================= NOVEL HEADER ================= -->
+
+			<section class="novel-details">
+
+
+				<!-- COVER -->
+
+				<div class="large-cover"
+					 id="novelCover">
+
+					<div>
+
+						<span>📖</span>
+
+						<h1 id="coverTitle">
+							Loading...
+						</h1>
+
+					</div>
+
+				</div>
+
+
+
+				<!-- NOVEL INFORMATION -->
+
+				<div class="novel-description">
+
+
+					<!-- GENRE -->
+
+					<p class="section-label"
+					   id="novelGenre">
+
+						Loading...
+
+					</p>
+
+
+
+					<!-- TITLE -->
+
+					<h1 id="novelTitle">
+
+						Loading...
+
+					</h1>
+
+
+
+					<!-- AUTHOR -->
+
+					<p class="author-large">
+
+						By
+
+						<strong id="novelAuthor">
+
+							Author
+
+						</strong>
+
+					</p>
+
+
+
+					<!-- RATING -->
+
+					<div class="rating-large">
+
+						⭐
+
+						<span id="novelRating">
+
+							No rating yet
+
+						</span>
+
+
+						<span id="novelReaders">
+
+						</span>
+
+					</div>
+
+
+
+					<!-- ACTIONS -->
+
+					<div class="novel-actions">
+
+
+						<button
+							class="primary-btn"
+							id="startReading">
+
+							📖 Start Reading
+
+						</button>
+
+
+
+						<button
+							class="secondary-btn"
+							id="bookmarkButton">
+
+							🔖 Bookmark
+
+						</button>
+
+
+					</div>
+
+
+
+					<!-- META -->
+
+					<div class="novel-meta">
+
+
+						<div>
+
+							<span>
+								Chapters
+							</span>
+
+							<strong id="chapterCount">
+
+								0
+
+							</strong>
+
+						</div>
+
+
+
+						<div>
+
+							<span>
+								Status
+							</span>
+
+							<strong id="novelStatus">
+
+								—
+
+							</strong>
+
+						</div>
+
+
+
+						<div>
+
+							<span>
+								Language
+							</span>
+
+							<strong>
+
+								English
+
+							</strong>
+
+						</div>
+
+
+					</div>
+
+
+				</div>
+
+			</section>
+
+
+
+
+			<!-- ================= ABOUT ================= -->
+
+			<section class="section">
+
+
+				<div class="section-heading">
+
+					<div>
+
+						<p class="section-label">
+
+							THE STORY
+
+						</p>
+
+
+						<h2>
+
+							About This Novel
+
+						</h2>
+
+					</div>
+
+				</div>
+
+
+
+				<p class="story-about"
+				   id="storyAbout">
+
+					Loading...
+
+				</p>
+
+
+			</section>
+
+
+
+
+			<!-- ================= CHARACTERS ================= -->
+
+			<section class="section">
+
+
+				<div class="section-heading">
+
+					<div>
+
+						<p class="section-label">
+
+							MEET THE CAST
+
+						</p>
+
+
+						<h2>
+
+							Characters
+
+						</h2>
+
+					</div>
+
+				</div>
+
+
+
+				<div id="characterList">
+
+					<p>
+
+						Loading characters...
+
+					</p>
+
+				</div>
+
+
+			</section>
+
+
+
+
+			<!-- ================= CHAPTERS ================= -->
+
+			<section class="section chapters-section">
+
+
+				<div class="section-heading">
+
+					<div>
+
+						<p class="section-label">
+
+							STORY
+
+						</p>
+
+
+						<h2>
+
+							Chapters
+
+						</h2>
+
+					</div>
+
+				</div>
+
+
+
+				<div
+					class="chapter-list"
+					id="chapterList">
+
+
+					<p>
+
+						Loading chapters...
+
+					</p>
+
+
+				</div>
+
+
+			</section>
+
+
+		</main>
+
+
+
+
+		<!-- ================= FOOTER ================= -->
+
+		<footer>
+
+
+			<div class="footer-logo">
+
+				📖 StoryNest
+
+			</div>
+
+
+			<p>
+
+				Discover. Read. Imagine.
+
+			</p>
+
+
+			<p class="copyright">
+
+				© 2026 StoryNest.
+				All rights reserved.
+
+			</p>
+
+
+		</footer>
+
+
+
+
+		<!-- ================= SCRIPTS ================= -->
+
+		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+		<script src="js/supabase.js"></script>
+
+		<script src="js/novel.js"></script>
+
+
+	</body>
+
+</html>

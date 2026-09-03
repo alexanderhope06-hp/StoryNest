@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<meta charset="UTF-8">
+
+			<meta name="viewport"
+				  content="width=device-width, initial-scale=1.0">
+
+				<title>Add Novel — Novel Hub</title>
+
+				<link rel="stylesheet"
+					  href="css/style.css">
+
+				</head>
+
+
+	<body>
+
+		<header class="navbar">
+
+			<a href="index.html"
+			   class="logo">
+				📖 Novel<span>Hub</span>
+			</a>
+
+			<a href="author.html"
+			   class="login-btn">
+				← Dashboard
+			</a>
+
+		</header>
+
+
+		<main class="add-novel-container">
+
+			<div class="add-novel-header">
+
+				<p class="section-label">
+					AUTHOR STUDIO
+				</p>
+
+				<h1>Create Your Novel</h1>
+
+				<p>
+					Tell readers about your story.
+				</p>
+
+			</div>
+
+
+			<form id="novelForm"
+				  class="novel-form">
+
+
+				<!-- TITLE -->
+
+				<div class="form-group">
+
+					<label>
+						Novel Title
+					</label>
+
+					<input
+						type="text"
+						id="novelTitle"
+						placeholder="Enter your novel title"
+						required=""
+            >
+
+					</div>
+
+
+				<!-- DESCRIPTION -->
+
+				<div class="form-group">
+
+					<label>
+						Description
+					</label>
+
+					<textarea
+						id="novelDescription"
+						rows="6"
+						placeholder="Tell readers what your story is about..."
+						required=""
+            ></textarea>
+
+				</div>
+
+
+				<!-- GENRE -->
+
+				<div class="form-group">
+
+					<label>
+						Genre
+					</label>
+
+					<select id="novelGenre">
+
+						<option value="">
+							Select a genre
+						</option>
+
+						<option>Romance</option>
+						<option>Fantasy</option>
+						<option>Mystery</option>
+						<option>Thriller</option>
+						<option>Drama</option>
+						<option>Adventure</option>
+						<option>Science Fiction</option>
+
+					</select>
+
+				</div>
+
+
+				<!-- COVER -->
+
+				<div class="form-group">
+
+					<label>
+						Cover Image
+					</label>
+
+					<input
+						type="file"
+						id="novelCover"
+						accept="image/*"
+            >
+
+						<small>
+							Recommended: portrait book cover.
+						</small>
+
+					</div>
+
+
+				<!-- BUTTONS -->
+
+				<div class="form-buttons">
+
+					<button
+						type="button"
+						class="secondary-btn">
+
+						Save Draft
+
+					</button>
+
+					<button
+						type="submit"
+						class="primary-btn">
+
+						Continue →
+
+					</button>
+
+				</div>
+
+			</form>
+
+		</main>
+
+
+		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+		<script src="js/supabase.js"></script>
+
+		<script src="js/addNovel.js"></script>
+
+	</body>
+</html>

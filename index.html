@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Nest — Stories Without Borders</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- ================= NAVIGATION ================= -->
+    <header class="navbar">
+        <a href="index.html" class="logo">
+            <span class="logo-icon">📖</span>
+            Story<span>Nest</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#trending">Trending</a>
+            <a href="#genres">Genres</a>
+            <a href="#new">New Releases</a>
+        </nav>
+
+        <div class="nav-actions">
+            <button class="search-btn" id="searchBtn">🔍</button>
+            <a href="login.html">
+                <button class="login-btn">Login</button>
+            </a>
+        </div>
+    </header>
+
+    <!-- ================= SEARCH ================= -->
+    <div class="search-panel" id="searchPanel">
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search novels by title, author, genre..."
+            autocomplete="off"
+        >
+    </div>
+
+    <!-- ================= HERO ================= -->
+    <main>
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <p class="hero-label">WELCOME TO Story Nest</p>
+                <h1>
+                    Discover Your
+                    <span>Next Story.</span>
+                </h1>
+                <p class="hero-description">
+                    Explore stories from new and established writers.
+                    Discover unforgettable characters, worlds and adventures.
+                </p>
+                <div class="hero-buttons">
+                    <button class="primary-btn" id="exploreBtn">
+                        Explore Novels →
+                    </button>
+                    <a href="signup.html">
+                        <button class="secondary-btn">
+                            Become an Author
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="hero-art">
+                <div class="book-card book-back">
+                    <div class="book-cover">
+                        <span>DISCOVER</span>
+                        <strong>READ<br>IMAGINE</strong>
+                    </div>
+                </div>
+                <div class="book-card book-front">
+                    <div class="book-cover">
+                        <span>STORY</span>
+                        <strong>NEST</strong>
+                        <small>Stories Without Borders</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= STATS ================= -->
+        <section class="stats">
+            <div>
+                <strong>1,000+</strong>
+                <span>Stories</span>
+            </div>
+            <div>
+                <strong>500+</strong>
+                <span>Authors</span>
+            </div>
+            <div>
+                <strong>50K+</strong>
+                <span>Readers</span>
+            </div>
+        </section>
+
+        <!-- ================= SEARCH RESULTS ================= -->
+        <section class="section" id="searchResults" style="display:none;">
+            <!-- Dynamically populated -->
+        </section>
+
+        <!-- ================= TRENDING ================= -->
+        <section class="section" id="trending">
+            <div class="section-heading">
+                <div>
+                    <p class="section-label">WHAT PEOPLE ARE READING</p>
+                    <h2>🔥 Trending Novels</h2>
+                </div>
+                <button class="view-all">View All →</button>
+            </div>
+            <div class="novel-grid" id="trendingNovels">
+                <!-- JavaScript inserts novels here -->
+            </div>
+        </section>
+
+        <!-- ================= GENRES ================= -->
+        <section class="section genres-section" id="genres">
+            <div class="section-heading">
+                <div>
+                    <p class="section-label">FIND YOUR VIBE</p>
+                    <h2>Explore Genres</h2>
+                </div>
+            </div>
+            <div class="genres">
+                <button class="genre-btn" data-genre="all">✨ All</button>
+                <button class="genre-btn" data-genre="Romance">❤️ Romance</button>
+                <button class="genre-btn" data-genre="Fantasy">🧙 Fantasy</button>
+                <button class="genre-btn" data-genre="Thriller">🔪 Thriller</button>
+                <button class="genre-btn" data-genre="Mystery">👻 Mystery</button>
+                <button class="genre-btn" data-genre="Science Fiction">🚀 Sci-Fi</button>
+                <button class="genre-btn" data-genre="Comedy">😂 Comedy</button>
+                <button class="genre-btn" data-genre="Drama">🎭 Drama</button>
+                <button class="genre-btn" data-genre="Historical">🏛️ Historical</button>
+                <button class="genre-btn" data-genre="Adventure">⚔️ Adventure</button>
+            </div>
+        </section>
+
+        <!-- ================= NEW RELEASES ================= -->
+        <section class="section" id="new">
+            <div class="section-heading">
+                <div>
+                    <p class="section-label">JUST ARRIVED</p>
+                    <h2>New Releases</h2>
+                </div>
+                <button class="view-all">View All →</button>
+            </div>
+            <div class="novel-list" id="newNovels">
+                <!-- JavaScript inserts novels here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer>
+        <div class="footer-logo">📖 StoryNest</div>
+        <p>Discover. Read. Imagine.</p>
+        <div class="footer-links">
+            <a href="#">About</a>
+            <a href="#">Authors</a>
+            <a href="#">Contact</a>
+            <a href="#">Privacy</a>
+        </div>
+        <p class="copyright">© 2026 StoryNest. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

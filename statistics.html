@@ -1,0 +1,300 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<meta charset="UTF-8">
+
+			<meta
+				name="viewport"
+				content="width=device-width, initial-scale=1.0"
+    >
+
+				<title>Statistics — StoryNest</title>
+
+				<link
+					rel="stylesheet"
+					href="css/style.css"
+    >
+
+				</head>
+
+
+	<body class="author-page">
+
+
+		<header class="navbar">
+
+			<a
+				href="index.html"
+				class="logo"
+    >
+				📖 Story<span>Nest</span>
+			</a>
+
+
+			<a
+				href="author.html"
+				class="login-btn"
+    >
+				← Dashboard
+			</a>
+
+		</header>
+
+
+		<main class="author-dashboard">
+
+
+			<!-- HEADER -->
+
+			<section class="dashboard-header">
+
+				<div>
+
+					<p class="section-label">
+						AUTHOR STUDIO
+					</p>
+
+					<h1 id="statisticsTitle">
+						Novel Statistics
+					</h1>
+
+					<p id="statisticsDescription">
+						View the performance of your story.
+					</p>
+
+				</div>
+
+			</section>
+
+
+
+			<!-- STATISTICS -->
+
+			<section class="author-stats">
+
+
+				<div class="author-stat">
+
+					<span>
+						Readers
+					</span>
+
+					<strong id="totalReaders">
+						0
+					</strong>
+
+				</div>
+
+
+				<div class="author-stat">
+
+					<span>
+						Chapters
+					</span>
+
+					<strong id="totalChapters">
+						0
+					</strong>
+
+				</div>
+
+
+				<div class="author-stat">
+
+					<span>
+						Rating
+					</span>
+
+					<strong id="novelRating">
+						—
+					</strong>
+
+				</div>
+
+
+				<div class="author-stat">
+
+					<span>
+						Status
+					</span>
+
+					<strong id="novelStatus">
+						—
+					</strong>
+
+				</div>
+
+
+			</section>
+
+
+
+			<!-- NOVEL INFORMATION -->
+
+			<section class="dashboard-section">
+
+
+				<div class="section-heading">
+
+					<div>
+
+						<p class="section-label">
+							NOVEL
+						</p>
+
+						<h2>
+							Story Information
+						</h2>
+
+					</div>
+
+				</div>
+
+
+				<div class="author-novel">
+
+
+					<div
+						class="author-cover"
+						id="statisticsCover"
+            >
+						📖
+					</div>
+
+
+					<div class="author-novel-info">
+
+
+						<span
+							class="status"
+							id="statusLabel"
+                >
+							● Loading
+						</span>
+
+
+						<h2 id="novelTitle">
+							Loading...
+						</h2>
+
+
+						<p id="novelGenre">
+							Loading...
+						</p>
+
+
+						<p
+							class="muted"
+							id="publishedDate"
+                >
+							Published: —
+						</p>
+
+
+					</div>
+
+
+				</div>
+
+			</section>
+
+
+
+			<!-- CHAPTER INFORMATION -->
+
+			<section class="dashboard-section">
+
+
+				<div class="section-heading">
+
+					<div>
+
+						<p class="section-label">
+							CONTENT
+						</p>
+
+						<h2>
+							Chapters
+						</h2>
+
+					</div>
+
+				</div>
+
+
+				<div id="statisticsChapters">
+
+					<p>
+						Loading chapters...
+					</p>
+
+				</div>
+
+
+			</section>
+
+
+
+			<!-- FUTURE ANALYTICS -->
+
+			<section class="publish-box">
+
+
+				<div>
+
+					<h2>
+						Reader Analytics
+					</h2>
+
+
+					<p>
+						Detailed reader activity, reading
+						time, views and earnings will appear
+						here once reader tracking is enabled.
+					</p>
+
+				</div>
+
+
+				<span>
+					Coming Soon
+				</span>
+
+			</section>
+
+
+		</main>
+
+
+		<footer>
+
+			<div class="footer-logo">
+				📖 StoryNest
+			</div>
+
+
+			<p>
+				Discover. Read. Imagine.
+			</p>
+
+
+			<p class="copyright">
+				© 2026 StoryNest.
+			</p>
+
+		</footer>
+
+
+
+		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+		<script src="js/supabase.js"></script>
+
+		<script src="js/statistics.js"></script>
+
+
+	</body>
+
+</html>

@@ -1,0 +1,335 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Author Studio — StoryNest</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="author-page">
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<header class="navbar">
+    <a href="index.html" class="logo">
+        <span class="logo-icon">📖</span>
+        Story<span>Nest</span>
+    </a>
+
+    <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#trending">Discover</a>
+        <a href="author.html" class="active">Author Studio</a>
+    </nav>
+
+    <div class="nav-actions">
+        <button class="search-btn" id="searchBtn">🔍</button>
+        <button class="logout-btn" id="logoutButton">🚪 Logout</button>
+        <a href="profile.html" class="login-btn" id="profileButton">Profile</a>
+    </div>
+</header>
+
+<!-- =====================================================
+     SEARCH
+===================================================== -->
+
+<div class="search-panel" id="searchPanel">
+    <input type="text" placeholder="Search StoryNest...">
+</div>
+
+<!-- =====================================================
+     AUTHOR DASHBOARD
+===================================================== -->
+
+<main class="author-dashboard">
+
+    <!-- DASHBOARD HEADER -->
+    <section class="dashboard-header">
+        <div>
+            <p class="section-label">AUTHOR STUDIO</p>
+            <h1 id="welcomeMessage">Welcome, Author 👋</h1>
+            <p id="welcomeSubtitle">Manage your stories and grow your audience.</p>
+        </div>
+        <a href="add-novel.html" class="primary-btn">+ Add New Novel</a>
+    </section>
+
+    <!-- AUTHOR PROFILE -->
+    <section class="author-profile-card">
+        <div class="author-avatar" id="authorAvatar">A</div>
+        <div class="author-profile-info">
+            <p class="section-label">AUTHOR PROFILE</p>
+            <h2 id="authorName">Author</h2>
+            <p id="authorBio">Tell readers about yourself and your stories.</p>
+        </div>
+        <a href="profile.html" class="secondary-btn">Edit Profile</a>
+    </section>
+
+    <!-- DASHBOARD NAVIGATION -->
+    <nav class="author-dashboard-nav">
+        <a href="#overview" class="dashboard-nav-link active">🏠 <span>Overview</span></a>
+        <a href="#novels" class="dashboard-nav-link">📚 <span>Novels</span></a>
+        <a href="#statistics" class="dashboard-nav-link">📊 <span>Statistics</span></a>
+        <a href="#earnings" class="dashboard-nav-link">💰 <span>Earnings</span></a>
+        <a href="#withdraw" class="dashboard-nav-link">💸 <span>Withdraw</span></a>
+        <a href="#settings" class="dashboard-nav-link">⚙️ <span>Settings</span></a>
+    </nav>
+
+    <!-- OVERVIEW -->
+    <section id="overview" class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <p class="section-label">OVERVIEW</p>
+                <h2>Your Performance</h2>
+            </div>
+        </div>
+
+        <div class="author-stats">
+            <div class="author-stat">
+                <div class="stat-icon">📚</div>
+                <div>
+                    <span>Published Novels</span>
+                    <strong id="publishedNovelCount">0</strong>
+                    <small>Published stories</small>
+                </div>
+            </div>
+            <div class="author-stat">
+                <div class="stat-icon">📖</div>
+                <div>
+                    <span>Total Chapters</span>
+                    <strong id="chapterCount">0</strong>
+                    <small>Across your novels</small>
+                </div>
+            </div>
+            <div class="author-stat">
+                <div class="stat-icon">👥</div>
+                <div>
+                    <span>Total Readers</span>
+                    <strong>—</strong>
+                    <small>Reader analytics coming soon</small>
+                </div>
+            </div>
+            <div class="author-stat">
+                <div class="stat-icon">⭐</div>
+                <div>
+                    <span>Average Rating</span>
+                    <strong>—</strong>
+                    <small>Ratings coming soon</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PERFORMANCE -->
+    <section id="statistics" class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <p class="section-label">PERFORMANCE</p>
+                <h2>Reader Growth</h2>
+            </div>
+            <span class="dashboard-period">Last 6 months</span>
+        </div>
+        <div class="analytics-card">
+            <div class="analytics-empty">
+                <div class="analytics-icon">📈</div>
+                <h3>Reader analytics coming soon</h3>
+                <p>Once StoryNest begins tracking readers, your monthly growth will appear here.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PUBLISHING ACTIVITY -->
+    <section class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <p class="section-label">ACTIVITY</p>
+                <h2>Publishing</h2>
+            </div>
+        </div>
+        <div class="activity-grid">
+            <div class="activity-card">
+                <span>Chapters published</span>
+                <strong id="activityChapterCount">0</strong>
+                <small>Total chapters</small>
+            </div>
+            <div class="activity-card">
+                <span>Published novels</span>
+                <strong id="activityPublishedCount">0</strong>
+                <small>Live stories</small>
+            </div>
+            <div class="activity-card">
+                <span>Draft novels</span>
+                <strong id="activityDraftCount">0</strong>
+                <small>Stories in progress</small>
+            </div>
+        </div>
+        <p class="dashboard-note">Keep publishing consistently to build your audience on StoryNest.</p>
+    </section>
+
+    <!-- TOP NOVELS -->
+    <section class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <p class="section-label">YOUR BEST PERFORMERS</p>
+                <h2>Top Novels</h2>
+            </div>
+            <a href="#novels" class="view-all">View All →</a>
+        </div>
+        <div id="topNovels" class="top-novels">
+            <div class="dashboard-empty">
+                <div>📚</div>
+                <p>Your published novels will appear here.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- NOVELS -->
+    <section id="novels" class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <p class="section-label">STORY MANAGEMENT</p>
+                <h2>Your Novels</h2>
+            </div>
+            <a href="add-novel.html" class="view-all">+ New Novel</a>
+        </div>
+        
+        <!-- Novel Filters -->
+        <div class="novel-filters">
+            <button class="novel-filter active" data-filter="all">All</button>
+            <button class="novel-filter" data-filter="published">Published</button>
+            <button class="novel-filter" data-filter="draft">Drafts</button>
+        </div>
+        
+        <div id="novelList" class="author-novel-list">
+            <div class="dashboard-empty">
+                <div>📖</div>
+                <p>Loading your novels...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- EARNINGS -->
+    <section id="earnings" class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <p class="section-label">MONETIZATION</p>
+                <h2>Earnings</h2>
+            </div>
+        </div>
+        <div class="coming-soon-card">
+            <div class="coming-soon-icon">💰</div>
+            <div>
+                <h3>Author Earnings</h3>
+
+
+<!-- Earnings section with real data -->
+<section id="earnings" class="dashboard-section">
+    
+    <div class="earnings-grid"><br />
+        <div class="earnings-card">
+            <span>Total Revenue</span>
+            <strong id="totalRevenue">$0.00</strong>
+            <small>All time earnings</small>
+        </div>
+        
+        <div class="earnings-card">
+            <span>This Month</span>
+            <strong id="monthlyRevenue">$0.00</strong>
+            <small>Current month</small>
+        </div>
+        
+        <div class="earnings-card">
+            <span>Available Balance</span>
+            <strong id="availableBalance">$0.00</strong>
+            <small>Ready to withdraw</small>
+        </div>
+    </div>
+    
+    <div style="margin-top: 20px; text-align: center; padding: 20px; background: var(--bg-card); border-radius: 8px;">
+        <p style="color: var(--text-secondary);">
+            📊 Earnings will start tracking once ad revenue is activated.
+            <br>
+            <small>This feature is coming soon!</small>
+        </p>
+    </div>
+</section>
+
+
+            </div>
+        </div>
+    </section>
+
+    <!-- WITHDRAW -->
+    <section id="withdraw" class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <p class="section-label">PAYOUTS</p>
+                <h2>Withdraw</h2>
+            </div>
+        </div>
+        <div class="coming-soon-card">
+            <div class="coming-soon-icon">💸</div>
+            <div>
+                <h3>Withdraw Your Earnings</h3>
+                <p>Payout options and withdrawal history will become available when the StoryNest payment system is ready.</p>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    
+
+
+
+    <!-- SETTINGS -->
+    <section id="settings" class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <p class="section-label">ACCOUNT</p>
+                <h2>Settings</h2>
+            </div>
+        </div>
+        <div class="settings-grid">
+            <a href="profile.html" class="settings-card">
+                <span>👤</span>
+                <div>
+                    <strong>Profile</strong>
+                    <small>Update your author information</small>
+                </div>
+            </a>
+            <button class="settings-card">
+                <span>🔔</span>
+                <div>
+                    <strong>Notifications</strong>
+                    <small>Manage StoryNest notifications</small>
+                </div>
+            </button>
+            <button class="settings-card">
+                <span>🔐</span>
+                <div>
+                    <strong>Security</strong>
+                    <small>Manage your account security</small>
+                </div>
+            </button>
+        </div>
+    </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-logo">📖 StoryNest</div>
+    <p>Discover. Read. Imagine.</p>
+    <p class="copyright">© 2026 StoryNest.</p>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/author.js"></script>
+</body>
+</html>

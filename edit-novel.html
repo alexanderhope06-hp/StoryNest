@@ -1,0 +1,287 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<meta charset="UTF-8">
+
+			<meta name="viewport"
+				  content="width=device-width, initial-scale=1.0">
+
+				<title>Edit Novel — StoryNest</title>
+
+				<link rel="stylesheet"
+					  href="css/style.css">
+
+				</head>
+
+
+	<body>
+
+
+		<!-- ================= NAVIGATION ================= -->
+
+		<header class="navbar">
+
+			<a href="index.html"
+			   class="logo">
+
+				📖 Story<span>Nest</span>
+
+			</a>
+
+
+			<a href="author.html"
+			   class="login-btn">
+
+				← Dashboard
+
+			</a>
+
+		</header>
+
+
+
+		<!-- ================= EDIT NOVEL ================= -->
+
+		<main class="add-novel-container">
+
+
+			<div class="add-novel-header">
+
+				<p class="section-label">
+					AUTHOR STUDIO
+				</p>
+
+
+				<h1>
+					Edit Your Novel
+				</h1>
+
+
+				<p>
+					Update your story information.
+				</p>
+
+			</div>
+
+
+
+			<form id="editNovelForm"
+				  class="novel-form">
+
+
+				<!-- TITLE -->
+
+				<div class="form-group">
+
+					<label for="novelTitle">
+
+						Novel Title
+
+					</label>
+
+
+					<input
+						type="text"
+						id="novelTitle"
+						placeholder="Enter your novel title"
+						required="">
+
+					</div>
+
+
+
+				<!-- DESCRIPTION -->
+
+				<div class="form-group">
+
+					<label for="novelDescription">
+
+						Description
+
+					</label>
+
+
+					<textarea
+						id="novelDescription"
+						rows="8"
+						placeholder="Tell readers what your story is about..."
+						required=""></textarea>
+
+				</div>
+
+
+
+				<!-- GENRE -->
+
+				<div class="form-group">
+
+					<label for="novelGenre">
+
+						Genre
+
+					</label>
+
+
+					<select id="novelGenre"
+							required="">
+
+						<option value="">
+							Select a genre
+						</option>
+
+						<option value="Romance">
+							Romance
+						</option>
+
+						<option value="Fantasy">
+							Fantasy
+						</option>
+
+						<option value="Mystery">
+							Mystery
+						</option>
+
+						<option value="Thriller">
+							Thriller
+						</option>
+
+						<option value="Drama">
+							Drama
+						</option>
+
+						<option value="Adventure">
+							Adventure
+						</option>
+
+						<option value="Science Fiction">
+							Science Fiction
+						</option>
+
+						<option value="Comedy">
+							Comedy
+						</option>
+
+						<option value="Historical">
+							Historical
+						</option>
+
+					</select>
+
+				</div>
+
+
+
+				<!-- STATUS -->
+
+				<div class="form-group">
+
+					<label>
+						Publication Status
+					</label>
+
+
+					<input
+						type="text"
+						id="novelStatus"
+						disabled="">
+
+					</div>
+
+
+
+				<!-- BUTTONS -->
+
+				<div class="form-buttons">
+
+
+					<a href="author.html"
+					   class="secondary-btn">
+
+						Cancel
+
+					</a>
+
+
+					<button
+						type="submit"
+						class="primary-btn"
+						id="saveNovel">
+
+						Save Changes
+
+					</button>
+
+
+				</div>
+
+
+			</form>
+
+
+			<!-- CHAPTER MANAGEMENT -->
+
+			<!-- ================= CONTENT MANAGEMENT ================= -->
+
+			<section class="publish-box">
+
+				<div>
+
+					<p class="section-label">
+						STORY CONTENT
+					</p>
+
+					<h2>
+						Manage Your Story
+					</h2>
+
+					<p>
+						Add, edit or remove characters and chapters
+						from your novel.
+					</p>
+
+				</div>
+
+				<div class="author-actions">
+
+					<button
+						type="button"
+						class="secondary-btn"
+						id="manageCharacters">
+
+						👤 Characters
+
+					</button>
+
+
+					<button
+						type="button"
+						class="primary-btn"
+						id="manageChapters">
+
+						📖 Chapters
+
+					</button>
+
+				</div>
+
+			</section>
+
+
+		</main>
+
+
+
+		<!-- ================= SCRIPTS ================= -->
+
+		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+		<script src="js/supabase.js"></script>
+
+		<script src="js/editNovel.js"></script>
+
+
+	</body>
+
+</html>

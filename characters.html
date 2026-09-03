@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+		<meta charset="UTF-8">
+
+			<meta name="viewport"
+				  content="width=device-width, initial-scale=1.0">
+
+				<title>Characters — StoryNest</title>
+
+				<link rel="stylesheet"
+					  href="css/style.css">
+
+				</head>
+
+	<body>
+
+		<header class="navbar">
+
+			<a href="index.html"
+			   class="logo">
+
+				📖 Story<span>Nest</span>
+
+			</a>
+
+			<a href="author.html"
+			   class="login-btn">
+
+				← Dashboard
+
+			</a>
+
+		</header>
+
+
+		<main class="add-novel-container">
+
+			<!-- HEADER -->
+
+			<div class="add-novel-header">
+
+				<p class="section-label">
+					AUTHOR STUDIO
+				</p>
+
+				<h1 id="novelTitle">
+					Characters
+				</h1>
+
+				<p>
+					Create and manage the characters in your story.
+				</p>
+
+			</div>
+
+
+			<!-- ADD CHARACTER -->
+
+			<section class="chapter-editor">
+
+				<div class="chapter-editor-top">
+
+					<h2>
+						Add Character
+					</h2>
+
+				</div>
+
+
+				<div class="form-group">
+
+					<label for="characterName">
+						Character Name
+					</label>
+
+					<input
+						type="text"
+						id="characterName"
+						placeholder="Example: Amara Williams"
+            >
+
+					</div>
+
+
+				<div class="form-group">
+
+					<label for="characterRole">
+						Role
+					</label>
+
+					<select id="characterRole">
+
+						<option value="">
+							Select character role
+						</option>
+
+						<option value="Protagonist">
+							Protagonist
+						</option>
+
+						<option value="Antagonist">
+							Antagonist
+						</option>
+
+						<option value="Supporting Character">
+							Supporting Character
+						</option>
+
+						<option value="Love Interest">
+							Love Interest
+						</option>
+
+						<option value="Other">
+							Other
+						</option>
+
+					</select>
+
+				</div>
+
+
+				<div class="form-group">
+
+					<label for="characterDescription">
+						Description
+					</label>
+
+					<textarea
+						id="characterDescription"
+						rows="7"
+						placeholder="Describe this character..."
+            ></textarea>
+
+				</div>
+
+
+				<div class="chapter-editor-buttons">
+
+					<button
+						class="secondary-btn"
+						id="clearCharacter">
+
+						Clear
+
+					</button>
+
+
+					<button
+						class="primary-btn"
+						id="saveCharacter">
+
+						+ Add Character
+
+					</button>
+
+				</div>
+
+			</section>
+
+
+			<!-- CHARACTER LIST -->
+
+			<section class="saved-chapters">
+
+				<div class="section-heading">
+
+					<div>
+
+						<p class="section-label">
+							YOUR STORY
+						</p>
+
+						<h2>
+							Characters
+						</h2>
+
+					</div>
+
+				</div>
+
+
+				<div id="characterList">
+
+					<div class="chapter-empty">
+
+						<div>👤</div>
+
+						<p>
+							No characters yet.
+						</p>
+
+					</div>
+
+				</div>
+
+			</section>
+
+		</main>
+
+
+		<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+		<script src="js/supabase.js"></script>
+
+		<script src="js/characters.js"></script>
+
+	</body>
+
+</html>
