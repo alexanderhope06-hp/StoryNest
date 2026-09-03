@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Reading — StoryNest</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -35,7 +35,6 @@
                 <a href="#" onclick="goHome(); return false;">🏠 Home</a>
                 <a href="#" onclick="toggleFontSize(); return false;">🔤 Font Size</a>
                 <a href="#" onclick="toggleTheme(); return false;">🌙 Dark Mode</a>
-                <a href="#" onclick="togglePageMode(); return false;">📄 Page Mode</a>
             </div>
         </div>
 
@@ -48,32 +47,38 @@
     <div class="reading-progress" id="readingProgress"></div>
 
     <!-- =====================================================
-         MAIN CONTENT
+         MAIN CONTENT - PAGE VIEWER
     ===================================================== -->
 
-    <main class="reader-container">
+    <main class="reader-container" id="readerContainer">
 
-        <!-- Page Mode Controls -->
-        <div class="page-controls" id="pageControls">
-            <button class="page-nav-btn" id="prevPageBtn" onclick="previousPage()">←</button>
-            <span id="pageIndicator">Page 1 of 1</span>
-            <button class="page-nav-btn" id="nextPageBtn" onclick="nextPage()">→</button>
-        </div>
-
+        <!-- Chapter Label -->
         <div class="chapter-label">
             CHAPTER <span id="chapterNumber">1</span>
         </div>
 
         <h1 id="chapterTitle">Loading...</h1>
 
-        <div class="story-wrapper">
-            <article class="story" id="storyContent">
-                <p>Loading chapter...</p>
-            </article>
+        <!-- Page Viewer - Swipeable -->
+        <div class="page-viewer" id="pageViewer">
+            
+            <!-- Left swipe hint -->
+            <div class="swipe-hint swipe-left" id="swipeLeftHint">‹</div>
+            
+            <!-- Page Content -->
+            <div class="page-content" id="pageContent">
+                <div class="page-inner" id="pageInner">
+                    <p>Loading chapter...</p>
+                </div>
+            </div>
+            
+            <!-- Right swipe hint -->
+            <div class="swipe-hint swipe-right" id="swipeRightHint">›</div>
+            
         </div>
 
-        <!-- Page indicator at bottom -->
-        <div class="page-indicator-bottom" id="pageIndicatorBottom">
+        <!-- Page Indicator -->
+        <div class="page-indicator" id="pageIndicator">
             <span id="currentPageDisplay">1</span>
             <span class="page-separator">/</span>
             <span id="totalPagesDisplay">1</span>
@@ -86,19 +91,16 @@
         <div class="chapter-navigation">
 
             <button id="previousChapter" class="nav-btn prev-btn">
-                ← Previous
+                ← Previous Chapter
             </button>
 
             <button id="nextChapter" class="nav-btn next-btn">
-                Next →
+                Next Chapter →
             </button>
 
         </div>
 
-        <!-- =====================================================
-             CHAPTER PROGRESS INDICATOR
-        ===================================================== -->
-
+        <!-- Chapter Progress -->
         <div class="chapter-progress" id="chapterProgress">
             <span id="currentChapterNum">1</span>
             <span class="progress-separator">/</span>
@@ -150,19 +152,23 @@
         let fontSize = parseInt(localStorage.getItem('readerFontSize')) || 18;
         
         function toggleFontSize() {
-            const content = document.getElementById('storyContent');
-            if (!content) return;
+            const pageInner = document.getElementById('pageInner');
+            if (!pageInner) return;
             
             if (fontSize < 24) {
                 fontSize += 2;
             } else {
                 fontSize = 16;
             }
-            content.style.fontSize = fontSize + 'px';
+            pageInner.style.fontSize = fontSize + 'px';
             localStorage.setItem('readerFontSize', fontSize);
             
             // Recalculate pages after font change
-            setTimeout(calculatePages, 100);
+            setTimeout(() => {
+                if (typeof calculatePages === 'function') {
+                    calculatePages();
+                }
+            }, 200);
         }
 
         function toggleTheme() {
@@ -170,48 +176,9 @@
             const isDark = document.body.classList.contains('dark-theme');
             localStorage.setItem('readerTheme', isDark ? 'dark' : 'light');
             
-            // Update menu text
             const themeBtn = document.querySelector('[onclick="toggleTheme()"]');
             if (themeBtn) {
                 themeBtn.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
-            }
-        }
-
-        // Page Mode Toggle
-        let pageMode = localStorage.getItem('readerPageMode') !== 'scroll';
-
-        function togglePageMode() {
-            pageMode = !pageMode;
-            localStorage.setItem('readerPageMode', pageMode ? 'page' : 'scroll');
-            
-            const container = document.querySelector('.reader-container');
-            const storyWrapper = document.querySelector('.story-wrapper');
-            const pageControls = document.getElementById('pageControls');
-            const pageIndicatorBottom = document.getElementById('pageIndicatorBottom');
-            
-            if (pageMode) {
-                container.classList.add('page-mode');
-                storyWrapper.classList.add('page-mode-wrapper');
-                pageControls.style.display = 'flex';
-                pageIndicatorBottom.style.display = 'flex';
-                // Reset scroll position
-                window.scrollTo(0, 0);
-            } else {
-                container.classList.remove('page-mode');
-                storyWrapper.classList.remove('page-mode-wrapper');
-                pageControls.style.display = 'none';
-                pageIndicatorBottom.style.display = 'none';
-            }
-            
-            // Update menu text
-            const modeBtn = document.querySelector('[onclick="togglePageMode()"]');
-            if (modeBtn) {
-                modeBtn.textContent = pageMode ? '📜 Scroll Mode' : '📄 Page Mode';
-            }
-            
-            // Recalculate pages if in page mode
-            if (pageMode) {
-                setTimeout(calculatePages, 100);
             }
         }
 
@@ -220,9 +187,9 @@
             const savedFontSize = localStorage.getItem('readerFontSize');
             if (savedFontSize) {
                 fontSize = parseInt(savedFontSize);
-                const content = document.getElementById('storyContent');
-                if (content) {
-                    content.style.fontSize = fontSize + 'px';
+                const pageInner = document.getElementById('pageInner');
+                if (pageInner) {
+                    pageInner.style.fontSize = fontSize + 'px';
                 }
             }
 
@@ -232,24 +199,6 @@
                 const themeBtn = document.querySelector('[onclick="toggleTheme()"]');
                 if (themeBtn) {
                     themeBtn.textContent = '☀️ Light Mode';
-                }
-            }
-
-            // Restore page mode
-            if (pageMode) {
-                const container = document.querySelector('.reader-container');
-                const storyWrapper = document.querySelector('.story-wrapper');
-                const pageControls = document.getElementById('pageControls');
-                const pageIndicatorBottom = document.getElementById('pageIndicatorBottom');
-                
-                if (container) container.classList.add('page-mode');
-                if (storyWrapper) storyWrapper.classList.add('page-mode-wrapper');
-                if (pageControls) pageControls.style.display = 'flex';
-                if (pageIndicatorBottom) pageIndicatorBottom.style.display = 'flex';
-                
-                const modeBtn = document.querySelector('[onclick="togglePageMode()"]');
-                if (modeBtn) {
-                    modeBtn.textContent = '📜 Scroll Mode';
                 }
             }
         });
