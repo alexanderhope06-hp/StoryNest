@@ -14,35 +14,32 @@
          READER HEADER
     ===================================================== -->
 
-    <!-- =====================================================
-     READER HEADER - FIXED
-===================================================== -->
+    <header class="reader-header">
 
-<header class="reader-header">
-
-    <div class="reader-header-left">
-        <a href="index.html" class="reader-back" title="Home">
-            ←
-        </a>
-        <div class="reader-header-info">
-            <strong id="readerNovelTitle">Loading...</strong>
-            <span id="chapterHeader">Chapter 1</span>
+        <div class="reader-header-left">
+            <a href="index.html" class="reader-back" title="Home">
+                ←
+            </a>
+            <div class="reader-header-info">
+                <strong id="readerNovelTitle">Loading...</strong>
+                <span id="chapterHeader">Chapter 1</span>
+            </div>
         </div>
-    </div>
 
-    <div class="reader-actions">
-        <button id="readerMenuBtn" class="reader-menu-btn" onclick="toggleReaderMenu(event)" title="Menu">
-            ⋮
-        </button>
-        <div class="reader-dropdown" id="readerDropdown">
-            <a href="#" onclick="goToNovelDetails(); return false;">📚 Novel Details</a>
-            <a href="#" onclick="goHome(); return false;">🏠 Home</a>
-            <a href="#" onclick="toggleFontSize(); return false;">🔤 Font Size</a>
-            <a href="#" onclick="toggleTheme(); return false;">🌙 Dark Mode</a>
+        <div class="reader-actions">
+            <button id="readerMenuBtn" class="reader-menu-btn" onclick="toggleReaderMenu(event)" title="Menu">
+                ⋮
+            </button>
+            <div class="reader-dropdown" id="readerDropdown">
+                <a href="#" onclick="goToNovelDetails(); return false;">📚 Novel Details</a>
+                <a href="#" onclick="goHome(); return false;">🏠 Home</a>
+                <a href="#" onclick="toggleFontSize(); return false;">🔤 Font Size</a>
+                <a href="#" onclick="toggleTheme(); return false;">🌙 Dark Mode</a>
+                <a href="#" onclick="togglePageMode(); return false;">📄 Page Mode</a>
+            </div>
         </div>
-    </div>
 
-</header>
+    </header>
 
     <!-- =====================================================
          READING PROGRESS BAR
@@ -56,15 +53,31 @@
 
     <main class="reader-container">
 
+        <!-- Page Mode Controls -->
+        <div class="page-controls" id="pageControls">
+            <button class="page-nav-btn" id="prevPageBtn" onclick="previousPage()">←</button>
+            <span id="pageIndicator">Page 1 of 1</span>
+            <button class="page-nav-btn" id="nextPageBtn" onclick="nextPage()">→</button>
+        </div>
+
         <div class="chapter-label">
             CHAPTER <span id="chapterNumber">1</span>
         </div>
 
         <h1 id="chapterTitle">Loading...</h1>
 
-        <article class="story" id="storyContent">
-            <p>Loading chapter...</p>
-        </article>
+        <div class="story-wrapper">
+            <article class="story" id="storyContent">
+                <p>Loading chapter...</p>
+            </article>
+        </div>
+
+        <!-- Page indicator at bottom -->
+        <div class="page-indicator-bottom" id="pageIndicatorBottom">
+            <span id="currentPageDisplay">1</span>
+            <span class="page-separator">/</span>
+            <span id="totalPagesDisplay">1</span>
+        </div>
 
         <!-- =====================================================
              CHAPTER NAVIGATION
@@ -102,20 +115,16 @@
     <script src="js/supabase.js"></script>
     <script src="js/reader.js"></script>
 
-    <!-- SIMPLIFIED: Menu functions that work immediately -->
+    <!-- Menu Functions -->
     <script>
-        // These functions are global and will work even before DOM is ready
-        
         function toggleReaderMenu(event) {
             event.stopPropagation();
             const dropdown = document.getElementById('readerDropdown');
             if (dropdown) {
                 dropdown.classList.toggle('active');
-                console.log('Menu toggled:', dropdown.classList.contains('active')); // Debug log
             }
         }
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
             const dropdown = document.getElementById('readerDropdown');
             const menuBtn = document.getElementById('readerMenuBtn');
@@ -138,7 +147,6 @@
             window.location.href = 'index.html';
         }
 
-        // Font size toggle
         let fontSize = parseInt(localStorage.getItem('readerFontSize')) || 18;
         
         function toggleFontSize() {
@@ -153,37 +161,62 @@
             content.style.fontSize = fontSize + 'px';
             localStorage.setItem('readerFontSize', fontSize);
             
-            // Show feedback
-            const btn = document.querySelector('[onclick="toggleFontSize()"]');
-            if (btn) {
-                const originalText = btn.textContent;
-                btn.textContent = fontSize + 'px ✓';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                }, 800);
-            }
+            // Recalculate pages after font change
+            setTimeout(calculatePages, 100);
         }
 
-        // Theme toggle
         function toggleTheme() {
             document.body.classList.toggle('dark-theme');
             const isDark = document.body.classList.contains('dark-theme');
             localStorage.setItem('readerTheme', isDark ? 'dark' : 'light');
             
-            // Show feedback
-            const btn = document.querySelector('[onclick="toggleTheme()"]');
-            if (btn) {
-                const icon = isDark ? '☀️' : '🌙';
-                btn.textContent = icon + ' Light Mode';
-                setTimeout(() => {
-                    btn.textContent = '🌙 Dark Mode';
-                }, 1500);
+            // Update menu text
+            const themeBtn = document.querySelector('[onclick="toggleTheme()"]');
+            if (themeBtn) {
+                themeBtn.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
             }
         }
 
-        // Restore preferences on load
+        // Page Mode Toggle
+        let pageMode = localStorage.getItem('readerPageMode') !== 'scroll';
+
+        function togglePageMode() {
+            pageMode = !pageMode;
+            localStorage.setItem('readerPageMode', pageMode ? 'page' : 'scroll');
+            
+            const container = document.querySelector('.reader-container');
+            const storyWrapper = document.querySelector('.story-wrapper');
+            const pageControls = document.getElementById('pageControls');
+            const pageIndicatorBottom = document.getElementById('pageIndicatorBottom');
+            
+            if (pageMode) {
+                container.classList.add('page-mode');
+                storyWrapper.classList.add('page-mode-wrapper');
+                pageControls.style.display = 'flex';
+                pageIndicatorBottom.style.display = 'flex';
+                // Reset scroll position
+                window.scrollTo(0, 0);
+            } else {
+                container.classList.remove('page-mode');
+                storyWrapper.classList.remove('page-mode-wrapper');
+                pageControls.style.display = 'none';
+                pageIndicatorBottom.style.display = 'none';
+            }
+            
+            // Update menu text
+            const modeBtn = document.querySelector('[onclick="togglePageMode()"]');
+            if (modeBtn) {
+                modeBtn.textContent = pageMode ? '📜 Scroll Mode' : '📄 Page Mode';
+            }
+            
+            // Recalculate pages if in page mode
+            if (pageMode) {
+                setTimeout(calculatePages, 100);
+            }
+        }
+
+        // Restore preferences
         document.addEventListener('DOMContentLoaded', function() {
-            // Restore font size
             const savedFontSize = localStorage.getItem('readerFontSize');
             if (savedFontSize) {
                 fontSize = parseInt(savedFontSize);
@@ -193,21 +226,31 @@
                 }
             }
 
-            // Restore theme
             const savedTheme = localStorage.getItem('readerTheme');
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-theme');
-                // Update menu text
                 const themeBtn = document.querySelector('[onclick="toggleTheme()"]');
                 if (themeBtn) {
                     themeBtn.textContent = '☀️ Light Mode';
                 }
             }
 
-            // Update font size menu text
-            const fontBtn = document.querySelector('[onclick="toggleFontSize()"]');
-            if (fontBtn) {
-                fontBtn.textContent = '🔤 ' + fontSize + 'px';
+            // Restore page mode
+            if (pageMode) {
+                const container = document.querySelector('.reader-container');
+                const storyWrapper = document.querySelector('.story-wrapper');
+                const pageControls = document.getElementById('pageControls');
+                const pageIndicatorBottom = document.getElementById('pageIndicatorBottom');
+                
+                if (container) container.classList.add('page-mode');
+                if (storyWrapper) storyWrapper.classList.add('page-mode-wrapper');
+                if (pageControls) pageControls.style.display = 'flex';
+                if (pageIndicatorBottom) pageIndicatorBottom.style.display = 'flex';
+                
+                const modeBtn = document.querySelector('[onclick="togglePageMode()"]');
+                if (modeBtn) {
+                    modeBtn.textContent = '📜 Scroll Mode';
+                }
             }
         });
     </script>
