@@ -46,7 +46,7 @@ const totalChaptersEl = document.getElementById("totalChapters");
 const currentPageDisplay = document.getElementById("currentPageDisplay");
 const totalPagesDisplay = document.getElementById("totalPagesDisplay");
 const pageViewer = document.getElementById("pageViewer");
-const pageContent = document.getElementById("pageContent");
+const pageContentEl = document.getElementById("pageContent");
 const swipeLeftHint = document.getElementById("swipeLeftHint");
 const swipeRightHint = document.getElementById("swipeRightHint");
 
@@ -54,66 +54,79 @@ const swipeRightHint = document.getElementById("swipeRightHint");
    START
    ===================================================== */
 
-if (!novelId) {
-    showError("No novel was selected.");
-} else {
-    loadNovel();
-}
+document.addEventListener('DOMContentLoaded', function() {
+    if (!novelId) {
+        showError("No novel was selected.");
+    } else {
+        loadNovel();
+    }
+});
 
 /* =====================================================
    LOAD NOVEL
    ===================================================== */
 
 async function loadNovel() {
-
-    const { data: novelData, error: novelError } = await supabaseClient
-        .from("novels")
-        .select("*")
-        .eq("id", novelId)
-        .eq("status", "published")
-        .single();
-
-    if (novelError || !novelData) {
-        console.error("Novel error:", novelError);
-        showError("This novel could not be found.");
-        return;
-    }
-
-    novel = novelData;
-
-    const { data: chapterData, error: chapterError } = await supabaseClient
-        .from("chapters")
-        .select("*")
-        .eq("novel_id", novelId)
-        .order("chapter_number", { ascending: true });
-
-    if (chapterError) {
-        console.error("Chapter error:", chapterError);
-        showError("Could not load the chapters.");
-        return;
-    }
-
-    chapters = chapterData || [];
-
-    if (chapters.length === 0) {
-        showError("This novel does not have any chapters yet.");
-        return;
-    }
-
-    if (totalChaptersEl) {
-        totalChaptersEl.textContent = chapters.length;
-    }
-
-    if (chapterNumber < 1 || chapterNumber > chapters.length) {
-        chapterNumber = 1;
-        updateURL();
-    }
-
-    readerNovelTitle.textContent = novel.title;
-    displayChapter();
+    console.log("Loading novel...", novelId);
     
-    // Setup swipe after content loads
-    setTimeout(setupSwipe, 300);
+    try {
+        // Load published novel
+        const { data: novelData, error: novelError } = await supabaseClient
+            .from("novels")
+            .select("*")
+            .eq("id", novelId)
+            .eq("status", "published")
+            .single();
+
+        if (novelError || !novelData) {
+            console.error("Novel error:", novelError);
+            showError("This novel could not be found.");
+            return;
+        }
+
+        novel = novelData;
+        console.log("Novel loaded:", novel.title);
+
+        // Load chapters
+        const { data: chapterData, error: chapterError } = await supabaseClient
+            .from("chapters")
+            .select("*")
+            .eq("novel_id", novelId)
+            .order("chapter_number", { ascending: true });
+
+        if (chapterError) {
+            console.error("Chapter error:", chapterError);
+            showError("Could not load the chapters.");
+            return;
+        }
+
+        chapters = chapterData || [];
+        console.log("Chapters loaded:", chapters.length);
+
+        if (chapters.length === 0) {
+            showError("This novel does not have any chapters yet.");
+            return;
+        }
+
+        if (totalChaptersEl) {
+            totalChaptersEl.textContent = chapters.length;
+        }
+
+        // Validate chapter number
+        if (chapterNumber < 1 || chapterNumber > chapters.length) {
+            chapterNumber = 1;
+            updateURL();
+        }
+
+        readerNovelTitle.textContent = novel.title;
+        
+        // Display the chapter
+        displayChapter();
+        
+    } catch (error) {
+        console.error("Load error:", error);
+        showError("An unexpected error occurred.");
+    }
 }
 
 /* =====================================================
@@ -121,13 +134,19 @@ async function loadNovel() {
    ===================================================== */
 
 function displayChapter() {
-
+    console.log("Displaying chapter:", chapterNumber);
+    
     const chapter = chapters[chapterNumber - 1];
 
     if (!chapter) {
+        console.error("Chapter not found:", chapterNumber);
+        showError("Chapter not found.");
         return;
     }
 
+    console.log("Chapter data:", chapter.title);
+
+    // Update chapter info
     chapterNumberElement.textContent = chapter.chapter_number;
     if (currentChapterNum) {
         currentChapterNum.textContent = chapter.chapter_number;
@@ -139,15 +158,20 @@ function displayChapter() {
     // Build content
     buildChapterContent(chapter);
 
-    // Reset and calculate pages
+    // Reset and calculate pages - wait for DOM to update
     currentPage = 0;
-    setTimeout(() => {
-        calculatePages();
-        updatePageDisplay();
-        updateProgressBar();
-        updateSwipeHints();
-    }, 100);
+    
+    // Use requestAnimationFrame to ensure DOM is ready
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            calculatePages();
+            updatePageDisplay();
+            updateProgressBar();
+            updateSwipeHints();
+        }, 50);
+    });
 
+    // Update navigation buttons
     previousButton.style.visibility = chapterNumber === 1 ? "hidden" : "visible";
     nextButton.textContent = chapterNumber === chapters.length ? "Finish →" : "Next →";
 
@@ -161,14 +185,35 @@ function displayChapter() {
    ===================================================== */
 
 function buildChapterContent(chapter) {
+    if (!pageInner) {
+        console.error("pageInner element not found");
+        return;
+    }
+    
     pageInner.innerHTML = "";
     
     const content = chapter.content || "";
+    console.log("Content length:", content.length);
+    
+    if (!content || content.trim().length === 0) {
+        // If no content, show placeholder
+        const p = document.createElement("p");
+        p.textContent = "This chapter is empty.";
+        p.className = "first-paragraph";
+        pageInner.appendChild(p);
+        return;
+    }
+    
+    // Split into paragraphs
     const paragraphs = content.split(/\n\s*\n/);
+    console.log("Paragraphs found:", paragraphs.length);
+    
+    let hasContent = false;
     
     paragraphs.forEach((paragraph, index) => {
         const cleaned = paragraph.trim();
         if (!cleaned) return;
+        hasContent = true;
         
         const p = document.createElement("p");
         p.textContent = cleaned;
@@ -181,6 +226,14 @@ function buildChapterContent(chapter) {
         
         pageInner.appendChild(p);
     });
+    
+    // If no content was added, show placeholder
+    if (!hasContent) {
+        const p = document.createElement("p");
+        p.textContent = "This chapter is empty.";
+        p.className = "first-paragraph";
+        pageInner.appendChild(p);
+    }
 }
 
 /* =====================================================
@@ -188,9 +241,16 @@ function buildChapterContent(chapter) {
    ===================================================== */
 
 function calculatePages() {
-    if (!pageInner) return;
+    console.log("Calculating pages...");
+    
+    if (!pageInner) {
+        console.error("pageInner not found");
+        return;
+    }
     
     const paragraphs = pageInner.querySelectorAll('p');
+    console.log("Paragraphs for pagination:", paragraphs.length);
+    
     if (paragraphs.length === 0) {
         totalPages = 1;
         pageContent = [[0]];
@@ -199,34 +259,49 @@ function calculatePages() {
     }
     
     // Get the available height for content
-    const viewerHeight = pageContent.clientHeight;
-    if (viewerHeight === 0) {
+    const viewerHeight = pageContentEl ? pageContentEl.clientHeight : 400;
+    console.log("Viewer height:", viewerHeight);
+    
+    if (viewerHeight < 50) {
+        // If viewer height is too small, retry after a moment
+        console.log("Viewer height too small, retrying...");
         setTimeout(calculatePages, 200);
         return;
     }
     
-    // Get font size and line height
+    // Get computed styles
     const computedStyle = window.getComputedStyle(pageInner);
     const fontSize = parseFloat(computedStyle.fontSize) || 18;
     const lineHeight = parseFloat(computedStyle.lineHeight) || (fontSize * 1.9);
-    const paragraphMargin = 12; // Margin between paragraphs
+    const paragraphMargin = 12;
+    const padding = 20;
+    
+    // Available height with padding
+    const maxHeight = viewerHeight - padding;
     
     // Reset page content
     pageContent = [];
     let currentPageParagraphs = [];
     let currentHeight = 0;
     
-    // Available height (with some padding)
-    const maxHeight = viewerHeight - 20;
+    // Get page width for character counting
+    const pageWidth = pageContentEl ? pageContentEl.clientWidth - 80 : 600;
+    const avgCharsPerLine = Math.max(20, Math.floor(pageWidth / (fontSize * 0.55)));
+    
+    console.log("Page width:", pageWidth, "Avg chars per line:", avgCharsPerLine);
     
     // Calculate how many paragraphs fit per page
     paragraphs.forEach((p, index) => {
-        // Get text content length to estimate height
         const text = p.textContent;
         const charCount = text.length;
-        const avgCharsPerLine = Math.floor((pageContent.clientWidth - 40) / (fontSize * 0.6));
         const lines = Math.max(1, Math.ceil(charCount / avgCharsPerLine));
         const height = (lines * lineHeight) + paragraphMargin;
+        
+        // If this paragraph alone is taller than the page, it gets its own page
+        if (height > maxHeight && currentPageParagraphs.length === 0) {
+            pageContent.push([index]);
+            return;
+        }
         
         if (currentHeight + height > maxHeight && currentPageParagraphs.length > 0) {
             // Save current page
@@ -244,13 +319,15 @@ function calculatePages() {
         pageContent.push([...currentPageParagraphs]);
     }
     
-    // If no pages were created (shouldn't happen)
+    // If no pages were created, create at least one
     if (pageContent.length === 0) {
         pageContent = [[0]];
     }
     
     totalPages = pageContent.length;
     currentPage = Math.min(currentPage, totalPages - 1);
+    
+    console.log("Total pages:", totalPages);
     
     showPage(currentPage);
     updatePageDisplay();
@@ -263,6 +340,8 @@ function calculatePages() {
    ===================================================== */
 
 function showPage(pageIndex) {
+    console.log("Showing page:", pageIndex);
+    
     if (!pageInner) return;
     if (pageIndex < 0 || pageIndex >= totalPages) return;
     
@@ -272,10 +351,13 @@ function showPage(pageIndex) {
     const paragraphs = pageInner.querySelectorAll('p');
     paragraphs.forEach(p => {
         p.style.display = 'none';
+        p.style.animation = 'none';
     });
     
     // Show only paragraphs for current page with animation
     const pageParagraphs = pageContent[currentPage] || [];
+    console.log("Page paragraphs:", pageParagraphs.length);
+    
     pageParagraphs.forEach((index, i) => {
         if (paragraphs[index]) {
             paragraphs[index].style.display = 'block';
@@ -331,7 +413,6 @@ function goToPreviousChapter() {
    ===================================================== */
 
 function updatePageDisplay() {
-    const displayText = `${currentPage + 1} / ${totalPages}`;
     if (currentPageDisplay) {
         currentPageDisplay.textContent = currentPage + 1;
     }
@@ -342,7 +423,6 @@ function updatePageDisplay() {
 
 function updateProgressBar() {
     if (!progressBar) return;
-    // Calculate overall progress through chapter
     const progress = ((currentPage + 1) / totalPages) * 100;
     progressBar.style.width = `${Math.min(progress, 100)}%`;
 }
@@ -362,7 +442,12 @@ function updateSwipeHints() {
 
 function setupSwipe() {
     const viewer = pageViewer;
-    if (!viewer) return;
+    if (!viewer) {
+        console.error("Page viewer not found");
+        return;
+    }
+    
+    console.log("Setting up swipe...");
     
     // Touch events for mobile
     viewer.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -443,15 +528,15 @@ function handleKeyboard(e) {
    ===================================================== */
 
 function handlePageTurn(direction) {
+    console.log("Page turn:", direction);
+    
     if (direction === 'next') {
         // Try next page
         if (nextPage()) {
-            // Page turned successfully
             return;
         }
         // Try next chapter
         if (goToNextChapter()) {
-            // Chapter turned successfully
             return;
         }
         // End of book - go to novel details
@@ -476,7 +561,9 @@ let resizeTimeout;
 window.addEventListener("resize", () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
-        calculatePages();
+        if (chapters.length > 0) {
+            calculatePages();
+        }
     }, 300);
 });
 
@@ -502,7 +589,9 @@ window.addEventListener("popstate", () => {
         chapterNumber = chapters.length;
     }
 
-    displayChapter();
+    if (chapters.length > 0) {
+        displayChapter();
+    }
 });
 
 /* =====================================================
@@ -530,6 +619,8 @@ previousButton.addEventListener("click", () => {
    ===================================================== */
 
 function showError(message) {
+    console.error("Error:", message);
+    
     if (readerNovelTitle) {
         readerNovelTitle.textContent = "StoryNest";
     }
@@ -578,9 +669,16 @@ function escapeHTML(value) {
     return div.innerHTML;
 }
 
+// Setup swipe when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup swipe after a delay to ensure everything is loaded
+    setTimeout(setupSwipe, 500);
+});
+
 // Export for menu functions
 window.calculatePages = calculatePages;
 window.showPage = showPage;
 window.nextPage = nextPage;
 window.previousPage = previousPage;
 window.handlePageTurn = handlePageTurn;
+window.displayChapter = displayChapter;

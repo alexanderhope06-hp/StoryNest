@@ -165,10 +165,10 @@
             
             // Recalculate pages after font change
             setTimeout(() => {
-                if (typeof calculatePages === 'function') {
-                    calculatePages();
+                if (typeof calculatePages === 'function' && typeof window.calculatePages === 'function') {
+                    window.calculatePages();
                 }
-            }, 200);
+            }, 300);
         }
 
         function toggleTheme() {
