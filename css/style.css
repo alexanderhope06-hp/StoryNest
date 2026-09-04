@@ -4942,3 +4942,526 @@ footer p {
 .reader-page.dark-theme .chapter-progress {
     color: #aaa;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   STORYNEST — PAGE TURNING READER
+===================================================== */
+
+.reader-page {
+    margin: 0;
+    padding: 0;
+
+    overflow: hidden;
+
+    height: 100vh;
+
+    background: #111111;
+
+    color: #eeeeee;
+
+    touch-action: pan-x;
+
+    user-select: none;
+}
+
+
+/* =====================================================
+   READER HEADER
+===================================================== */
+
+.reader-header {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 64px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 22px;
+
+    background: #111111;
+
+    z-index: 100;
+
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+
+}
+
+
+.reader-header-left {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    min-width: 0;
+
+}
+
+
+.reader-back {
+
+    color: #888;
+
+    text-decoration: none;
+
+    font-size: 28px;
+
+}
+
+
+.reader-header-info {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+
+}
+
+
+.reader-header-info strong {
+
+    font-size: 16px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+}
+
+
+.reader-header-info span {
+
+    font-size: 13px;
+
+    color: #777;
+
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+.reader-menu-btn {
+
+    border: 0;
+
+    background: rgba(255,255,255,0.06);
+
+    color: #ddd;
+
+    border-radius: 24px;
+
+    padding: 9px 14px;
+
+    cursor: pointer;
+
+}
+
+
+.reader-dropdown {
+
+    position: absolute;
+
+    top: 58px;
+
+    right: 18px;
+
+    width: 190px;
+
+    background: #202020;
+
+    border: 1px solid rgba(255,255,255,0.08);
+
+    border-radius: 12px;
+
+    padding: 8px;
+
+    display: none;
+
+    z-index: 200;
+
+}
+
+
+.reader-dropdown.active {
+
+    display: block;
+
+}
+
+
+.reader-dropdown a {
+
+    display: block;
+
+    padding: 11px 12px;
+
+    color: #ddd;
+
+    text-decoration: none;
+
+    border-radius: 8px;
+
+}
+
+
+.reader-dropdown a:hover {
+
+    background: rgba(255,255,255,0.07);
+
+}
+
+
+/* =====================================================
+   PROGRESS BAR
+===================================================== */
+
+.reading-progress {
+
+    position: fixed;
+
+    top: 64px;
+
+    left: 0;
+
+    height: 2px;
+
+    width: 0%;
+
+    background: #8b5cf6;
+
+    z-index: 110;
+
+}
+
+
+/* =====================================================
+   READER CONTAINER
+===================================================== */
+
+.reader-container {
+
+    position: relative;
+
+    height: 100vh;
+
+    box-sizing: border-box;
+
+    padding:
+
+        92px
+        24px
+        72px
+        24px;
+
+    max-width: 960px;
+
+    margin: 0 auto;
+
+}
+
+
+/* =====================================================
+   CHAPTER LABEL
+===================================================== */
+
+.chapter-label {
+
+    color: #8b5cf6;
+
+    font-size: 12px;
+
+    letter-spacing: 2px;
+
+    font-weight: 700;
+
+    margin-bottom: 8px;
+
+}
+
+
+#chapterTitle {
+
+    margin: 0 0 18px;
+
+    font-size: clamp(24px, 4vw, 34px);
+
+    line-height: 1.2;
+
+}
+
+
+/* =====================================================
+   STORY PAGE AREA
+===================================================== */
+
+.story {
+
+    position: relative;
+
+    height: calc(100vh - 190px);
+
+    overflow: hidden;
+
+}
+
+
+/* =====================================================
+   INDIVIDUAL PAGE
+===================================================== */
+
+.story-page {
+
+    position: absolute;
+
+    inset: 0;
+
+    height: 100%;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform: translateX(20px);
+
+    transition:
+
+        opacity 0.18s ease,
+
+        transform 0.18s ease;
+
+    box-sizing: border-box;
+
+}
+
+
+.story-page.active {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transform: translateX(0);
+
+}
+
+
+.story-page p {
+
+    margin:
+
+        0 0 24px;
+
+    font-size: clamp(17px, 2vw, 20px);
+
+    line-height: 1.85;
+
+    color: #dddddd;
+
+}
+
+
+/* =====================================================
+   CHAPTER NAVIGATION
+===================================================== */
+
+.chapter-navigation {
+
+    display: none;
+
+}
+
+
+/* =====================================================
+   CHAPTER PROGRESS
+===================================================== */
+
+.chapter-progress {
+
+    display: none;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .reader-header {
+
+        height: 58px;
+
+        padding: 0 16px;
+
+    }
+
+
+    .reader-menu-btn {
+
+        padding: 8px 13px;
+
+    }
+
+
+    .reading-progress {
+
+        top: 58px;
+
+    }
+
+
+    .reader-container {
+
+        padding:
+
+            78px
+            18px
+            55px
+            18px;
+
+    }
+
+
+    .story {
+
+        height: calc(100vh - 160px);
+
+    }
+
+
+    .chapter-label {
+
+        font-size: 11px;
+
+        margin-bottom: 6px;
+
+    }
+
+
+    #chapterTitle {
+
+        font-size: 25px;
+
+        margin-bottom: 14px;
+
+    }
+
+
+    .story-page p {
+
+        font-size: 18px;
+
+        line-height: 1.8;
+
+        margin-bottom: 22px;
+
+    }
+
+}
+
+
+/* =====================================================
+   SMALL PHONES
+===================================================== */
+
+@media (max-width: 380px) {
+
+    .reader-container {
+
+        padding-left: 15px;
+
+        padding-right: 15px;
+
+    }
+
+
+    .story-page p {
+
+        font-size: 17px;
+
+        line-height: 1.75;
+
+    }
+
+}
+
+
+/* =====================================================
+   READER ERROR
+===================================================== */
+
+.reader-error {
+
+    text-align: center;
+
+    padding-top: 70px;
+
+}
+
+
+.reader-error-icon {
+
+    font-size: 48px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.reader-error h3 {
+
+    font-size: 24px;
+
+}
+
+
+.reader-error p {
+
+    color: #999;
+
+}
