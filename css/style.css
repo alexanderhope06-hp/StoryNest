@@ -5465,3 +5465,405 @@ footer p {
     color: #999;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   STORYNEST - PAGE READER
+===================================================== */
+
+.reader-page {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100dvh;
+}
+
+
+/* -----------------------------------------------------
+   READER HEADER
+----------------------------------------------------- */
+
+.reader-header {
+    height: 64px;
+    min-height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 20px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+
+/* -----------------------------------------------------
+   MAIN READER AREA
+----------------------------------------------------- */
+
+.reader-container {
+
+    width: 100%;
+
+    height: calc(100dvh - 64px);
+
+    box-sizing: border-box;
+
+    padding:
+
+        18px
+        24px
+        78px
+        24px;
+
+    overflow: hidden;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+/* -----------------------------------------------------
+   CHAPTER LABEL
+----------------------------------------------------- */
+
+.chapter-label {
+
+    flex-shrink: 0;
+
+    font-size: 12px;
+
+    letter-spacing: 2px;
+
+    opacity: 0.55;
+
+    margin-bottom: 8px;
+
+}
+
+
+/* -----------------------------------------------------
+   CHAPTER TITLE
+----------------------------------------------------- */
+
+#chapterTitle {
+
+    flex-shrink: 0;
+
+    margin: 0 0 14px 0;
+
+    font-size: clamp(
+        22px,
+        3vw,
+        34px
+    );
+
+}
+
+
+/* -----------------------------------------------------
+   STORY PAGE
+----------------------------------------------------- */
+
+.story {
+
+    /*
+     * This is the actual page.
+     */
+
+    flex: 1;
+
+    min-height: 0;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+    font-size: clamp(
+        17px,
+        2vw,
+        22px
+    );
+
+    line-height: 1.8;
+
+    letter-spacing: 0.01em;
+
+    text-align: left;
+
+    touch-action: pan-y;
+
+}
+
+
+/* -----------------------------------------------------
+   STORY PARAGRAPHS
+----------------------------------------------------- */
+
+.story p {
+
+    margin: 0 0 20px 0;
+
+}
+
+
+/*
+ * Don't allow a word to be broken across
+ * lines/pages.
+ */
+
+.story,
+.story p {
+
+    overflow-wrap: normal;
+
+    word-break: normal;
+
+}
+
+
+/* -----------------------------------------------------
+   PAGE NAVIGATION
+----------------------------------------------------- */
+
+.chapter-navigation {
+
+    position: fixed;
+
+    left: 0;
+    right: 0;
+
+    bottom: 8px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    padding: 0 18px;
+
+    pointer-events: none;
+
+}
+
+
+.chapter-navigation .nav-btn {
+
+    pointer-events: auto;
+
+    opacity: 0.45;
+
+}
+
+
+/* -----------------------------------------------------
+   CHAPTER PROGRESS
+----------------------------------------------------- */
+
+.chapter-progress {
+
+    position: fixed;
+
+    bottom: 12px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    font-size: 12px;
+
+    opacity: 0.45;
+
+}
+
+
+/* -----------------------------------------------------
+   HIDDEN MEASUREMENT AREA
+----------------------------------------------------- */
+
+.reader-measure {
+
+    position: absolute;
+
+    left: -99999px;
+
+    top: 0;
+
+    visibility: hidden;
+
+    box-sizing: border-box;
+
+    white-space: pre-wrap;
+
+    overflow-wrap: normal;
+
+    word-break: normal;
+
+}
+
+
+/* -----------------------------------------------------
+   MOBILE
+----------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+    .reader-header {
+
+        height: 54px;
+
+        min-height: 54px;
+
+        padding: 0 14px;
+
+    }
+
+
+    .reader-container {
+
+        height: calc(100dvh - 54px);
+
+        padding:
+
+            14px
+            18px
+            72px
+            18px;
+
+    }
+
+
+    #chapterTitle {
+
+        font-size: 22px;
+
+        margin-bottom: 10px;
+
+    }
+
+
+    .story {
+
+        font-size: 18px;
+
+        line-height: 1.8;
+
+    }
+
+
+    .story p {
+
+        margin-bottom: 18px;
+
+    }
+
+
+    .chapter-navigation {
+
+        display: none;
+
+    }
+
+
+    .chapter-progress {
+
+        display: none;
+
+    }
+
+}
+
+
+/* -----------------------------------------------------
+   VERY SMALL PHONES
+----------------------------------------------------- */
+
+@media (max-height: 650px) {
+
+    .reader-container {
+
+        padding-top: 10px;
+
+        padding-bottom: 68px;
+
+    }
+
+
+    .story {
+
+        font-size: 17px;
+
+        line-height: 1.7;
+
+    }
+
+
+    #chapterTitle {
+
+        font-size: 20px;
+
+        margin-bottom: 8px;
+
+    }
+
+}
+
+
+/* -----------------------------------------------------
+   TABLETS
+----------------------------------------------------- */
+
+@media (min-width: 601px) and (max-width: 1100px) {
+
+    .reader-container {
+
+        max-width: 850px;
+
+        margin: auto;
+
+        padding-left: 35px;
+
+        padding-right: 35px;
+
+    }
+
+}
+
+
+/* -----------------------------------------------------
+   LARGE LAPTOP / DESKTOP
+----------------------------------------------------- */
+
+@media (min-width: 1101px) {
+
+    .reader-container {
+
+        max-width: 900px;
+
+        margin: auto;
+
+        padding-left: 40px;
+
+        padding-right: 40px;
+
+    }
+
+}
