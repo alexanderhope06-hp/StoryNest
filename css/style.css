@@ -4617,3 +4617,328 @@ footer p {
         font-size: 0.8rem;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   STORYNEST - PAGINATED READER
+   ===================================================== */
+
+.reader-page {
+    overflow-x: hidden;
+}
+
+
+/*
+ * The story becomes a single reading page.
+ */
+
+.reader-container {
+    min-height: calc(100vh - 70px);
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+/*
+ * Chapter title
+ */
+
+.reader-container > h1 {
+    margin-bottom: 35px;
+}
+
+
+/*
+ * Actual page
+ */
+
+.story {
+    width: 100%;
+    max-width: 760px;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    min-height: 420px;
+
+    padding: 0 5px;
+
+    overflow: hidden;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 20px;
+
+    line-height: 2;
+
+    color: #333;
+
+    user-select: text;
+
+    animation: readerPageIn .25s ease;
+}
+
+
+/*
+ * Page animation
+ */
+
+@keyframes readerPageIn {
+
+    from {
+        opacity: 0;
+        transform: translateX(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+}
+
+
+/*
+ * Paragraph spacing
+ */
+
+.story p {
+    margin-bottom: 28px;
+}
+
+
+/*
+ * Page navigation
+ */
+
+.chapter-navigation {
+    width: 100%;
+    max-width: 760px;
+
+    margin:
+        45px auto 20px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+
+/*
+ * Navigation buttons
+ */
+
+.chapter-navigation button {
+    min-width: 130px;
+
+    padding: 13px 20px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 8px;
+
+    background: white;
+
+    color: #222;
+
+    transition:
+        background .2s,
+        transform .2s;
+}
+
+
+.chapter-navigation button:hover {
+    background: #eee;
+
+    transform: translateY(-2px);
+}
+
+
+/*
+ * Page counter
+ */
+
+.chapter-progress {
+    text-align: center;
+
+    margin-top: 10px;
+
+    color: #777;
+
+    font-size: 13px;
+}
+
+
+/*
+ * Prevent accidental selection
+ * while swiping.
+ */
+
+.reader-page .story {
+    touch-action: pan-y;
+
+    -webkit-user-select: text;
+}
+
+
+/* =====================================================
+   MOBILE PAGINATED READER
+   ===================================================== */
+
+@media (max-width: 700px) {
+
+    .reader-container {
+
+        padding:
+            50px 20px 80px;
+
+        min-height:
+            calc(100vh - 65px);
+
+    }
+
+
+    .reader-container > h1 {
+
+        font-size: 32px;
+
+        margin-bottom: 30px;
+
+    }
+
+
+    .story {
+
+        min-height: 460px;
+
+        font-size: 18px;
+
+        line-height: 1.9;
+
+    }
+
+
+    .story p {
+
+        margin-bottom: 25px;
+
+    }
+
+
+    .chapter-navigation {
+
+        margin-top: 35px;
+
+    }
+
+
+    .chapter-navigation button {
+
+        min-width: 110px;
+
+        padding:
+            12px 15px;
+
+    }
+
+}
+
+
+/* =====================================================
+   SMALL PHONES
+   ===================================================== */
+
+@media (max-width: 450px) {
+
+    .reader-container {
+
+        padding-left: 16px;
+        padding-right: 16px;
+
+    }
+
+
+    .reader-container > h1 {
+
+        font-size: 28px;
+
+    }
+
+
+    .story {
+
+        min-height: 430px;
+
+        font-size: 17px;
+
+        line-height: 1.85;
+
+    }
+
+
+    .chapter-navigation button {
+
+        min-width: 95px;
+
+        font-size: 14px;
+
+    }
+
+}
+
+
+/* =====================================================
+   READER DARK MODE
+   ===================================================== */
+
+.reader-page.dark-theme {
+    background: #121212;
+    color: #eee;
+}
+
+
+.reader-page.dark-theme .story {
+    color: #e5e5e5;
+}
+
+
+.reader-page.dark-theme .chapter-navigation button {
+    background: #222;
+    border-color: #444;
+    color: #eee;
+}
+
+
+.reader-page.dark-theme .chapter-navigation button:hover {
+    background: #2c2c2c;
+}
+
+
+.reader-page.dark-theme .chapter-progress {
+    color: #aaa;
+}
