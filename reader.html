@@ -95,118 +95,61 @@
     ===================================================== -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/reader.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/reader.js"></script>
 
-    <!-- SIMPLIFIED: Menu functions that work immediately -->
-    <script>
-        // These functions are global and will work even before DOM is ready
-        
-        function toggleReaderMenu(event) {
-            event.stopPropagation();
-            const dropdown = document.getElementById('readerDropdown');
-            if (dropdown) {
-                dropdown.classList.toggle('active');
-                console.log('Menu toggled:', dropdown.classList.contains('active')); // Debug log
-            }
+<!-- Simple menu toggle -->
+<script>
+    function toggleReaderMenu(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('readerDropdown');
+        if (dropdown) dropdown.classList.toggle('active');
+    }
+
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('readerDropdown');
+        const menuBtn = document.getElementById('readerMenuBtn');
+        if (dropdown && menuBtn && !dropdown.contains(e.target) && e.target !== menuBtn) {
+            dropdown.classList.remove('active');
         }
+    });
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('readerDropdown');
-            const menuBtn = document.getElementById('readerMenuBtn');
-            if (dropdown && menuBtn) {
-                if (!dropdown.contains(e.target) && e.target !== menuBtn) {
-                    dropdown.classList.remove('active');
-                }
-            }
-        });
+    function goToNovelDetails() {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        if (id) window.location.href = 'novel.html?id=' + id;
+    }
 
-        function goToNovelDetails() {
-            const params = new URLSearchParams(window.location.search);
-            const novelId = params.get('id');
-            if (novelId) {
-                window.location.href = 'novel.html?id=' + novelId;
-            }
+    function goHome() {
+        window.location.href = 'index.html';
+    }
+
+    function toggleFontSize() {
+        const content = document.querySelector('.reader-page-content');
+        if (!content) return;
+        let size = parseInt(localStorage.getItem('readerFontSize')) || 18;
+        size = size >= 24 ? 16 : size + 2;
+        localStorage.setItem('readerFontSize', size);
+        content.style.fontSize = size + 'px';
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark-theme');
+        localStorage.setItem('readerTheme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+    }
+
+    // Restore preferences
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedSize = localStorage.getItem('readerFontSize');
+        if (savedSize) {
+            const content = document.querySelector('.reader-page-content');
+            if (content) content.style.fontSize = savedSize + 'px';
         }
-
-        function goHome() {
-            window.location.href = 'index.html';
+        if (localStorage.getItem('readerTheme') === 'dark') {
+            document.body.classList.add('dark-theme');
         }
-
-        // Font size toggle
-        let fontSize = parseInt(localStorage.getItem('readerFontSize')) || 18;
-        
-        function toggleFontSize() {
-            const content = document.getElementById('storyContent');
-            if (!content) return;
-            
-            if (fontSize < 24) {
-                fontSize += 2;
-            } else {
-                fontSize = 16;
-            }
-            content.style.fontSize = fontSize + 'px';
-            localStorage.setItem('readerFontSize', fontSize);
-            
-            // Show feedback
-            const btn = document.querySelector('[onclick="toggleFontSize()"]');
-            if (btn) {
-                const originalText = btn.textContent;
-                btn.textContent = fontSize + 'px ✓';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                }, 800);
-            }
-        }
-
-        // Theme toggle
-        function toggleTheme() {
-            document.body.classList.toggle('dark-theme');
-            const isDark = document.body.classList.contains('dark-theme');
-            localStorage.setItem('readerTheme', isDark ? 'dark' : 'light');
-            
-            // Show feedback
-            const btn = document.querySelector('[onclick="toggleTheme()"]');
-            if (btn) {
-                const icon = isDark ? '☀️' : '🌙';
-                btn.textContent = icon + ' Light Mode';
-                setTimeout(() => {
-                    btn.textContent = '🌙 Dark Mode';
-                }, 1500);
-            }
-        }
-
-        // Restore preferences on load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Restore font size
-            const savedFontSize = localStorage.getItem('readerFontSize');
-            if (savedFontSize) {
-                fontSize = parseInt(savedFontSize);
-                const content = document.getElementById('storyContent');
-                if (content) {
-                    content.style.fontSize = fontSize + 'px';
-                }
-            }
-
-            // Restore theme
-            const savedTheme = localStorage.getItem('readerTheme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-theme');
-                // Update menu text
-                const themeBtn = document.querySelector('[onclick="toggleTheme()"]');
-                if (themeBtn) {
-                    themeBtn.textContent = '☀️ Light Mode';
-                }
-            }
-
-            // Update font size menu text
-            const fontBtn = document.querySelector('[onclick="toggleFontSize()"]');
-            if (fontBtn) {
-                fontBtn.textContent = '🔤 ' + fontSize + 'px';
-            }
-        });
-    </script>
+    });
+</script>
 
 </body>
 </html>
