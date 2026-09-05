@@ -20,8 +20,6 @@ const chapterHeader = document.getElementById("chapterHeader");
 const chapterTitle = document.getElementById("chapterTitle");
 const readerPageContent = document.getElementById("readerPageContent");
 const progressBar = document.getElementById("readingProgress");
-const chapterProgress = document.getElementById("chapterProgress");
-const totalChaptersEl = document.getElementById("totalChapters");
 
 /* =====================================================
    START
@@ -78,11 +76,6 @@ async function loadNovel() {
             chapterNumber = 1;
         }
 
-        // Update total chapters
-        if (totalChaptersEl) {
-            totalChaptersEl.textContent = chapters.length;
-        }
-
         readerNovelTitle.textContent = novel.title;
         displayChapter();
 
@@ -104,12 +97,6 @@ function displayChapter() {
     chapterTitle.textContent = chapter.title || "";
     document.title = `${chapter.title} — ${novel.title}`;
 
-    // Update chapter progress
-    const currentChapterNum = document.getElementById("currentChapterNum");
-    if (currentChapterNum) {
-        currentChapterNum.textContent = chapterNumber;
-    }
-
     buildPages(chapter);
     currentPage = 0;
     updateURL();
@@ -127,8 +114,8 @@ function buildPages(chapter) {
     // Get available height
     const header = document.querySelector(".reader-header");
     const headerHeight = header ? header.getBoundingClientRect().height : 64;
-    const bottomSpace = 70;
-    const paddingSpace = 36;
+    const bottomSpace = 70; // Ad space
+    const paddingSpace = 48;
     const availableHeight = Math.max(
         200,
         window.innerHeight - headerHeight - bottomSpace - paddingSpace
@@ -141,12 +128,12 @@ function buildPages(chapter) {
         position: fixed;
         left: -100000px;
         top: 0;
-        width: min(900px, calc(100vw - 40px));
+        width: min(900px, calc(100vw - 48px));
         height: ${availableHeight}px;
         visibility: hidden;
         overflow: hidden;
         box-sizing: border-box;
-        font-size: clamp(17px, 2vw, 21px);
+        font-size: 18px;
         line-height: 1.75;
         font-family: Georgia, 'Times New Roman', serif;
     `;
@@ -225,10 +212,21 @@ function buildPages(chapter) {
 function showPage() {
     if (!pages.length) return;
 
+    // Apply current font size
+    const savedSize = localStorage.getItem('readerFontSize');
+    const fontSize = savedSize ? parseInt(savedSize) : 18;
+
     readerPageContent.innerHTML = pages[currentPage];
+    readerPageContent.style.fontSize = fontSize + 'px';
     readerPageContent.scrollTop = 0;
 
-    // Progress
+    // Apply font size to all paragraphs
+    const paragraphs = readerPageContent.querySelectorAll('p');
+    paragraphs.forEach(p => {
+        p.style.fontSize = fontSize + 'px';
+    });
+
+    // Progress bar
     if (progressBar) {
         const progress = ((currentPage + 1) / pages.length) * 100;
         progressBar.style.width = `${progress}%`;
@@ -381,24 +379,26 @@ window.addEventListener("popstate", function() {
    RESTORE POSITION
    ===================================================== */
 
+let positionRestored = false;
+
 function restorePosition() {
+    if (positionRestored) return;
     const saved = localStorage.getItem(`storynest-progress-${novelId}-${chapterNumber}`);
     if (saved !== null) {
         const pos = parseInt(saved);
         if (pos >= 0 && pos < pages.length) {
             currentPage = pos;
             showPage();
+            positionRestored = true;
         }
     }
 }
 
-// Override showPage to call restore after display
+// Override showPage to restore position
 const originalShowPage = showPage;
 showPage = function() {
     originalShowPage();
-    // Restore saved position after first render
-    if (!window._positionRestored) {
-        window._positionRestored = true;
+    if (!positionRestored) {
         const saved = localStorage.getItem(`storynest-progress-${novelId}-${chapterNumber}`);
         if (saved !== null) {
             const pos = parseInt(saved);
@@ -406,8 +406,13 @@ showPage = function() {
                 setTimeout(() => {
                     currentPage = pos;
                     originalShowPage();
-                }, 50);
+                    positionRestored = true;
+                }, 100);
+            } else {
+                positionRestored = true;
             }
+        } else {
+            positionRestored = true;
         }
     }
 };
@@ -421,9 +426,9 @@ function showError(message) {
     if (chapterTitle) chapterTitle.textContent = "Unable to open story";
     if (readerPageContent) {
         readerPageContent.innerHTML = `
-            <div class="reader-error" style="text-align:center;padding:60px 20px;">
+            <div style="text-align:center;padding:80px 20px;">
                 <div style="font-size:4rem;margin-bottom:20px;">📖</div>
-                <h3 style="font-size:1.5rem;margin-bottom:12px;">Something went wrong</h3>
+                <h3 style="font-size:1.5rem;margin-bottom:12px;color:#222;">Something went wrong</h3>
                 <p style="color:#888;margin-bottom:16px;">${escapeHTML(message)}</p>
                 <a href="index.html" class="primary-btn" style="display:inline-block;">Return Home</a>
             </div>

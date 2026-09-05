@@ -762,14 +762,68 @@ footer > p {
     transform: translateX(3px);
 }
 
-/* ================= READER ================= */
+/* =====================================================
+   READER - CLEAN & RESPONSIVE
+   ===================================================== */
+
 .reader-page {
-    background: #111113;
-    color: #eeeeee;
+    background: #f7f4ed;
+    color: #222;
     overflow: hidden;
     height: 100dvh;
     margin: 0;
+    font-family: Georgia, 'Times New Roman', serif;
 }
+
+/* Dark Theme */
+.reader-page.dark-theme {
+    background: #0d0d12;
+    color: #e8e8e8;
+}
+
+.reader-page.dark-theme .reader-header {
+    background: rgba(13, 13, 18, 0.97);
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.reader-page.dark-theme .reader-header-info strong {
+    color: #e8e8e8;
+}
+
+.reader-page.dark-theme .reader-header-info span {
+    color: #777;
+}
+
+.reader-page.dark-theme .reader-menu-btn {
+    background: rgba(255, 255, 255, 0.06);
+    color: #ddd;
+}
+
+.reader-page.dark-theme .reader-dropdown {
+    background: #1a1a2e;
+    border-color: #2a2a4a;
+}
+
+.reader-page.dark-theme .reader-dropdown a {
+    color: #d0d0d0;
+}
+
+.reader-page.dark-theme .reader-dropdown a:hover {
+    background: rgba(155, 92, 255, 0.15);
+}
+
+.reader-page.dark-theme .reader-page-content p {
+    color: #d0d0d0;
+}
+
+.reader-page.dark-theme .reader-page-content h1,
+.reader-page.dark-theme .page-chapter-title {
+    color: #e8e8e8;
+}
+
+/* =====================================================
+   READER HEADER
+   ===================================================== */
 
 .reader-header {
     position: fixed;
@@ -782,8 +836,8 @@ footer > p {
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    background: rgba(17, 17, 19, 0.97);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: rgba(247, 244, 237, 0.97);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     backdrop-filter: blur(12px);
 }
 
@@ -796,15 +850,18 @@ footer > p {
 }
 
 .reader-back {
-    color: #888;
+    color: #555;
     text-decoration: none;
     font-size: 28px;
     padding: 4px 8px;
     border-radius: 4px;
     transition: background 0.2s;
     flex-shrink: 0;
+    line-height: 1;
 }
-.reader-back:hover { background: rgba(255,255,255,0.06); }
+.reader-back:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
 
 .reader-header-info {
     display: flex;
@@ -817,43 +874,80 @@ footer > p {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: #222;
 }
 .reader-header-info span {
     font-size: 13px;
-    color: #777;
+    color: #888;
+}
+
+.reader-actions {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .reader-menu-btn {
     border: 0;
-    background: rgba(255,255,255,0.06);
-    color: #ddd;
+    background: rgba(0, 0, 0, 0.06);
+    color: #333;
     border-radius: 24px;
     padding: 9px 14px;
     cursor: pointer;
     font-size: 20px;
+    transition: background 0.2s;
+    line-height: 1;
+}
+.reader-menu-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .reader-dropdown {
     position: absolute;
-    top: 58px;
-    right: 18px;
-    width: 190px;
-    background: #202020;
-    border: 1px solid rgba(255,255,255,0.08);
+    top: 50px;
+    right: 0;
+    min-width: 180px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 12px;
-    padding: 8px;
+    padding: 6px;
     display: none;
     z-index: 200;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
-.reader-dropdown.active { display: block; }
+.reader-dropdown.active {
+    display: block;
+    animation: dropdownFade 0.2s ease;
+}
+
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .reader-dropdown a {
     display: block;
-    padding: 11px 12px;
-    color: #ddd;
+    padding: 10px 14px;
+    color: #333;
     text-decoration: none;
     border-radius: 8px;
+    font-size: 14px;
+    transition: background 0.2s;
 }
-.reader-dropdown a:hover { background: rgba(255,255,255,0.07); }
+.reader-dropdown a:hover {
+    background: rgba(155, 92, 255, 0.08);
+}
+
+/* =====================================================
+   READING PROGRESS
+   ===================================================== */
 
 .reading-progress {
     position: fixed;
@@ -863,8 +957,12 @@ footer > p {
     width: 0%;
     background: linear-gradient(90deg, #9b5cff, #6d28d9);
     z-index: 999;
-    transition: width 0.1s linear;
+    transition: width 0.15s ease;
 }
+
+/* =====================================================
+   READER CONTAINER
+   ===================================================== */
 
 .reader-container {
     position: fixed;
@@ -876,7 +974,7 @@ footer > p {
     display: flex;
     justify-content: center;
     box-sizing: border-box;
-    padding: 18px 20px 0;
+    padding: 24px 24px 0;
 }
 
 .reader-page-content {
@@ -885,37 +983,260 @@ footer > p {
     overflow: hidden;
     box-sizing: border-box;
     touch-action: pan-y;
+    font-size: 18px;
+    line-height: 1.75;
 }
 
 .reader-page-content h1,
 .page-chapter-title {
-    margin: 0 0 24px;
+    margin: 0 0 20px;
     padding: 0;
     font-size: clamp(24px, 3vw, 34px);
     line-height: 1.25;
+    color: #222;
+    font-weight: 700;
 }
 
-.reader-page-content .story p,
-.reader-page-content p {
-    margin: 0 0 1.25em;
-    font-size: clamp(17px, 2vw, 21px);
+.reader-page-content p,
+.reader-page-content .story p {
+    margin: 0 0 1.2em;
+    font-size: 18px;
     line-height: 1.75;
+    color: #333;
 }
 
-/* Bottom ad space */
-.reader-page::after {
-    content: '';
+/* =====================================================
+   AD SPACE - Empty (Reserved for ads)
+   ===================================================== */
+
+.reader-ad-space {
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     height: 70px;
     z-index: 900;
+    background: rgba(247, 244, 237, 0.98);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
     pointer-events: none;
-    background: rgba(25,25,27,0.98);
-    border-top: 1px solid rgba(255,255,255,0.06);
 }
 
+/* Dark theme ad space */
+.reader-page.dark-theme .reader-ad-space {
+    background: rgba(17, 17, 19, 0.98);
+    border-top-color: rgba(255, 255, 255, 0.05);
+}
+
+/* =====================================================
+   CHAPTER PROGRESS (Hidden on mobile)
+   ===================================================== */
+
+.chapter-progress {
+    display: none;
+}
+
+.chapter-navigation {
+    display: none;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 768px) {
+    .reader-header {
+        height: 56px;
+        padding: 0 14px;
+    }
+
+    .reading-progress {
+        top: 56px;
+    }
+
+    .reader-container {
+        top: 56px;
+        bottom: 60px;
+        padding: 16px 16px 0;
+    }
+
+    .reader-page-content {
+        font-size: 17px;
+    }
+
+    .reader-page-content h1,
+    .page-chapter-title {
+        font-size: 22px;
+        margin-bottom: 16px;
+    }
+
+    .reader-page-content p,
+    .reader-page-content .story p {
+        font-size: 17px;
+        line-height: 1.7;
+    }
+
+    .reader-ad-space {
+        height: 60px;
+    }
+
+    .reader-header-info strong {
+        font-size: 14px;
+        max-width: 120px;
+    }
+    .reader-header-info span {
+        font-size: 12px;
+    }
+
+    .reader-back {
+        font-size: 24px;
+    }
+
+    .reader-menu-btn {
+        padding: 7px 12px;
+        font-size: 18px;
+    }
+
+    .reader-dropdown {
+        min-width: 160px;
+        top: 44px;
+        right: -4px;
+    }
+    .reader-dropdown a {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+
+    /* Hide chapter progress on mobile */
+    .chapter-progress {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .reader-header {
+        height: 50px;
+        padding: 0 10px;
+    }
+
+    .reading-progress {
+        top: 50px;
+    }
+
+    .reader-container {
+        top: 50px;
+        bottom: 54px;
+        padding: 12px 12px 0;
+    }
+
+    .reader-page-content {
+        font-size: 16px;
+    }
+
+    .reader-page-content h1,
+    .page-chapter-title {
+        font-size: 20px;
+        margin-bottom: 14px;
+    }
+
+    .reader-page-content p,
+    .reader-page-content .story p {
+        font-size: 16px;
+        line-height: 1.65;
+    }
+
+    .reader-ad-space {
+        height: 54px;
+    }
+
+    .reader-header-info strong {
+        font-size: 13px;
+        max-width: 80px;
+    }
+    .reader-header-info span {
+        font-size: 11px;
+    }
+
+    .reader-back {
+        font-size: 20px;
+    }
+
+    .reader-menu-btn {
+        padding: 6px 10px;
+        font-size: 16px;
+    }
+
+    .reader-dropdown {
+        min-width: 140px;
+        top: 40px;
+        padding: 4px;
+    }
+    .reader-dropdown a {
+        font-size: 12px;
+        padding: 7px 10px;
+    }
+}
+
+/* =====================================================
+   LARGE SCREENS
+   ===================================================== */
+
+@media (min-width: 1100px) {
+    .reader-container {
+        padding: 32px 40px 0;
+    }
+    .reader-page-content {
+        font-size: 19px;
+    }
+    .reader-page-content p,
+    .reader-page-content .story p {
+        font-size: 19px;
+        line-height: 1.8;
+    }
+    .reader-page-content h1,
+    .page-chapter-title {
+        font-size: 36px;
+        margin-bottom: 28px;
+    }
+}
+
+/* =====================================================
+   DARK THEME - EXTRA
+   ===================================================== */
+
+.reader-page.dark-theme .reader-header {
+    background: rgba(13, 13, 18, 0.97);
+}
+
+.reader-page.dark-theme .reader-back {
+    color: #888;
+}
+.reader-page.dark-theme .reader-back:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.reader-page.dark-theme .reader-menu-btn {
+    background: rgba(255, 255, 255, 0.06);
+    color: #ddd;
+}
+.reader-page.dark-theme .reader-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.reader-page.dark-theme .reader-dropdown {
+    background: #1a1a2e;
+    border-color: #2a2a4a;
+}
+.reader-page.dark-theme .reader-dropdown a {
+    color: #d0d0d0;
+}
+.reader-page.dark-theme .reader-dropdown a:hover {
+    background: rgba(155, 92, 255, 0.15);
+}
+
+.reader-page.dark-theme .reader-ad-space {
+    background: rgba(17, 17, 19, 0.98);
+    border-top-color: rgba(255, 255, 255, 0.05);
+}
 /* ================= DASHBOARD ================= */
 .author-page { background: #0d0d12; }
 .author-dashboard {

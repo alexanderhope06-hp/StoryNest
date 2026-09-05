@@ -14,38 +14,31 @@
          READER HEADER
     ===================================================== -->
 
-
-<header class="reader-header">
-
-    <div class="reader-header-left">
-        <a href="index.html" class="reader-back" title="Home">
-            ←
-        </a>
-        <div class="reader-header-info">
-            <strong id="readerNovelTitle">Loading...</strong>
-            <span id="chapterHeader">Chapter 1</span>
+    <header class="reader-header">
+        <div class="reader-header-left">
+            <a href="index.html" class="reader-back" title="Home">←</a>
+            <div class="reader-header-info">
+                <strong id="readerNovelTitle">Loading...</strong>
+                <span id="chapterHeader">Chapter 1</span>
+            </div>
         </div>
-    </div>
 
-    <div class="reader-actions">
-        <button id="readerMenuBtn" class="reader-menu-btn" onclick="toggleReaderMenu(event)" title="Menu">
-            ⋮
-        </button>
-        <div class="reader-dropdown" id="readerDropdown">
-            <a href="#" onclick="goToNovelDetails(); return false;">📚 Novel Details</a>
-            <a href="#" onclick="goHome(); return false;">🏠 Home</a>
-            <a href="#" onclick="toggleFontSize(); return false;">🔤 Font Size</a>
-            <a href="#" onclick="toggleTheme(); return false;">🌙 Dark Mode</a>
+        <div class="reader-actions">
+            <button id="readerMenuBtn" class="reader-menu-btn" onclick="toggleReaderMenu(event)" title="Menu">⋮</button>
+            <div class="reader-dropdown" id="readerDropdown">
+                <a href="#" onclick="goToNovelDetails(); return false;">📚 Novel Details</a>
+                <a href="#" onclick="goHome(); return false;">🏠 Home</a>
+                <a href="#" onclick="toggleFontSize(); return false;" id="fontSizeBtn">🔤 18px</a>
+                <a href="#" onclick="toggleTheme(); return false;" id="themeBtn">🌙 Dark Mode</a>
+            </div>
         </div>
-    </div>
-
-</header>
+    </header>
 
     <!-- =====================================================
          READING PROGRESS BAR
     ===================================================== -->
 
-   <div class="reading-progress" id="readingProgress"></div> 
+    <div class="reading-progress" id="readingProgress"></div>
 
     <!-- =====================================================
          MAIN CONTENT
@@ -53,103 +46,189 @@
 
     <main class="reader-container">
         <div class="reader-page-content" id="readerPageContent">
-
             <h1 id="chapterTitle">Loading...</h1>
-
-            <article class="story" id="storyContent">
+            <div class="story" id="storyContent">
                 <p>Loading chapter...</p>
-            </article>
-
+            </div>
         </div>
-
-        <!-- =====================================================
-             CHAPTER NAVIGATION
-        ===================================================== -->
-<!--
-        <div class="chapter-navigation">
-
-            <button id="previousChapter" class="nav-btn prev-btn">
-                ← Previous
-            </button>
-
-            <button id="nextChapter" class="nav-btn next-btn">
-                Next →
-            </button>
-
-        </div>
--->
-        <!-- =====================================================
-             CHAPTER PROGRESS INDICATOR
-        ===================================================== -->
-
-        <div class="chapter-progress" id="chapterProgress">
-            <span id="currentChapterNum">1</span>
-            <span class="progress-separator">/</span>
-            <span id="totalChapters">0</span>
-        </div>
-
     </main>
+
+    <!-- =====================================================
+         AD SPACE - EMPTY (Reserved for future ads)
+    ===================================================== -->
+
+    <div class="reader-ad-space" id="readerAdSpace"></div>
 
     <!-- =====================================================
          SCRIPTS
     ===================================================== -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js"></script>
-<script src="js/reader.js"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/reader.js"></script>
 
-<!-- Simple menu toggle -->
-<script>
-    function toggleReaderMenu(event) {
-        event.stopPropagation();
-        const dropdown = document.getElementById('readerDropdown');
-        if (dropdown) dropdown.classList.toggle('active');
-    }
+    <!-- Reader Menu & Controls -->
+    <script>
+        // =====================================================
+        // MENU TOGGLE
+        // =====================================================
 
-    document.addEventListener('click', function(e) {
-        const dropdown = document.getElementById('readerDropdown');
-        const menuBtn = document.getElementById('readerMenuBtn');
-        if (dropdown && menuBtn && !dropdown.contains(e.target) && e.target !== menuBtn) {
-            dropdown.classList.remove('active');
+        function toggleReaderMenu(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('readerDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('active');
+            }
         }
-    });
 
-    function goToNovelDetails() {
-        const params = new URLSearchParams(window.location.search);
-        const id = params.get('id');
-        if (id) window.location.href = 'novel.html?id=' + id;
-    }
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('readerDropdown');
+            const menuBtn = document.getElementById('readerMenuBtn');
+            if (dropdown && menuBtn && !dropdown.contains(e.target) && e.target !== menuBtn) {
+                dropdown.classList.remove('active');
+            }
+        });
 
-    function goHome() {
-        window.location.href = 'index.html';
-    }
+        // =====================================================
+        // NAVIGATION
+        // =====================================================
 
-    function toggleFontSize() {
-        const content = document.querySelector('.reader-page-content');
-        if (!content) return;
-        let size = parseInt(localStorage.getItem('readerFontSize')) || 18;
-        size = size >= 24 ? 16 : size + 2;
-        localStorage.setItem('readerFontSize', size);
-        content.style.fontSize = size + 'px';
-    }
+        function goToNovelDetails() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if (id) {
+                window.location.href = 'novel.html?id=' + id;
+            }
+        }
 
-    function toggleTheme() {
-        document.body.classList.toggle('dark-theme');
-        localStorage.setItem('readerTheme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
-    }
+        function goHome() {
+            window.location.href = 'index.html';
+        }
 
-    // Restore preferences
-    document.addEventListener('DOMContentLoaded', function() {
-        const savedSize = localStorage.getItem('readerFontSize');
-        if (savedSize) {
+        // =====================================================
+        // FONT SIZE
+        // =====================================================
+
+        let currentFontSize = parseInt(localStorage.getItem('readerFontSize')) || 18;
+
+        function toggleFontSize() {
+            const sizes = [16, 18, 20, 22, 24, 26];
+            let index = sizes.indexOf(currentFontSize);
+            if (index === -1 || index === sizes.length - 1) {
+                currentFontSize = sizes[0];
+            } else {
+                currentFontSize = sizes[index + 1];
+            }
+
+            applyFontSize(currentFontSize);
+            localStorage.setItem('readerFontSize', currentFontSize);
+
+            // Update menu text
+            const btn = document.getElementById('fontSizeBtn');
+            if (btn) {
+                btn.textContent = '🔤 ' + currentFontSize + 'px';
+                setTimeout(() => {
+                    btn.textContent = '🔤 ' + currentFontSize + 'px';
+                }, 100);
+            }
+        }
+
+        function applyFontSize(size) {
             const content = document.querySelector('.reader-page-content');
-            if (content) content.style.fontSize = savedSize + 'px';
+            const story = document.querySelector('.story');
+            const paragraphs = document.querySelectorAll('.reader-page-content p, .story p');
+
+            if (content) {
+                content.style.fontSize = size + 'px';
+            }
+            if (story) {
+                story.style.fontSize = size + 'px';
+            }
+            paragraphs.forEach(p => {
+                p.style.fontSize = size + 'px';
+            });
         }
-        if (localStorage.getItem('readerTheme') === 'dark') {
-            document.body.classList.add('dark-theme');
+
+        // =====================================================
+        // THEME (Dark / Light)
+        // =====================================================
+
+        let currentTheme = localStorage.getItem('readerTheme') || 'light';
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+
+            if (currentTheme === 'light') {
+                body.classList.add('dark-theme');
+                currentTheme = 'dark';
+                if (btn) btn.textContent = '☀️ Light Mode';
+            } else {
+                body.classList.remove('dark-theme');
+                currentTheme = 'light';
+                if (btn) btn.textContent = '🌙 Dark Mode';
+            }
+
+            localStorage.setItem('readerTheme', currentTheme);
         }
-    });
-</script>
+
+        function applyTheme(theme) {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+
+            if (theme === 'dark') {
+                body.classList.add('dark-theme');
+                if (btn) btn.textContent = '☀️ Light Mode';
+            } else {
+                body.classList.remove('dark-theme');
+                if (btn) btn.textContent = '🌙 Dark Mode';
+            }
+            currentTheme = theme;
+        }
+
+        // =====================================================
+        // RESTORE PREFERENCES
+        // =====================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Restore font size
+            const savedSize = localStorage.getItem('readerFontSize');
+            if (savedSize) {
+                currentFontSize = parseInt(savedSize);
+                applyFontSize(currentFontSize);
+                const btn = document.getElementById('fontSizeBtn');
+                if (btn) {
+                    btn.textContent = '🔤 ' + currentFontSize + 'px';
+                }
+            }
+
+            // Restore theme
+            const savedTheme = localStorage.getItem('readerTheme');
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            }
+
+            // Hide chapter progress counter on mobile
+            const progressEl = document.querySelector('.chapter-progress');
+            if (progressEl && window.innerWidth < 768) {
+                progressEl.style.display = 'none';
+            }
+        });
+
+        // Handle resize for chapter progress visibility
+        window.addEventListener('resize', function() {
+            const progressEl = document.querySelector('.chapter-progress');
+            if (progressEl) {
+                if (window.innerWidth < 768) {
+                    progressEl.style.display = 'none';
+                } else {
+                    progressEl.style.display = 'block';
+                }
+            }
+        });
+
+        console.log('📖 Reader controls loaded successfully.');
+    </script>
 
 </body>
 </html>
