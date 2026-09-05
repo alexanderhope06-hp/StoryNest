@@ -5867,3 +5867,518 @@ footer p {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   STORYNEST — PAGE READER
+===================================================== */
+
+.reader-page {
+
+    margin: 0;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    background: #111113;
+
+    color: #eeeeee;
+
+}
+
+
+/* =====================================================
+   FIXED READER HEADER
+===================================================== */
+
+.reader-page .reader-header {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    right: 0;
+
+    height: 64px;
+
+    z-index: 1000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        0 20px;
+
+    background:
+        rgba(17, 17, 19, 0.97);
+
+    border-bottom:
+        1px solid rgba(255,255,255,0.08);
+
+    backdrop-filter:
+        blur(12px);
+
+}
+
+
+/* =====================================================
+   READER CONTAINER
+===================================================== */
+
+.reader-page .reader-container {
+
+    box-sizing: border-box;
+
+    width: 100%;
+
+    max-width: 900px;
+
+    margin: 0 auto;
+
+    padding:
+
+        92px
+
+        24px
+
+        90px;
+
+    height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+/* =====================================================
+   CHAPTER LABEL
+===================================================== */
+
+.reader-page .chapter-label {
+
+    flex-shrink: 0;
+
+    margin-bottom: 8px;
+
+    font-size: 12px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    opacity: 0.55;
+
+}
+
+
+/* =====================================================
+   CHAPTER TITLE
+===================================================== */
+
+.reader-page #chapterTitle {
+
+    position: relative;
+
+    z-index: 2;
+
+    flex-shrink: 0;
+
+    margin:
+
+        0
+
+        0
+
+        22px;
+
+    padding: 0;
+
+    line-height: 1.2;
+
+    font-size: clamp(
+        24px,
+        4vw,
+        38px
+    );
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* =====================================================
+   STORY PAGE
+===================================================== */
+
+.reader-page #storyContent {
+
+    flex: 1;
+
+    min-height: 0;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+    font-size: 18px;
+
+    line-height: 1.65;
+
+    letter-spacing: 0;
+
+}
+
+
+/*
+ * Every generated paragraph.
+ */
+
+.reader-page #storyContent p {
+
+    margin:
+
+        0 0 18px;
+
+}
+
+
+/*
+ * Prevent awkward text selection behavior
+ * while swiping.
+ */
+
+.reader-page #storyContent {
+
+    user-select: text;
+
+    touch-action: pan-y;
+
+}
+
+
+/* =====================================================
+   PAGE MEASURER
+===================================================== */
+
+.reader-page-measurer {
+
+    position: fixed;
+
+    left: -100000px;
+
+    top: 0;
+
+    visibility: hidden;
+
+    width:
+        min(
+            calc(100vw - 48px),
+            852px
+        );
+
+    box-sizing: border-box;
+
+    line-height: 1.65;
+
+    font-family:
+        inherit;
+
+    font-size: 18px;
+
+    overflow: hidden;
+
+}
+
+
+/* =====================================================
+   PARAGRAPH SEPARATION
+===================================================== */
+
+.paragraph-space {
+
+    height: 1px;
+
+}
+
+
+/* =====================================================
+   BOTTOM AD SPACE
+===================================================== */
+
+.reader-page::after {
+
+    content: "";
+
+    position: fixed;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    height: 64px;
+
+    z-index: 900;
+
+    background:
+        rgba(25,25,27,0.98);
+
+    border-top:
+        1px solid rgba(255,255,255,0.06);
+
+}
+
+
+/*
+ * This is where your future ad banner
+ * can live.
+ */
+
+.reader-ad-space {
+
+    position: fixed;
+
+    left: 0;
+
+    right: 0;
+
+    bottom: 0;
+
+    height: 64px;
+
+    z-index: 950;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 13px;
+
+    opacity: 0.7;
+
+}
+
+
+/* =====================================================
+   CHAPTER NAVIGATION
+===================================================== */
+
+.reader-page .chapter-navigation {
+
+    display: none;
+
+}
+
+
+/* =====================================================
+   CHAPTER PROGRESS
+===================================================== */
+
+.reader-page .chapter-progress {
+
+    display: none;
+
+}
+
+
+/* =====================================================
+   READING PROGRESS BAR
+===================================================== */
+
+.reader-page .reading-progress {
+
+    position: fixed;
+
+    top: 64px;
+
+    left: 0;
+
+    height: 2px;
+
+    width: 0;
+
+    z-index: 1100;
+
+    background:
+        #9b5cff;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .reader-page .reader-header {
+
+        height: 56px;
+
+        padding:
+            0 14px;
+
+    }
+
+
+    .reader-page .reader-container {
+
+        padding:
+
+            76px
+
+            18px
+
+            82px;
+
+    }
+
+
+    .reader-page #chapterTitle {
+
+        margin-bottom: 18px;
+
+        font-size:
+            clamp(
+                22px,
+                7vw,
+                30px
+            );
+
+    }
+
+
+    .reader-page #storyContent {
+
+        font-size:
+            var(--reader-font-size, 18px);
+
+        line-height: 1.65;
+
+    }
+
+
+    .reader-page::after {
+
+        height: 64px;
+
+    }
+
+
+    .reader-ad-space {
+
+        height: 64px;
+
+    }
+
+
+    .reader-page .reading-progress {
+
+        top: 56px;
+
+    }
+
+}
+
+
+/* =====================================================
+   VERY SMALL PHONES
+===================================================== */
+
+@media (max-height: 650px) {
+
+    .reader-page .reader-container {
+
+        padding-top: 72px;
+
+        padding-bottom: 78px;
+
+    }
+
+
+    .reader-page #chapterTitle {
+
+        margin-bottom: 12px;
+
+        font-size: 23px;
+
+    }
+
+}
+
+
+/* =====================================================
+   TABLETS
+===================================================== */
+
+@media (
+    min-width: 601px
+) and (
+    max-width: 1100px
+) {
+
+    .reader-page .reader-container {
+
+        max-width: 850px;
+
+        padding-left: 30px;
+
+        padding-right: 30px;
+
+    }
+
+}
+
+
+/* =====================================================
+   LARGE LAPTOP / DESKTOP
+===================================================== */
+
+@media (min-width: 1101px) {
+
+    .reader-page .reader-container {
+
+        max-width: 900px;
+
+    }
+
+
+    .reader-page #storyContent {
+
+        font-size: 19px;
+
+        line-height: 1.7;
+
+    }
+
+}
