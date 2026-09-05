@@ -1,12 +1,6 @@
 /* =====================================================
-   STORYNEST — READER
-   PAGE-BY-PAGE VERSION
+   STORYNEST — PAGE BASED READER
    ===================================================== */
-
-
-/* =====================================================
-   URL PARAMETERS
-===================================================== */
 
 const params = new URLSearchParams(window.location.search);
 
@@ -14,11 +8,6 @@ const novelId = params.get("id");
 
 let chapterNumber =
     Number(params.get("chapter")) || 1;
-
-
-/* =====================================================
-   DATA
-===================================================== */
 
 let novel = null;
 let chapters = [];
@@ -28,16 +17,8 @@ let currentPage = 0;
 
 
 /* =====================================================
-   TOUCH
-===================================================== */
-
-let touchStartX = 0;
-let touchStartY = 0;
-
-
-/* =====================================================
    ELEMENTS
-===================================================== */
+   ===================================================== */
 
 const readerNovelTitle =
     document.getElementById("readerNovelTitle");
@@ -45,37 +26,22 @@ const readerNovelTitle =
 const chapterHeader =
     document.getElementById("chapterHeader");
 
-const chapterNumberElement =
-    document.getElementById("chapterNumber");
-
 const chapterTitle =
     document.getElementById("chapterTitle");
 
 const storyContent =
     document.getElementById("storyContent");
 
-const previousButton =
-    document.getElementById("previousChapter");
-
-const nextButton =
-    document.getElementById("nextChapter");
+const readerPageContent =
+    document.getElementById("readerPageContent");
 
 const progressBar =
     document.getElementById("readingProgress");
 
-const chapterProgress =
-    document.getElementById("chapterProgress");
-
-const currentChapterNum =
-    document.getElementById("currentChapterNum");
-
-const totalChaptersEl =
-    document.getElementById("totalChapters");
-
 
 /* =====================================================
    START
-===================================================== */
+   ===================================================== */
 
 if (!novelId) {
 
@@ -90,20 +56,9 @@ if (!novelId) {
 
 /* =====================================================
    LOAD NOVEL
-   KEEPING ORIGINAL SUPABASE LOGIC
-===================================================== */
+   ===================================================== */
 
 async function loadNovel() {
-
-    console.log(
-        "STORYNEST READER: Loading novel:",
-        novelId
-    );
-
-
-    /* -----------------------------------------------
-       LOAD NOVEL
-    ------------------------------------------------ */
 
     const {
         data: novelData,
@@ -118,31 +73,16 @@ async function loadNovel() {
 
     if (novelError || !novelData) {
 
-        console.error(
-            "STORYNEST READER: Novel error:",
-            novelError
-        );
+        console.error("Novel error:", novelError);
 
-        showError(
-            "This novel could not be found."
-        );
+        showError("This novel could not be found.");
 
         return;
     }
 
 
-    console.log(
-        "STORYNEST READER: Novel loaded:",
-        novelData.title
-    );
-
-
     novel = novelData;
 
-
-    /* -----------------------------------------------
-       LOAD CHAPTERS
-    ------------------------------------------------ */
 
     const {
         data: chapterData,
@@ -151,24 +91,19 @@ async function loadNovel() {
         .from("chapters")
         .select("*")
         .eq("novel_id", novelId)
-        .order(
-            "chapter_number",
-            {
-                ascending: true
-            }
-        );
+        .order("chapter_number", {
+            ascending: true
+        });
 
 
     if (chapterError) {
 
         console.error(
-            "STORYNEST READER: Chapter error:",
+            "Chapter error:",
             chapterError
         );
 
-        showError(
-            "Could not load the chapters."
-        );
+        showError("Could not load the chapters.");
 
         return;
     }
@@ -187,39 +122,18 @@ async function loadNovel() {
     }
 
 
-    /* -----------------------------------------------
-       VALIDATE CHAPTER
-    ------------------------------------------------ */
-
     if (
         chapterNumber < 1 ||
         chapterNumber > chapters.length
     ) {
 
         chapterNumber = 1;
-
     }
 
-
-    /* -----------------------------------------------
-       HEADER
-    ------------------------------------------------ */
 
     readerNovelTitle.textContent =
         novel.title;
 
-
-    if (totalChaptersEl) {
-
-        totalChaptersEl.textContent =
-            chapters.length;
-
-    }
-
-
-    /* -----------------------------------------------
-       DISPLAY
-    ------------------------------------------------ */
 
     displayChapter();
 
@@ -228,7 +142,7 @@ async function loadNovel() {
 
 /* =====================================================
    DISPLAY CHAPTER
-===================================================== */
+   ===================================================== */
 
 function displayChapter() {
 
@@ -239,177 +153,139 @@ function displayChapter() {
     if (!chapter) return;
 
 
-    /* -----------------------------------------------
-       CHAPTER INFORMATION
-    ------------------------------------------------ */
-
-    chapterNumberElement.textContent =
-        chapter.chapter_number;
-
-
-    currentChapterNum.textContent =
-        chapter.chapter_number;
-
-
     chapterHeader.textContent =
         `Chapter ${chapter.chapter_number}`;
 
 
     chapterTitle.textContent =
-        chapter.title;
+        chapter.title || "";
 
 
     document.title =
         `${chapter.title} — ${novel.title}`;
 
 
-    /* -----------------------------------------------
-       CREATE PAGES
-    ------------------------------------------------ */
-
-    createPages(
-        chapter.content || ""
-    );
-
-
     /*
-     * Start at first page.
+     * Put the entire chapter into a temporary
+     * measurement container.
      */
+
+    buildPages(chapter);
+
 
     currentPage = 0;
 
 
-    /* -----------------------------------------------
-       BUTTONS
-    ------------------------------------------------ */
-
-    previousButton.style.visibility =
-        chapterNumber === 1
-            ? "hidden"
-            : "visible";
-
-
-    nextButton.textContent =
-        chapterNumber === chapters.length
-            ? "Finish →"
-            : "Next →";
-
-
-    /* -----------------------------------------------
-       URL
-    ------------------------------------------------ */
-
     updateURL();
 
 
-    /* -----------------------------------------------
-       SHOW FIRST PAGE
-    ------------------------------------------------ */
-
     showPage();
+
 
 }
 
 
 /* =====================================================
-   CREATE PAGES
-===================================================== */
+   BUILD PAGES
+   ===================================================== */
 
-function createPages(content) {
+function buildPages(chapter) {
 
     pages = [];
 
 
-    const text =
-        String(content)
-            .replace(/\r\n/g, "\n")
-            .replace(/\r/g, "\n")
-            .trim();
-
-
-    if (!text) {
-
-        pages.push(
-            "<p>No content available.</p>"
-        );
-
-        return;
-    }
+    const content =
+        chapter.content || "";
 
 
     /*
-     * We use the actual story container
-     * to determine how much text fits.
+     * Create temporary measurement area.
+     */
+
+    const measure =
+        document.createElement("div");
+
+    measure.className =
+        "reader-measure";
+
+
+    document.body.appendChild(measure);
+
+
+    /*
+     * Copy the exact reader dimensions.
      */
 
     const availableHeight =
-        getStoryHeight();
+        getReaderHeight();
 
 
-    /*
-     * Create invisible measuring element.
-     */
-
-    const measurer =
-        document.createElement("article");
-
-
-    measurer.className =
-        "story reader-measurer";
-
-
-    measurer.style.position =
-        "fixed";
-
-    measurer.style.left =
-        "-99999px";
-
-    measurer.style.top =
-        "0";
-
-    measurer.style.visibility =
-        "hidden";
-
-    measurer.style.width =
-        `${storyContent.clientWidth}px`;
-
-    measurer.style.height =
+    measure.style.height =
         `${availableHeight}px`;
 
-    measurer.style.overflow =
-        "hidden";
 
-    measurer.style.fontSize =
-        getComputedStyle(
-            storyContent
-        ).fontSize;
+    /*
+     * Add chapter title first.
+     */
 
-    measurer.style.lineHeight =
-        getComputedStyle(
-            storyContent
-        ).lineHeight;
+    const title =
+        document.createElement("h1");
 
-    measurer.style.boxSizing =
-        "border-box";
+    title.className =
+        "page-chapter-title";
+
+    title.textContent =
+        chapter.title || "";
 
 
-    document.body.appendChild(
-        measurer
-    );
+    measure.appendChild(title);
 
 
     /*
-     * Split chapter into paragraphs.
+     * Convert paragraphs.
      */
 
     const paragraphs =
-        text
+        content
             .split(/\n\s*\n/)
             .map(p => p.trim())
             .filter(Boolean);
 
 
+    /*
+     * Build pages progressively.
+     */
+
     let currentPageHTML = "";
+
+
+    /*
+     * Temporary page used to test
+     * whether content fits.
+     */
+
+    const testPage =
+        document.createElement("div");
+
+    testPage.className =
+        "reader-test-page";
+
+
+    measure.innerHTML = "";
+
+    measure.appendChild(testPage);
+
+
+    /*
+     * Add title first.
+     */
+
+    testPage.innerHTML =
+        title.outerHTML;
+
+
+    currentPageHTML =
+        title.outerHTML;
 
 
     for (
@@ -424,51 +300,60 @@ function createPages(content) {
 
 
         for (
-            const word of words
+            let i = 0;
+            i < words.length;
+            i++
         ) {
 
-            const safeWord =
-                escapeHTML(word);
+            const word =
+                words[i];
 
 
-            const testParagraph =
-                currentParagraph +
-                safeWord +
-                " ";
+            const candidate =
+                currentParagraph
+                    ? currentParagraph + " " + word
+                    : word;
 
 
-            const testHTML =
+            const candidateHTML =
+                `<p>${escapeHTML(candidate)}</p>`;
+
+
+            testPage.innerHTML =
                 currentPageHTML +
-                `<p>${testParagraph}</p>`;
-
-
-            measurer.innerHTML =
-                testHTML;
+                candidateHTML;
 
 
             if (
-                measurer.scrollHeight <=
+                testPage.scrollHeight <=
                 availableHeight
             ) {
 
                 currentParagraph =
-                    testParagraph;
+                    candidate;
+
 
             } else {
 
                 /*
-                 * Page is full.
+                 * Current paragraph no longer fits.
                  */
 
-                if (
-                    currentPageHTML.trim()
-                ) {
+                if (currentParagraph) {
 
-                    pages.push(
-                        currentPageHTML
-                    );
+                    currentPageHTML +=
+                        `<p>${escapeHTML(currentParagraph)}</p>`;
 
                 }
+
+
+                /*
+                 * Save completed page.
+                 */
+
+                pages.push(
+                    currentPageHTML
+                );
 
 
                 /*
@@ -476,68 +361,64 @@ function createPages(content) {
                  */
 
                 currentPageHTML =
-                    `<p>${safeWord} `;
+                    `<p>${escapeHTML(word)}`;
 
 
-                currentParagraph = "";
+                /*
+                 * Continue adding words
+                 * to the new paragraph.
+                 */
 
+                currentParagraph =
+                    word;
+
+
+                testPage.innerHTML =
+                    currentPageHTML +
+                    "</p>";
             }
-
         }
 
 
         /*
-         * Finish paragraph.
+         * Close paragraph.
          */
 
         if (currentParagraph) {
 
-            const paragraphHTML =
-                `<p>${currentParagraph}</p>`;
+            const finalParagraph =
+                `<p>${escapeHTML(currentParagraph)}</p>`;
 
 
-            const testHTML =
+            testPage.innerHTML =
                 currentPageHTML +
-                paragraphHTML;
-
-
-            measurer.innerHTML =
-                testHTML;
+                finalParagraph;
 
 
             if (
-                measurer.scrollHeight <=
+                testPage.scrollHeight <=
                 availableHeight
             ) {
 
                 currentPageHTML =
-                    testHTML;
+                    testPage.innerHTML;
 
             } else {
 
-                if (
-                    currentPageHTML.trim()
-                ) {
-
-                    pages.push(
-                        currentPageHTML
-                    );
-
-                }
+                pages.push(
+                    currentPageHTML
+                );
 
 
                 currentPageHTML =
-                    paragraphHTML;
-
+                    finalParagraph;
             }
-
         }
-
     }
 
 
     /*
-     * Add final page.
+     * Save final page.
      */
 
     if (
@@ -547,176 +428,127 @@ function createPages(content) {
         pages.push(
             currentPageHTML
         );
-
     }
 
 
-    document.body.removeChild(
-        measurer
-    );
+    measure.remove();
 
 
     /*
-     * Safety.
+     * Safety fallback.
      */
 
-    if (!pages.length) {
+    if (pages.length === 0) {
 
         pages.push(
-            `<p>${escapeHTML(text)}</p>`
+            `<h1 class="page-chapter-title">${escapeHTML(chapter.title || "")}</h1>`
         );
 
     }
 
-
-    console.log(
-        "STORYNEST READER:",
-        pages.length,
-        "pages created"
-    );
-
 }
 
 
 /* =====================================================
-   STORY HEIGHT
-===================================================== */
+   GET AVAILABLE READING HEIGHT
+   ===================================================== */
 
-function getStoryHeight() {
+function getReaderHeight() {
+
+    const header =
+        document.querySelector(
+            ".reader-header"
+        );
+
+
+    const adSpace =
+        70;
+
+
+    const headerHeight =
+        header
+            ? header.getBoundingClientRect().height
+            : 70;
+
 
     /*
-     * The CSS gives storyContent its actual
-     * available height.
+     * Small extra breathing room.
      */
 
-    const rect =
-        storyContent.getBoundingClientRect();
+    const safeSpace = 18;
 
 
     return Math.max(
-        150,
-        Math.floor(rect.height)
+        200,
+        window.innerHeight -
+        headerHeight -
+        adSpace -
+        safeSpace
     );
 
 }
 
 
 /* =====================================================
-   SHOW PAGE
-===================================================== */
+   SHOW CURRENT PAGE
+   ===================================================== */
 
 function showPage() {
 
     if (!pages.length) return;
 
 
-    storyContent.innerHTML =
+    readerPageContent.innerHTML =
         pages[currentPage];
 
 
     /*
-     * Keep story exactly inside its
-     * allocated reading area.
+     * Always start the visible page
+     * at the top.
      */
 
-    storyContent.scrollTop = 0;
+    readerPageContent.scrollTop = 0;
 
 
-    updateProgress();
+    /*
+     * Progress through the chapter.
+     */
+
+    if (progressBar) {
+
+        const progress =
+            ((currentPage + 1) /
+            pages.length) * 100;
 
 
-    updateButtons();
+        progressBar.style.width =
+            `${progress}%`;
+    }
 
 
-    updateChapterProgress();
+    /*
+     * Update browser title.
+     */
+
+    document.title =
+        `${chapters[chapterNumber - 1].title} — ${novel.title}`;
+
+
+    /*
+     * Save reading position.
+     */
+
+    localStorage.setItem(
+        `storynest-progress-${novelId}-${chapterNumber}`,
+        currentPage
+    );
 
 }
 
 
 /* =====================================================
-   PROGRESS
-===================================================== */
-
-function updateProgress() {
-
-    if (!progressBar) return;
-
-
-    let progress = 0;
-
-
-    if (pages.length > 1) {
-
-        progress =
-            (
-                currentPage /
-                (pages.length - 1)
-            ) * 100;
-
-    } else {
-
-        progress = 100;
-
-    }
-
-
-    progressBar.style.width =
-        `${progress}%`;
-
-}
-
-
-/* =====================================================
-   BUTTONS
-===================================================== */
-
-function updateButtons() {
-
-    if (currentPage > 0) {
-
-        previousButton.style.visibility =
-            "visible";
-
-        previousButton.textContent =
-            "← Previous";
-
-    } else {
-
-        previousButton.style.visibility =
-            chapterNumber === 1
-                ? "hidden"
-                : "visible";
-
-
-        previousButton.textContent =
-            "← Previous Chapter";
-
-    }
-
-
-    if (
-        currentPage <
-        pages.length - 1
-    ) {
-
-        nextButton.textContent =
-            "Next →";
-
-    } else {
-
-        nextButton.textContent =
-            chapterNumber === chapters.length
-                ? "Finish →"
-                : "Next Chapter →";
-
-    }
-
-}
-
-
-/* =====================================================
-   NEXT
-===================================================== */
+   NEXT PAGE
+   ===================================================== */
 
 function nextPage() {
 
@@ -761,8 +593,8 @@ function nextPage() {
 
 
 /* =====================================================
-   PREVIOUS
-===================================================== */
+   PREVIOUS PAGE
+   ===================================================== */
 
 function previousPage() {
 
@@ -777,8 +609,8 @@ function previousPage() {
 
 
     /*
-     * First page of current chapter.
-     * Go to previous chapter.
+     * Beginning of chapter.
+     * Move to previous chapter.
      */
 
     if (chapterNumber > 1) {
@@ -787,62 +619,39 @@ function previousPage() {
 
         displayChapter();
 
+        /*
+         * Open the last page of
+         * previous chapter.
+         */
 
-        setTimeout(
-            function() {
+        setTimeout(() => {
 
-                currentPage =
-                    pages.length - 1;
+            currentPage =
+                pages.length - 1;
 
-                showPage();
+            showPage();
 
-            },
-            50
-        );
-
+        }, 50);
     }
 
 }
 
 
 /* =====================================================
-   BUTTON EVENTS
-===================================================== */
-
-if (nextButton) {
-
-    nextButton.addEventListener(
-        "click",
-        nextPage
-    );
-
-}
-
-
-if (previousButton) {
-
-    previousButton.addEventListener(
-        "click",
-        previousPage
-    );
-
-}
-
-
-/* =====================================================
-   LAPTOP ARROW KEYS
-===================================================== */
+   KEYBOARD
+   ===================================================== */
 
 document.addEventListener(
     "keydown",
     function(event) {
 
+        /*
+         * Don't interfere with typing.
+         */
+
         if (
-            event.target &&
-            (
-                event.target.tagName === "INPUT" ||
-                event.target.tagName === "TEXTAREA"
-            )
+            event.target.tagName === "INPUT" ||
+            event.target.tagName === "TEXTAREA"
         ) {
 
             return;
@@ -875,14 +684,19 @@ document.addEventListener(
 
 
 /* =====================================================
-   SWIPE
-===================================================== */
+   TOUCH / SWIPE
+   ===================================================== */
+
+let touchStartX = 0;
+let touchStartY = 0;
+
 
 document.addEventListener(
     "touchstart",
     function(event) {
 
-        if (!event.touches.length) return;
+        if (!event.touches.length)
+            return;
 
 
         touchStartX =
@@ -903,69 +717,54 @@ document.addEventListener(
     "touchend",
     function(event) {
 
-        if (!event.changedTouches.length) {
+        if (!event.changedTouches.length)
             return;
-        }
 
 
-        const endX =
-            event.changedTouches[0].clientX;
+        const touch =
+            event.changedTouches[0];
 
 
-        const endY =
-            event.changedTouches[0].clientY;
+        const deltaX =
+            touch.clientX -
+            touchStartX;
 
 
-        const dx =
-            endX - touchStartX;
-
-
-        const dy =
-            endY - touchStartY;
+        const deltaY =
+            touch.clientY -
+            touchStartY;
 
 
         /*
-         * Ignore mostly vertical swipes.
+         * Ignore vertical gestures.
          */
 
         if (
-            Math.abs(dy) >
-            Math.abs(dx)
+            Math.abs(deltaX) < 50 ||
+            Math.abs(deltaX) <
+            Math.abs(deltaY)
         ) {
 
             return;
-
         }
 
 
         /*
-         * Ignore tiny movements.
+         * Swipe left = next.
          */
 
-        if (
-            Math.abs(dx) < 50
-        ) {
-
-            return;
-
-        }
-
-
-        if (dx < 0) {
-
-            /*
-             * Swipe LEFT
-             * = next
-             */
+        if (deltaX < 0) {
 
             nextPage();
 
-        } else {
+        }
 
-            /*
-             * Swipe RIGHT
-             * = previous
-             */
+
+        /*
+         * Swipe right = previous.
+         */
+
+        if (deltaX > 0) {
 
             previousPage();
 
@@ -979,15 +778,15 @@ document.addEventListener(
 
 
 /* =====================================================
-   TAP LEFT / RIGHT
-===================================================== */
+   TAP NAVIGATION
+   ===================================================== */
 
 document.addEventListener(
     "click",
     function(event) {
 
         /*
-         * Don't interfere with controls.
+         * Ignore buttons, links and menu.
          */
 
         if (
@@ -997,18 +796,6 @@ document.addEventListener(
         ) {
 
             return;
-
-        }
-
-
-        if (
-            event.target.closest(
-                ".reader-header"
-            )
-        ) {
-
-            return;
-
         }
 
 
@@ -1016,31 +803,28 @@ document.addEventListener(
             window.innerWidth;
 
 
-        const x =
-            event.clientX;
-
-
         /*
-         * Left third.
+         * Left side = previous.
          */
 
         if (
-            x < width / 3
+            event.clientX <
+            width * 0.30
         ) {
 
             previousPage();
 
             return;
-
         }
 
 
         /*
-         * Right third.
+         * Right side = next.
          */
 
         if (
-            x > width * 2 / 3
+            event.clientX >
+            width * 0.70
         ) {
 
             nextPage();
@@ -1052,8 +836,8 @@ document.addEventListener(
 
 
 /* =====================================================
-   RESIZE / ROTATION
-===================================================== */
+   RESIZE
+   ===================================================== */
 
 let resizeTimer;
 
@@ -1062,40 +846,40 @@ window.addEventListener(
     "resize",
     function() {
 
-        clearTimeout(
-            resizeTimer
-        );
+        clearTimeout(resizeTimer);
 
 
         resizeTimer =
             setTimeout(
                 function() {
 
-                    const chapter =
-                        chapters[
-                            chapterNumber - 1
-                        ];
+                    const oldPage =
+                        currentPage;
 
 
-                    if (!chapter) return;
+                    displayChapter();
 
 
-                    createPages(
-                        chapter.content || ""
-                    );
+                    /*
+                     * Try to keep reader
+                     * near the same page.
+                     */
 
+                    if (
+                        pages.length
+                    ) {
 
-                    currentPage =
-                        Math.min(
-                            currentPage,
-                            pages.length - 1
-                        );
+                        currentPage =
+                            Math.min(
+                                oldPage,
+                                pages.length - 1
+                            );
 
-
-                    showPage();
+                        showPage();
+                    }
 
                 },
-                300
+                250
             );
 
     }
@@ -1103,67 +887,75 @@ window.addEventListener(
 
 
 /* =====================================================
-   UPDATE URL
-===================================================== */
+   URL
+   ===================================================== */
 
 function updateURL() {
 
-    const url =
-        `reader.html?id=${encodeURIComponent(
-            novelId
-        )}&chapter=${chapterNumber}`;
+    const newURL =
+        `reader.html?id=${encodeURIComponent(novelId)}&chapter=${chapterNumber}`;
 
 
     window.history.replaceState(
         {},
         "",
-        url
+        newURL
     );
 
 }
 
 
 /* =====================================================
-   CHAPTER PROGRESS
-===================================================== */
+   BROWSER BACK / FORWARD
+   ===================================================== */
 
-function updateChapterProgress() {
+window.addEventListener(
+    "popstate",
+    function() {
 
-    if (currentChapterNum) {
+        const currentParams =
+            new URLSearchParams(
+                window.location.search
+            );
 
-        currentChapterNum.textContent =
-            chapterNumber;
+
+        const newChapter =
+            Number(
+                currentParams.get("chapter")
+            ) || 1;
+
+
+        if (
+            newChapter !== chapterNumber
+        ) {
+
+            chapterNumber =
+                Math.max(
+                    1,
+                    Math.min(
+                        newChapter,
+                        chapters.length
+                    )
+                );
+
+
+            displayChapter();
+        }
 
     }
-
-
-    if (totalChaptersEl) {
-
-        totalChaptersEl.textContent =
-            chapters.length;
-
-    }
-
-}
+);
 
 
 /* =====================================================
    ERROR
-===================================================== */
+   ===================================================== */
 
 function showError(message) {
-
-    console.error(
-        "STORYNEST READER ERROR:",
-        message
-    );
-
 
     if (readerNovelTitle) {
 
         readerNovelTitle.textContent =
             "StoryNest";
-
     }
 
 
@@ -1171,15 +963,6 @@ function showError(message) {
 
         chapterTitle.textContent =
             "Unable to open story";
-
-    }
-
-
-    if (chapterHeader) {
-
-        chapterHeader.textContent =
-            "";
-
     }
 
 
@@ -1187,7 +970,6 @@ function showError(message) {
 
         storyContent.innerHTML = `
             <div class="reader-error">
-
                 <div class="reader-error-icon">
                     📖
                 </div>
@@ -1206,33 +988,8 @@ function showError(message) {
                 >
                     Return Home
                 </a>
-
             </div>
         `;
-
-    }
-
-
-    if (previousButton) {
-
-        previousButton.style.visibility =
-            "hidden";
-
-    }
-
-
-    if (nextButton) {
-
-        nextButton.style.visibility =
-            "hidden";
-
-    }
-
-
-    if (chapterProgress) {
-
-        chapterProgress.style.display =
-            "none";
 
     }
 
@@ -1241,7 +998,7 @@ function showError(message) {
 
 /* =====================================================
    HTML SAFETY
-===================================================== */
+   ===================================================== */
 
 function escapeHTML(value) {
 
