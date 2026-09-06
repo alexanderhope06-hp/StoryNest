@@ -406,16 +406,27 @@ loadPublishedNovels();
 // PUBLIC DOMAIN NOVELS
 // =====================================================
 
-async function loadPublicDomainNovels() {
+async function displayPublicDomainNovels() {
     const container = document.getElementById('publicDomainNovels');
     if (!container) return;
 
-    const novels = await window.loadPublicDomainNovels ? window.loadPublicDomainNovels() : [];
+    // Check if the function exists
+    if (typeof loadPublicDomainNovels !== 'function') {
+        container.innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">
+                <p>Loading classics...</p>
+            </div>
+        `;
+        return;
+    }
+
+    const novels = await loadPublicDomainNovels();
     
     if (!novels || novels.length === 0) {
         container.innerHTML = `
             <div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">
-                <p>Loading public domain classics...</p>
+                <p style="font-size:1.2rem;margin-bottom:8px;">📚 No classics loaded yet</p>
+                <p style="font-size:0.9rem;">Click the button above to add public domain stories</p>
             </div>
         `;
         return;
@@ -442,6 +453,5 @@ async function loadPublicDomainNovels() {
     });
 }
 
-// Call loadPublicDomainNovels after the main load
-// Add this after the existing loadPublishedNovels() call
-setTimeout(loadPublicDomainNovels, 2000);
+// Load public domain novels after main content loads
+setTimeout(displayPublicDomainNovels, 1000);
