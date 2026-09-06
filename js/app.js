@@ -396,3 +396,52 @@ setupGenreButtons();
 
 // Load initial novels
 loadPublishedNovels();
+
+
+
+
+
+
+// =====================================================
+// PUBLIC DOMAIN NOVELS
+// =====================================================
+
+async function loadPublicDomainNovels() {
+    const container = document.getElementById('publicDomainNovels');
+    if (!container) return;
+
+    const novels = await window.loadPublicDomainNovels ? window.loadPublicDomainNovels() : [];
+    
+    if (!novels || novels.length === 0) {
+        container.innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:40px;color:#888;">
+                <p>Loading public domain classics...</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = '';
+    novels.forEach(novel => {
+        const card = document.createElement('article');
+        card.className = 'novel-card';
+        card.innerHTML = `
+            <a href="novel.html?id=${encodeURIComponent(novel.id)}">
+                <div class="novel-cover" style="background: linear-gradient(145deg, #2d1b4e, #1a0f2e);">
+                    <h3>${escapeHTML(novel.title)}</h3>
+                    <small style="color:#aaa;font-size:12px;margin-top:10px;">📚 Public Domain</small>
+                </div>
+                <div class="novel-info">
+                    <h3>${escapeHTML(novel.title)}</h3>
+                    <p class="author">${escapeHTML(novel.author_name || 'Author')}</p>
+                    <p class="rating">📖 ${escapeHTML(novel.genre || 'Classic')}</p>
+                </div>
+            </a>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// Call loadPublicDomainNovels after the main load
+// Add this after the existing loadPublishedNovels() call
+setTimeout(loadPublicDomainNovels, 2000);

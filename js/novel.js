@@ -187,6 +187,25 @@ async function loadNovel() {
 
     loadCharacters();
 
+// Check if this is a public domain novel that needs chapters
+if (novel.is_public_domain && novel.gutenberg_id) {
+    // Check if chapters exist
+    const { data: existingChapters } = await supabaseClient
+        .from('chapters')
+        .select('id')
+        .eq('novel_id', novelId)
+        .limit(1);
+
+    if (!existingChapters || existingChapters.length === 0) {
+        // Fetch chapters from Gutenberg
+        if (typeof fetchPublicDomainChapters === 'function') {
+            await fetchPublicDomainChapters(novelId);
+            // Reload chapters after fetching
+            await loadChapters();
+        }
+    }
+}
+
 }
 
 
