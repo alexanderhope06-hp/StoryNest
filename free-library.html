@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Free Library — StoryNest</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <style>
+
+        /* =========================================
+           FREE LIBRARY
+        ========================================= */
+
+        .free-library-page {
+            min-height: 100vh;
+        }
+
+        .library-hero {
+            padding: 70px 20px 45px;
+            text-align: center;
+        }
+
+        .library-hero h1 {
+            margin: 0 0 12px;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+        }
+
+        .library-hero p {
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.75;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .library-badge {
+            display: inline-block;
+            margin-bottom: 18px;
+            padding: 7px 14px;
+            border-radius: 999px;
+            background: rgba(124, 58, 237, 0.12);
+            color: #7c3aed;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
+        .library-controls {
+            max-width: 1200px;
+            margin: 0 auto 35px;
+            padding: 0 20px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .library-search {
+            width: min(100%, 360px);
+            padding: 13px 16px;
+
+            border: 1px solid rgba(128, 128, 128, 0.25);
+            border-radius: 12px;
+
+            background: transparent;
+            color: inherit;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .library-search:focus {
+            border-color: #7c3aed;
+        }
+
+        .library-count {
+            opacity: 0.65;
+            font-size: 0.9rem;
+        }
+
+        .library-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 70px;
+
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fill, minmax(190px, 1fr));
+
+            gap: 25px;
+        }
+
+        .library-card {
+            overflow: hidden;
+            border-radius: 16px;
+
+            background: rgba(128, 128, 128, 0.08);
+            border: 1px solid rgba(128, 128, 128, 0.12);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .library-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .library-cover {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+
+            object-fit: cover;
+
+            display: block;
+
+            background: rgba(128, 128, 128, 0.15);
+        }
+
+        .library-cover-placeholder {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            text-align: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(124, 58, 237, 0.2),
+                    rgba(124, 58, 237, 0.05)
+                );
+
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .library-card-body {
+            padding: 17px;
+        }
+
+        .library-card h2 {
+            margin: 0 0 7px;
+            font-size: 1.05rem;
+            line-height: 1.35;
+        }
+
+        .library-author {
+            margin: 0 0 12px;
+            opacity: 0.65;
+            font-size: 0.86rem;
+        }
+
+        .library-license {
+            display: inline-flex;
+            align-items: center;
+
+            padding: 5px 9px;
+            border-radius: 7px;
+
+            background: rgba(34, 197, 94, 0.12);
+            color: #16a34a;
+
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .library-read {
+            width: 100%;
+            margin-top: 15px;
+
+            padding: 10px 14px;
+
+            border: none;
+            border-radius: 9px;
+
+            background: #7c3aed;
+            color: white;
+
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .library-read:hover {
+            opacity: 0.9;
+        }
+
+        .library-state {
+            grid-column: 1 / -1;
+
+            padding: 60px 20px;
+            text-align: center;
+
+            opacity: 0.7;
+        }
+
+        .library-error {
+            color: #dc2626;
+        }
+
+        @media (max-width: 600px) {
+
+            .library-hero {
+                padding-top: 45px;
+            }
+
+            .library-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+
+                gap: 15px;
+            }
+
+            .library-card-body {
+                padding: 12px;
+            }
+
+            .library-card h2 {
+                font-size: 0.92rem;
+            }
+
+            .library-author {
+                font-size: 0.78rem;
+            }
+
+            .library-controls {
+                align-items: stretch;
+            }
+
+            .library-search {
+                width: 100%;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body class="free-library-page">
+
+    <!-- =========================================
+         NAVBAR
+    ========================================== -->
+
+    <header class="navbar">
+
+        <a
+            href="index.html"
+            class="logo"
+        >
+            StoryNest
+        </a>
+
+        <nav>
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="discover.html">
+                Discover
+            </a>
+
+            <a
+                href="free-library.html"
+                class="active"
+            >
+                Free Library
+            </a>
+
+            <a href="author.html">
+                Author Studio
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =========================================
+         HERO
+    ========================================== -->
+
+    <section class="library-hero">
+
+        <div class="library-badge">
+            STORYNEST FREE LIBRARY
+        </div>
+
+        <h1>
+            Timeless stories. Free to read.
+        </h1>
+
+        <p>
+            Discover classic books that are available
+            under public-domain or compatible free licenses.
+            Read them directly on StoryNest.
+        </p>
+
+    </section>
+
+
+    <!-- =========================================
+         CONTROLS
+    ========================================== -->
+
+    <section class="library-controls">
+
+        <input
+            type="search"
+            id="librarySearch"
+            class="library-search"
+            placeholder="Search books or authors..."
+            autocomplete="off"
+        >
+
+        <div
+            id="libraryCount"
+            class="library-count"
+        >
+            Loading library...
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         BOOK GRID
+    ========================================== -->
+
+    <main
+        id="libraryGrid"
+        class="library-grid"
+    >
+
+        <div class="library-state">
+            Loading the Free Library...
+        </div>
+
+    </main>
+
+
+    <!-- SUPABASE -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/free-library.js"></script>
+
+</body>
+
+</html>
