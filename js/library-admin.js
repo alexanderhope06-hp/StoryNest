@@ -1,471 +1,221 @@
 /* =========================================
-   STORYNEST LIBRARY ADMIN
-   Adds public-domain / free-license novels
+   STORYNEST FREE LIBRARY IMPORTER
 ========================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
 
-    addChapter();
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    document
-        .getElementById("addChapter")
-        ?.addEventListener("click", addChapter);
-
-    document
-        .getElementById("publishBook")
-        ?.addEventListener("click", publishBook);
-
-});
-
-
-/* =========================================
-   ADD CHAPTER
-========================================= */
-
-function addChapter() {
-
-    const container =
-        document.getElementById("chaptersContainer");
-
-    if (!container) return;
-
-
-    const chapterNumber =
-        container.children.length + 1;
-
-
-    const chapter = document.createElement("div");
-
-    chapter.className = "chapter-row";
-
-
-    chapter.innerHTML = `
-
-        <div class="chapter-row-header">
-
-            <strong>
-                Chapter ${chapterNumber}
-            </strong>
-
-            <button
-                type="button"
-                class="remove-chapter"
-            >
-                Remove
-            </button>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Chapter title
-            </label>
-
-            <input
-                type="text"
-                class="chapter-title"
-                placeholder="Example: Chapter One"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Chapter content
-            </label>
-
-            <textarea
-                class="chapter-content"
-                placeholder="Paste the chapter text here..."
-            ></textarea>
-
-        </div>
-
-    `;
-
-
-    chapter
-        .querySelector(".remove-chapter")
-        .addEventListener("click", () => {
-
-            chapter.remove();
-
-            renumberChapters();
-
-        });
-
-
-    container.appendChild(chapter);
-
-}
-
-
-/* =========================================
-   RENUMBER CHAPTERS
-========================================= */
-
-function renumberChapters() {
-
-    const chapters =
-        document.querySelectorAll(".chapter-row");
-
-
-    chapters.forEach((chapter, index) => {
-
-        const heading =
-            chapter.querySelector(
-                ".chapter-row-header strong"
+        const button =
+            document.getElementById(
+                "importButton"
             );
 
-        if (heading) {
 
-            heading.textContent =
-                `Chapter ${index + 1}`;
+        if (button) {
+
+            button.addEventListener(
+                "click",
+                importBook
+            );
 
         }
 
-    });
-
-}
+    }
+);
 
 
 /* =========================================
-   PUBLISH BOOK
+   IMPORT BOOK
 ========================================= */
 
-async function publishBook() {
+async function importBook() {
 
     const button =
-        document.getElementById("publishBook");
+        document.getElementById(
+            "importButton"
+        );
+
 
     const message =
-        document.getElementById("adminMessage");
+        document.getElementById(
+            "adminMessage"
+        );
+
+
+    const adminKey =
+        document
+            .getElementById("adminKey")
+            .value
+            .trim();
+
+
+    const bookUrl =
+        document
+            .getElementById("bookUrl")
+            .value
+            .trim();
+
+
+    const sourceName =
+        document
+            .getElementById("sourceName")
+            .value
+            .trim();
+
+
+    const sourceType =
+        document
+            .getElementById("sourceType")
+            .value;
+
+
+    if (!adminKey) {
+
+        showMessage(
+            "error",
+            "Enter your Library Admin Key."
+        );
+
+        return;
+
+    }
+
+
+    if (!bookUrl) {
+
+        showMessage(
+            "error",
+            "Enter the direct EPUB URL."
+        );
+
+        return;
+
+    }
 
 
     try {
 
-        button.disabled = true;
+        new URL(bookUrl);
 
-        button.textContent =
-            "Adding book...";
+    } catch {
 
+        showMessage(
+            "error",
+            "The EPUB URL is not valid."
+        );
 
-        hideMessage();
+        return;
 
-
-        /* -------------------------------------
-           GET BOOK INFORMATION
-        ------------------------------------- */
-
-        const title =
-            getValue("bookTitle");
-
-        const originalAuthor =
-            getValue("originalAuthor");
-
-        const description =
-            getValue("bookDescription");
-
-        const coverUrl =
-            getValue("coverUrl");
+    }
 
 
-        /* -------------------------------------
-           GET LICENSE INFORMATION
-        ------------------------------------- */
+    button.disabled = true;
 
-        const sourceType =
-            getValue("sourceType");
+    button.textContent =
+        "Importing book...";
 
 
-        const license =
-            getValue("license");
+    hideMessage();
 
 
-        const sourceName =
-            getValue("sourceName");
+    try {
+
+        const {
+            data: sessionData
+        } =
+            await supabaseClient
+                .auth
+                .getSession();
 
 
-        const sourceUrl =
-            getValue("sourceUrl");
+        const session =
+            sessionData?.session;
 
 
-        const attribution =
-            getValue("attribution");
-
-
-        /* -------------------------------------
-           VALIDATION
-        ------------------------------------- */
-
-        if (!title) {
+        if (!session) {
 
             throw new Error(
-                "Please enter the book title."
+                "You must be logged into StoryNest before importing a book."
             );
 
         }
 
 
-        if (!originalAuthor) {
-
-            throw new Error(
-                "Please enter the original author."
-            );
-
-        }
+        const functionUrl =
+            `${SUPABASE_URL}/functions/v1/import-free-book`;
 
 
-        if (!license) {
+        const response =
+            await fetch(functionUrl, {
 
-            throw new Error(
-                "Please enter the license."
-            );
+                method: "POST",
 
-        }
+                headers: {
 
+                    "Content-Type":
+                        "application/json",
 
-        if (!sourceName) {
+                    "Authorization":
+                        `Bearer ${session.access_token}`,
 
-            throw new Error(
-                "Please enter the source/library."
-            );
+                    "x-library-admin-key":
+                        adminKey
 
-        }
+                },
 
+                body: JSON.stringify({
 
-        if (!sourceUrl) {
+                    book_url: bookUrl,
 
-            throw new Error(
-                "Please enter the original source URL."
-            );
+                    source_name:
+                        sourceName,
 
-        }
+                    source_type:
+                        sourceType
 
-
-        /* -------------------------------------
-           GET CHAPTERS
-        ------------------------------------- */
-
-        const chapterRows =
-            document.querySelectorAll(
-                ".chapter-row"
-            );
-
-
-        if (!chapterRows.length) {
-
-            throw new Error(
-                "Please add at least one chapter."
-            );
-
-        }
-
-
-        const chapters = [];
-
-
-        chapterRows.forEach((row, index) => {
-
-            const chapterTitle =
-                row
-                    .querySelector(".chapter-title")
-                    ?.value
-                    .trim();
-
-
-            const chapterContent =
-                row
-                    .querySelector(".chapter-content")
-                    ?.value
-                    .trim();
-
-
-            if (!chapterTitle) {
-
-                throw new Error(
-                    `Please enter a title for Chapter ${index + 1}.`
-                );
-
-            }
-
-
-            if (!chapterContent) {
-
-                throw new Error(
-                    `Please enter content for Chapter ${index + 1}.`
-                );
-
-            }
-
-
-            chapters.push({
-
-                chapter_number: index + 1,
-
-                title: chapterTitle,
-
-                content: chapterContent
+                })
 
             });
 
-        });
+
+        const result =
+            await response.json();
 
 
-        /* -------------------------------------
-           CREATE NOVEL
-        ------------------------------------- */
-
-        const {
-            data: novel,
-            error: novelError
-        } = await supabaseClient
-
-            .from("novels")
-
-            .insert({
-
-                title: title,
-
-                description:
-                    description || null,
-
-                cover_url:
-                    coverUrl || null,
-
-                author_id: null,
-
-                status: "published",
-
-                source_type: sourceType,
-
-                license: license,
-
-                original_author:
-                    originalAuthor,
-
-                source_name:
-                    sourceName,
-
-                source_url:
-                    sourceUrl,
-
-                attribution:
-                    attribution || null
-
-            })
-
-            .select("id")
-            .single();
-
-
-        if (novelError) {
-
-            console.error(
-                "NOVEL INSERT ERROR:",
-                novelError
-            );
+        if (!response.ok) {
 
             throw new Error(
-                novelError.message
+                result.error ||
+                "The import failed."
             );
 
         }
 
-
-        /* -------------------------------------
-           CREATE CHAPTERS
-        ------------------------------------- */
-
-        const chapterRowsToInsert =
-            chapters.map(chapter => ({
-
-                novel_id: novel.id,
-
-                chapter_number:
-                    chapter.chapter_number,
-
-                title:
-                    chapter.title,
-
-                content:
-                    chapter.content
-
-            }));
-
-
-        const {
-            error: chaptersError
-        } = await supabaseClient
-
-            .from("chapters")
-
-            .insert(chapterRowsToInsert);
-
-
-        if (chaptersError) {
-
-            console.error(
-                "CHAPTER INSERT ERROR:",
-                chaptersError
-            );
-
-
-            /*
-             * If chapters failed, remove the novel
-             * so we don't leave an incomplete book.
-             */
-
-            await supabaseClient
-
-                .from("novels")
-
-                .delete()
-                .eq("id", novel.id);
-
-
-            throw new Error(
-                chaptersError.message
-            );
-
-        }
-
-
-        /* -------------------------------------
-           SUCCESS
-        ------------------------------------- */
 
         showMessage(
             "success",
-            `✓ "${title}" has been added to the Free Library.`
+            `✓ "${result.title}" was imported successfully with ${result.chapter_count} chapters.`
         );
 
 
         button.textContent =
-            "Book Added ✓";
+            "Imported ✓";
 
-
-        /*
-         * Give Supabase a moment, then
-         * return to the Free Library.
-         */
 
         setTimeout(() => {
 
             window.location.href =
                 "free-library.html";
 
-        }, 1500);
+        }, 1800);
 
 
     } catch (error) {
 
         console.error(
-            "LIBRARY ADMIN ERROR:",
+            "FREE LIBRARY IMPORT ERROR:",
             error
         );
 
@@ -473,36 +223,18 @@ async function publishBook() {
         showMessage(
             "error",
             error.message ||
-            "Could not add the book."
+            "Could not import the book."
         );
 
 
-        button.disabled = false;
+        button.disabled =
+            false;
+
 
         button.textContent =
-            "Add Book to Free Library";
+            "Import Book";
 
     }
-
-}
-
-
-/* =========================================
-   GET INPUT VALUE
-========================================= */
-
-function getValue(id) {
-
-    const element =
-        document.getElementById(id);
-
-
-    if (!element) {
-        return "";
-    }
-
-
-    return element.value.trim();
 
 }
 
@@ -511,13 +243,15 @@ function getValue(id) {
    MESSAGE
 ========================================= */
 
-function showMessage(type, text) {
+function showMessage(
+    type,
+    text
+) {
 
     const message =
-        document.getElementById("adminMessage");
-
-
-    if (!message) return;
+        document.getElementById(
+            "adminMessage"
+        );
 
 
     message.className =
@@ -537,10 +271,9 @@ function showMessage(type, text) {
 function hideMessage() {
 
     const message =
-        document.getElementById("adminMessage");
-
-
-    if (!message) return;
+        document.getElementById(
+            "adminMessage"
+        );
 
 
     message.className =
