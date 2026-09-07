@@ -175,11 +175,9 @@ Deno.serve(async (req) => {
             ).trim();
 
 
-        const sourceType =
-            String(
-                body.source_type ||
-                "public_domain"
-            ).trim();
+        // StoryNest currently imports only CC0 editions from Standard Ebooks.
+        // Never trust the browser to choose a license.
+        const sourceType = "cc0";
 
 
         if (!bookUrl) {
@@ -192,53 +190,80 @@ Deno.serve(async (req) => {
 
 
         /* =====================================
-           ONLY HTTPS
+           ONLY HTTPS + APPROVED SOURCE
         ===================================== */
 
-        const parsedUrl =
-            new URL(bookUrl);
+        let parsedUrl = new URL(bookUrl);
 
-
-        if (
-            parsedUrl.protocol !==
-            "https:"
-        ) {
-
-            throw new Error(
-                "Only HTTPS ebook URLs are allowed."
-            );
-
+        if (parsedUrl.protocol !== "https:") {
+            throw new Error("Only HTTPS ebook URLs are allowed.");
         }
 
-
-        /* =====================================
-           PROTECT AGAINST ARBITRARY SOURCES
-        ===================================== */
-
         const hostname =
-            parsedUrl.hostname
-                .toLowerCase()
-                .replace(/^www\./, "");
+            parsedUrl.hostname.toLowerCase().replace(/^www\./, "");
 
-
-        const approvedHosts = [
-
-            "standardebooks.org"
-
-        ];
-
-
-        if (
-            !approvedHosts.includes(
-                hostname
-            )
-        ) {
-
+        if (hostname !== "standardebooks.org") {
             throw new Error(
                 `Source "${hostname}" is not currently approved by StoryNest.`
             );
-
         }
+
+        // The admin may paste either a Standard Ebooks book page
+        // or its direct EPUB download. If it is a book page, resolve
+        // the official EPUB download from that page.
+        if (
+            parsedUrl.pathname.startsWith("/ebooks/") &&
+            !parsedUrl.pathname.includes("/downloads/")
+        ) {
+            const pageResponse = await fetch(parsedUrl.toString(), {
+                headers: {
+                    "User-Agent": "StoryNest-Free-Library/1.0"
+                }
+            });
+
+            if (!pageResponse.ok) {
+                throw new Error(
+                    `Could not open the Standard Ebooks page. HTTP ${pageResponse.status}.`
+                );
+            }
+
+            const pageHtml = await pageResponse.text();
+
+            const epubMatch = pageHtml.match(
+                /href=["'](\/ebooks\/[^"']+\/downloads\/[^"']+\.epub)["']/i
+            );
+
+            if (!epubMatch) {
+                throw new Error(
+                    "No official EPUB download was found on this Standard Ebooks page."
+                );
+            }
+
+            parsedUrl = new URL(
+                `https://standardebooks.org${epubMatch[1]}`
+            );
+        }
+
+        if (
+            !parsedUrl.pathname.startsWith("/ebooks/") ||
+            !parsedUrl.pathname.includes("/downloads/") ||
+            !parsedUrl.pathname.toLowerCase().endsWith(".epub")
+        ) {
+            throw new Error(
+                "The URL must be a Standard Ebooks book page or official EPUB download."
+            );
+        }
+
+        const licenseUrl =
+            "https://creativecommons.org/publicdomain/zero/1.0/";
+
+        const sourceEditionUrl =
+            bookUrl.startsWith("https://standardebooks.org/ebooks/")
+                ? bookUrl
+                : `https://standardebooks.org${parsedUrl.pathname.split("/downloads/")[0]}`;
+
+        const copyrightNote =
+            "Standard Ebooks states that content produced by or for Standard Ebooks L3C is dedicated to the public domain via CC0 1.0. The underlying work's copyright status should also be checked for the country where StoryNest is operated.";
 
 
         /* =====================================
@@ -257,7 +282,16 @@ Deno.serve(async (req) => {
                         bookUrl,
 
                     source_name:
-                        sourceName,
+                        "Standard Ebooks",
+
+                    source_type:
+                        sourceType,
+
+                    license:
+                        "CC0",
+
+                    license_verified:
+                        true,
 
                     status:
                         "pending"
@@ -699,15 +733,35 @@ Deno.serve(async (req) => {
 
                         source_name:
 
-                            sourceName,
+                            "Standard Ebooks",
 
                         source_url:
 
                             bookUrl,
 
+                        source_edition_url:
+
+                            sourceEditionUrl,
+
+                        license_url:
+
+                            licenseUrl,
+
+                        license_verified:
+
+                            true,
+
+                        license_verified_at:
+
+                            new Date().toISOString(),
+
+                        copyright_note:
+
+                            copyrightNote,
+
                         attribution:
 
-                            `Imported from ${sourceName}. Original author: ${author}.`
+                            `Edition by Standard Ebooks, based on the public-domain work by ${author}. Standard Ebooks production is dedicated to the public domain via CC0 1.0.`
 
                     })
                     .select("id")

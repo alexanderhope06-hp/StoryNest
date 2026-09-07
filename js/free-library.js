@@ -57,18 +57,23 @@ async function loadFreeLibrary() {
                 original_author,
                 license,
                 source_type,
-                source_name
+                source_name,
+                source_url,
+                source_edition_url,
+                license_url,
+                attribution,
+                copyright_note
             `)
 
             .eq("status", "published")
+
+            .eq("license_verified", true)
 
             .in(
                 "source_type",
                 [
                     "public_domain",
-                    "cc0",
-                    "cc_by",
-                    "cc_by_sa"
+                    "cc0"
                 ]
             )
 
@@ -242,6 +247,10 @@ function createBookCard(book) {
                 <span class="library-license">
                     ${license}
                 </span>
+
+                <p class="library-source">
+                    ${escapeHTML(book.source_name || "Verified source")}
+                </p>
 
                 <button
                     class="library-read"
