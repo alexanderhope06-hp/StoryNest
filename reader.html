@@ -136,18 +136,9 @@
 
         function applyFontSize(size) {
             const content = document.querySelector('.reader-page-content');
-            const story = document.querySelector('.story');
-            const paragraphs = document.querySelectorAll('.reader-page-content p, .story p');
-
-            if (content) {
-                content.style.fontSize = size + 'px';
-            }
-            if (story) {
-                story.style.fontSize = size + 'px';
-            }
-            paragraphs.forEach(p => {
-                p.style.fontSize = size + 'px';
-            });
+            if (content) content.style.fontSize = size + 'px';
+            // Rebuild pages with new font size so line counts stay correct
+            if (window.rebuildReaderPages) window.rebuildReaderPages();
         }
 
         // =====================================================
