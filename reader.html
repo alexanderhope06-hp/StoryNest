@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Reading — StoryNest</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/png" href="image/fav.png">
@@ -16,6 +16,10 @@
     ===================================================== -->
 
     <header class="reader-header">
+        <a href="index.html" class="logo">
+            <img src="image/fav.png" alt="StoryNest" class="logo-icon">
+            Story<span>Nest</span>
+        </a>
         <div class="reader-header-left">
             <a href="index.html" class="reader-back" title="Home">←</a>
             <div class="reader-header-info">
@@ -71,6 +75,59 @@
     <!-- Reader Menu & Controls -->
     <script>
         // =====================================================
+        // SCROLL LOCK (hard)
+        // =====================================================
+        // Some mobile browsers ignore overflow:hidden on body.
+        // This keeps the reader pinned so only page-turn gestures work.
+
+        (function lockScrolling() {
+            // Lock document scroll
+            document.documentElement.style.overflow = 'hidden';
+            document.documentElement.style.height = '100%';
+            document.body.style.overflow = 'hidden';
+            document.body.style.height = '100%';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+            document.body.style.top = '0';
+            document.body.style.left = '0';
+            document.body.style.right = '0';
+            document.body.style.bottom = '0';
+            document.body.style.overscrollBehavior = 'none';
+
+            // Prevent wheel scrolling entirely
+            window.addEventListener('wheel', function (e) {
+                // Only block if the wheel is over the reader content area
+                if (e.target.closest('.reader-page-content, .reader-container')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            // Prevent touchmove scrolling inside the reader
+            window.addEventListener('touchmove', function (e) {
+                if (e.target.closest('.reader-page-content, .reader-container, .reader-ad-space')) {
+                    // Allow horizontal swipes (page turns) but block vertical
+                    const t = e.touches[0];
+                    if (!t) return;
+                    // If we can't detect direction here, just block.
+                    // Horizontal swipe detection happens in touchend in reader.js.
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            // Prevent keyboard scroll keys from moving the page
+            window.addEventListener('keydown', function (e) {
+                const scrollKeys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '];
+                if (scrollKeys.includes(e.key)) {
+                    const el = document.activeElement;
+                    const tag = el ? el.tagName : '';
+                    if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
+                        e.preventDefault();
+                    }
+                }
+            }, { passive: false });
+        })();
+
+        // =====================================================
         // MENU TOGGLE
         // =====================================================
 
@@ -124,13 +181,9 @@
             applyFontSize(currentFontSize);
             localStorage.setItem('readerFontSize', currentFontSize);
 
-            // Update menu text
             const btn = document.getElementById('fontSizeBtn');
             if (btn) {
                 btn.textContent = '🔤 ' + currentFontSize + 'px';
-                setTimeout(() => {
-                    btn.textContent = '🔤 ' + currentFontSize + 'px';
-                }, 100);
             }
         }
 
@@ -183,7 +236,6 @@
         // =====================================================
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Restore font size
             const savedSize = localStorage.getItem('readerFontSize');
             if (savedSize) {
                 currentFontSize = parseInt(savedSize);
@@ -194,28 +246,21 @@
                 }
             }
 
-            // Restore theme
             const savedTheme = localStorage.getItem('readerTheme');
             if (savedTheme) {
                 applyTheme(savedTheme);
             }
 
-            // Hide chapter progress counter on mobile
             const progressEl = document.querySelector('.chapter-progress');
             if (progressEl && window.innerWidth < 768) {
                 progressEl.style.display = 'none';
             }
         });
 
-        // Handle resize for chapter progress visibility
         window.addEventListener('resize', function() {
             const progressEl = document.querySelector('.chapter-progress');
             if (progressEl) {
-                if (window.innerWidth < 768) {
-                    progressEl.style.display = 'none';
-                } else {
-                    progressEl.style.display = 'block';
-                }
+                progressEl.style.display = window.innerWidth < 768 ? 'none' : 'block';
             }
         });
 
