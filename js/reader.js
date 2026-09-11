@@ -126,11 +126,11 @@ function displayChapter() {
 }
 
 /* =====================================================
-   BUILD PAGES — MEASURE ON REAL ELEMENT
+   BUILD PAGES — FINAL WORKING VERSION
    ===================================================== */
 
-// Safety margin: reserve this many lines at the bottom of every page
-const LINE_SAFETY_MARGIN = 4;
+// Reserve this many lines at the bottom of every page as safety
+const LINE_SAFETY_MARGIN = 3;
 
 function buildPages(chapter) {
     pages = [];
@@ -139,25 +139,22 @@ function buildPages(chapter) {
     const contentEl = readerPageContent;
     if (!contentEl) return;
 
-    // Apply the user's font size before measuring
+    // Apply the user's font size BEFORE measuring
     const savedSize = localStorage.getItem('readerFontSize');
     const fontSize = savedSize ? parseInt(savedSize) : 18;
     contentEl.style.fontSize = fontSize + 'px';
 
-    // Reset
+    // Clear
     contentEl.innerHTML = "";
 
-    // ---- Compute the visible height in lines (for safety margin) ----
+    // ---- Compute the max height we allow per page ----
     const cs = getComputedStyle(contentEl);
     const fontSizePx = parseFloat(cs.fontSize) || 18;
     const lineHeightRaw = parseFloat(cs.lineHeight);
     const lineHeightPx = isNaN(lineHeightRaw) ? fontSizePx * 1.75 : lineHeightRaw;
     const safetyPx = lineHeightPx * LINE_SAFETY_MARGIN;
 
-    // The real, visible height of the content box
     const visibleHeight = contentEl.clientHeight;
-
-    // Maximum allowed content height per page
     const maxContentHeight = Math.max(lineHeightPx * 3, visibleHeight - safetyPx);
 
     // ---- Paragraphs ----
@@ -166,84 +163,74 @@ function buildPages(chapter) {
         .map(p => p.trim())
         .filter(Boolean);
 
-    // ---- Helper: does current DOM fit? ----
+    // ---- Page 1 starts with the chapter title ----
+    const titleText = chapter.title || "";
+    let currentPageHTML = titleText
+        ? `<h1 class="page-chapter-title">${escapeHTML(titleText)}</h1>`
+        : "";
+
+    // ---- Helper: does the current DOM fit? ----
     function fits() {
         return contentEl.scrollHeight <= maxContentHeight;
     }
 
-    // ---- Helper: snapshot current DOM as a page string ----
-    function snapshot() {
-        return contentEl.innerHTML;
-    }
-
-    // ---- Page 1 starts with the chapter title ----
-    const titleText = chapter.title || "";
-    contentEl.innerHTML = titleText
-        ? `<h1 class="page-chapter-title">${escapeHTML(titleText)}</h1>`
-        : "";
-
-    let currentPageHTML = snapshot();
-
-    // ---- Helper: finalize current page and start a new one ----
-    function flushCurrentPage() {
-        pages.push(currentPageHTML);
-    }
-
-    function startNewPage() {
-        contentEl.innerHTML = "";
+    // ---- Helper: flush current page, start fresh ----
+    function flushAndStartNew() {
+        if (currentPageHTML && currentPageHTML.trim()) {
+            pages.push(currentPageHTML);
+        }
         currentPageHTML = "";
     }
 
-    // ---- Main loop: append paragraph by paragraph, word by word ----
+    // ---- Main loop ----
     for (const para of paragraphs) {
         const words = para.split(/\s+/).filter(Boolean);
-        let buffer = "";
 
-        // First: try to append the whole paragraph at once (fast path)
-        const wholeHTML = `<p>${escapeHTML(para)}</p>`;
-        const before = contentEl.innerHTML;
-        contentEl.innerHTML = before + wholeHTML;
+        // --- Fast path: try the whole paragraph at once ---
+        const candidate = currentPageHTML + `<p>${escapeHTML(para)}</p>`;
+        contentEl.innerHTML = candidate;
 
         if (fits()) {
-            // Whole paragraph fits — commit it
-            currentPageHTML = snapshot();
+            currentPageHTML = candidate;
             continue;
         }
 
-        // Doesn't fit — fall back to word-by-word within this paragraph
-        contentEl.innerHTML = before;
+        // --- Slow path: paragraph doesn't fit. Split word-by-word. ---
+        // First, see if the paragraph has ANY room on the current page.
+        contentEl.innerHTML = currentPageHTML;
+
+        let buffer = "";
 
         for (let i = 0; i < words.length; i++) {
             const word = words[i];
-            const candidate = buffer ? buffer + " " + word : word;
-            const candidateHTML = `<p>${escapeHTML(candidate)}</p>`;
+            const candidateBuffer = buffer ? buffer + " " + word : word;
+            const candidateHTML = currentPageHTML + `<p>${escapeHTML(candidateBuffer)}</p>`;
 
-            contentEl.innerHTML = currentPageHTML + candidateHTML;
+            contentEl.innerHTML = candidateHTML;
 
             if (fits()) {
-                buffer = candidate;
+                buffer = candidateBuffer;
             } else {
-                // Candidate doesn't fit.
-                // 1. Commit buffer (if any) to this page
+                // The word doesn't fit on this page.
+
+                // 1. Commit the buffer (if any) to this page.
                 if (buffer) {
                     currentPageHTML += `<p>${escapeHTML(buffer)}</p>`;
                     contentEl.innerHTML = currentPageHTML;
                 }
 
-                // 2. Flush the page
-                flushCurrentPage();
-                startNewPage();
+                // 2. Flush the page (current page is done)
+                flushAndStartNew();
 
-                // 3. Start new page with this word
+                // 3. Start the new page with this word
                 buffer = word;
                 currentPageHTML = `<p>${escapeHTML(word)}</p>`;
                 contentEl.innerHTML = currentPageHTML;
             }
         }
 
-        // Commit the paragraph's buffer to the current page
+        // Paragraph done — commit the leftover buffer to the current page.
         if (buffer) {
-            // If currentPageHTML doesn't already include it, add it
             const tail = `<p>${escapeHTML(buffer)}</p>`;
             if (!currentPageHTML.endsWith(tail)) {
                 currentPageHTML += tail;
@@ -257,7 +244,7 @@ function buildPages(chapter) {
         pages.push(currentPageHTML);
     }
 
-    // ---- Clear content element ----
+    // ---- Clear ----
     contentEl.innerHTML = "";
 
     // ---- Fallback ----
@@ -268,6 +255,7 @@ function buildPages(chapter) {
         );
     }
 }
+
 
 /* =====================================================
    SHOW PAGE
