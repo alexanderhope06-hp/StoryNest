@@ -2330,3 +2330,41 @@ footer > p {
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     flex-shrink: 0;
 }
+
+
+
+
+
+
+
+
+
+
+/* The container that holds pages must have a FIXED height,
+   not auto — otherwise getBoundingClientRect() returns the
+   grown height, not the visible height. */
+.reader-container {
+    position: fixed;
+    top: var(--reader-header-height, 64px);
+    bottom: var(--reader-ad-height, 70px);
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    padding: 24px 16px;
+    box-sizing: border-box;
+}
+
+.reader-page-content {
+    height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    font-size: 18px;
+    line-height: 1.75;
+    font-family: Georgia, 'Times New Roman', serif;
+}
+
+.reader-page-content p {
+    margin: 0 0 1em 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}

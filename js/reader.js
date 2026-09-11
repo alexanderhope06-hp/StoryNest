@@ -104,48 +104,45 @@ function displayChapter() {
 }
 
 /* =====================================================
-   BUILD PAGES
+   BUILD PAGES  (FIXED)
    ===================================================== */
 
 function buildPages(chapter) {
     pages = [];
     const content = chapter.content || "";
 
-    // ---- Measure the ACTUAL content width ----
+    // -------------------------------------------------
+    // 1. Measure the REAL content box (not a guess)
+    // -------------------------------------------------
     const contentEl = document.querySelector(".reader-page-content");
-    let contentWidth;
-    if (contentEl) {
-        const rect = contentEl.getBoundingClientRect();
-        // Subtract horizontal padding if any
-        const cs = getComputedStyle(contentEl);
-        const padL = parseFloat(cs.paddingLeft) || 0;
-        const padR = parseFloat(cs.paddingRight) || 0;
-        contentWidth = Math.max(200, rect.width - padL - padR);
-    } else {
-        contentWidth = Math.min(900, window.innerWidth - 48);
-    }
+    if (!contentEl) return;
 
-    // ---- Measure header height fresh each time ----
-    const header = document.querySelector(".reader-header");
-    const headerHeight = header ? header.getBoundingClientRect().height : 64;
+    const cs = getComputedStyle(contentEl);
+    const padTop    = parseFloat(cs.paddingTop)    || 0;
+    const padBottom = parseFloat(cs.paddingBottom) || 0;
+    const padLeft   = parseFloat(cs.paddingLeft)   || 0;
+    const padRight  = parseFloat(cs.paddingRight)  || 0;
 
-    // ---- Calculate available height with safety buffer ----
-    const bottomSpace = 70;   // Ad space
-    const paddingSpace = 48;  // Page padding top+bottom
-    const fontSize = 18;
-    const lineHeight = fontSize * 1.75; // 31.5px -> will render as ~32px
+    const rect = contentEl.getBoundingClientRect();
+    const contentWidth  = Math.max(200, rect.width - padLeft - padRight);
+    const contentHeight = Math.max(200, rect.height - padTop  - padBottom);
 
-    // SAFETY BUFFER: reserve room for ~3 lines so nothing gets clipped
-    const safetyBuffer = lineHeight * 3;
+    // -------------------------------------------------
+    // 2. Use the ACTUAL visible height of the content box
+    //    (this already accounts for header + ad space,
+    //     because the CSS layout already positioned it)
+    // -------------------------------------------------
+    // Safety buffer: reserve 1 full line so nothing clips.
+    const FONT_SIZE   = 18;
+    const LINE_HEIGHT = FONT_SIZE * 1.75;   // ~31.5px
+    const SAFETY      = LINE_HEIGHT * 1.5;  // ~47px buffer
 
-    const availableHeight = Math.max(
-        200,
-        window.innerHeight - headerHeight - bottomSpace - paddingSpace - safetyBuffer
-    );
+    const availableHeight = Math.max(150, contentHeight - SAFETY);
 
-    // ---- Create measurement container (matches real content exactly) ----
+    // -------------------------------------------------
+    // 3. Build a measurement box that mirrors the real one
+    // -------------------------------------------------
     const measure = document.createElement("div");
-    measure.className = "reader-measure";
     measure.style.cssText = `
         position: fixed;
         left: -100000px;
@@ -155,7 +152,7 @@ function buildPages(chapter) {
         visibility: hidden;
         overflow: hidden;
         box-sizing: border-box;
-        font-size: ${fontSize}px;
+        font-size: ${FONT_SIZE}px;
         line-height: 1.75;
         font-family: Georgia, 'Times New Roman', serif;
         word-wrap: break-word;
@@ -163,63 +160,88 @@ function buildPages(chapter) {
     `;
     document.body.appendChild(measure);
 
-    // Chapter title
-    const titleEl = document.createElement("h1");
-    titleEl.className = "page-chapter-title";
-    titleEl.textContent = chapter.title || "";
-    measure.appendChild(titleEl);
-
-    // Split into paragraphs
+    // -------------------------------------------------
+    // 4. Split into paragraphs (keep blank-line separation)
+    // -------------------------------------------------
     const paragraphs = content
         .split(/\n\s*\n/)
         .map(p => p.trim())
         .filter(Boolean);
 
-    let currentPageHTML = titleEl.outerHTML;
+    // -------------------------------------------------
+    // 5. Build pages by measuring with ALWAYS-WELL-FORMED HTML
+    // -------------------------------------------------
+    // We keep an array of "blocks" for the current page.
+    // A block is either { type: 'title', text } or { type: 'para', text }.
+    // On overflow we flush the current page and start a new one.
 
-    const testPage = document.createElement("div");
-    testPage.style.cssText = "width:100%;overflow:hidden;box-sizing:border-box;";
-    measure.innerHTML = "";
-    measure.appendChild(testPage);
-    testPage.innerHTML = currentPageHTML;
+    let currentPageBlocks = [
+        { type: "title", text: chapter.title || "" }
+    ];
+
+    // Helper: render blocks to HTML
+    function renderBlocks(blocks) {
+        return blocks.map(b => {
+            if (b.type === "title") {
+                return `<h1 class="page-chapter-title">${escapeHTML(b.text)}</h1>`;
+            }
+            return `<p>${escapeHTML(b.text)}</p>`;
+        }).join("");
+    }
+
+    // Helper: does the current page still fit?
+    function fits(blocks) {
+        measure.innerHTML = renderBlocks(blocks);
+        return measure.scrollHeight <= availableHeight;
+    }
 
     for (const paragraph of paragraphs) {
         const words = paragraph.split(/\s+/);
-        let currentParagraph = "";
+        let buffer = "";
 
         for (let i = 0; i < words.length; i++) {
             const word = words[i];
-            const candidate = currentParagraph ? currentParagraph + " " + word : word;
-            const candidateHTML = `<p>${escapeHTML(candidate)}</p>`;
-            testPage.innerHTML = currentPageHTML + candidateHTML;
+            const candidate = buffer ? buffer + " " + word : word;
 
-            if (testPage.scrollHeight <= availableHeight) {
-                currentParagraph = candidate;
+            // Tentatively add the candidate as a paragraph block
+            const testBlocks = currentPageBlocks.concat([
+                { type: "para", text: candidate }
+            ]);
+
+            if (fits(testBlocks)) {
+                buffer = candidate;
             } else {
-                if (currentParagraph) {
-                    currentPageHTML += `<p>${escapeHTML(currentParagraph)}</p>`;
+                // The word doesn't fit on this page.
+                // 1. If we have buffered text, commit it to the current page.
+                if (buffer) {
+                    currentPageBlocks.push({ type: "para", text: buffer });
                 }
-                pages.push(currentPageHTML);
-                currentPageHTML = `<p>${escapeHTML(word)}`;
-                currentParagraph = word;
-                testPage.innerHTML = currentPageHTML + "</p>";
+
+                // 2. Flush the current page (if it has more than just the title)
+                if (currentPageBlocks.length > 1) {
+                    pages.push(renderBlocks(currentPageBlocks));
+                } else {
+                    // Page only had the title — push it anyway so we make progress
+                    pages.push(renderBlocks(currentPageBlocks));
+                }
+
+                // 3. Start a new page with just this word
+                currentPageBlocks = [
+                    { type: "para", text: word }
+                ];
+                buffer = word;
             }
         }
 
-        if (currentParagraph) {
-            const finalHTML = `<p>${escapeHTML(currentParagraph)}</p>`;
-            testPage.innerHTML = currentPageHTML + finalHTML;
-            if (testPage.scrollHeight <= availableHeight) {
-                currentPageHTML = testPage.innerHTML;
-            } else {
-                pages.push(currentPageHTML);
-                currentPageHTML = finalHTML;
-            }
+        // Paragraph finished — commit its buffer to the current page
+        if (buffer) {
+            currentPageBlocks.push({ type: "para", text: buffer });
         }
     }
 
-    if (currentPageHTML.trim()) {
-        pages.push(currentPageHTML);
+    // Flush the last page
+    if (currentPageBlocks.length > 1) {
+        pages.push(renderBlocks(currentPageBlocks));
     }
 
     measure.remove();
@@ -227,7 +249,8 @@ function buildPages(chapter) {
     // Safety fallback
     if (pages.length === 0) {
         pages.push(
-            `<h1 class="page-chapter-title">${escapeHTML(chapter.title || "")}</h1><p>No content available.</p>`
+            `<h1 class="page-chapter-title">${escapeHTML(chapter.title || "")}</h1>` +
+            `<p>No content available.</p>`
         );
     }
 }
