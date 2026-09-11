@@ -111,35 +111,59 @@ function buildPages(chapter) {
     pages = [];
     const content = chapter.content || "";
 
-    // Get available height
+    // ---- Measure the ACTUAL content width ----
+    const contentEl = document.querySelector(".reader-page-content");
+    let contentWidth;
+    if (contentEl) {
+        const rect = contentEl.getBoundingClientRect();
+        // Subtract horizontal padding if any
+        const cs = getComputedStyle(contentEl);
+        const padL = parseFloat(cs.paddingLeft) || 0;
+        const padR = parseFloat(cs.paddingRight) || 0;
+        contentWidth = Math.max(200, rect.width - padL - padR);
+    } else {
+        contentWidth = Math.min(900, window.innerWidth - 48);
+    }
+
+    // ---- Measure header height fresh each time ----
     const header = document.querySelector(".reader-header");
     const headerHeight = header ? header.getBoundingClientRect().height : 64;
-    const bottomSpace = 70; // Ad space
-    const paddingSpace = 48;
+
+    // ---- Calculate available height with safety buffer ----
+    const bottomSpace = 70;   // Ad space
+    const paddingSpace = 48;  // Page padding top+bottom
+    const fontSize = 18;
+    const lineHeight = fontSize * 1.75; // 31.5px -> will render as ~32px
+
+    // SAFETY BUFFER: reserve room for ~3 lines so nothing gets clipped
+    const safetyBuffer = lineHeight * 3;
+
     const availableHeight = Math.max(
         200,
-        window.innerHeight - headerHeight - bottomSpace - paddingSpace
+        window.innerHeight - headerHeight - bottomSpace - paddingSpace - safetyBuffer
     );
 
-    // Create measurement container
+    // ---- Create measurement container (matches real content exactly) ----
     const measure = document.createElement("div");
     measure.className = "reader-measure";
     measure.style.cssText = `
         position: fixed;
         left: -100000px;
         top: 0;
-        width: min(900px, calc(100vw - 48px));
+        width: ${contentWidth}px;
         height: ${availableHeight}px;
         visibility: hidden;
         overflow: hidden;
         box-sizing: border-box;
-        font-size: 18px;
+        font-size: ${fontSize}px;
         line-height: 1.75;
         font-family: Georgia, 'Times New Roman', serif;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     `;
     document.body.appendChild(measure);
 
-    // Add chapter title
+    // Chapter title
     const titleEl = document.createElement("h1");
     titleEl.className = "page-chapter-title";
     titleEl.textContent = chapter.title || "";
@@ -152,6 +176,7 @@ function buildPages(chapter) {
         .filter(Boolean);
 
     let currentPageHTML = titleEl.outerHTML;
+
     const testPage = document.createElement("div");
     testPage.style.cssText = "width:100%;overflow:hidden;box-sizing:border-box;";
     measure.innerHTML = "";
@@ -201,7 +226,9 @@ function buildPages(chapter) {
 
     // Safety fallback
     if (pages.length === 0) {
-        pages.push(`<h1 class="page-chapter-title">${escapeHTML(chapter.title || "")}</h1><p>No content available.</p>`);
+        pages.push(
+            `<h1 class="page-chapter-title">${escapeHTML(chapter.title || "")}</h1><p>No content available.</p>`
+        );
     }
 }
 
