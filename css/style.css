@@ -974,8 +974,7 @@ footer > p {
     display: flex;
     justify-content: center;
     box-sizing: border-box;
-    padding: 24px 24px 8px;
-    overscroll-behavior: none;
+    padding: 24px 24px 0;
 }
 
 .reader-page-content {
@@ -983,12 +982,9 @@ footer > p {
     height: 100%;
     overflow: hidden;
     box-sizing: border-box;
-    touch-action: pan-x;
-    overscroll-behavior: none;
+    touch-action: pan-y;
     font-size: 18px;
     line-height: 1.75;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
 }
 
 .reader-page-content h1,
@@ -1003,7 +999,7 @@ footer > p {
 
 .reader-page-content p,
 .reader-page-content .story p {
-    margin: 0 0 1em 0;
+    margin: 0 0 1.2em;
     font-size: 18px;
     line-height: 1.75;
     color: #333;
@@ -1069,12 +1065,8 @@ footer > p {
 
     .reader-page-content h1,
     .page-chapter-title {
-        margin: 0 0 20px;
-        padding: 0;
-        font-size: 28px;
-        line-height: 1.3;
-        color: #222;
-        font-weight: 700;
+        font-size: 22px;
+        margin-bottom: 16px;
     }
 
     .reader-page-content p,
@@ -2309,197 +2301,6 @@ footer > p {
     .genre-btn {
         padding: 6px 12px;
         font-size: 0.75rem;
-    }
-}
-
-/* ================= LOGO (circular icon) ================= */
-.logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-}
-
-.logo-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    background: #fff;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    flex-shrink: 0;
-}
-
-/* =====================================================
-   READER — FINAL LOCKED LAYOUT
-   (This replaces the old duplicate block that was
-   appended at the bottom. Keep ONLY this version.)
-   ===================================================== */
-
-.reader-page {
-    overflow: hidden;
-    height: 100vh;
-    height: 100dvh; /* mobile-safe */
-    overscroll-behavior: none;
-}
-
-.reader-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 64px;
-    z-index: 1000;
-    overscroll-behavior: none;
-}
-
-.reading-progress {
-    position: fixed;
-    top: 64px;
-    left: 0;
-    right: 0;
-    height: 3px;
-    z-index: 999;
-}
-
-.reader-container {
-    position: fixed;
-    top: 64px;              /* header (64) */
-    bottom: 70px;           /* ad space (70) */
-    left: 0;
-    right: 0;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    box-sizing: border-box;
-    padding: 24px 24px 8px;
-    overscroll-behavior: none;
-}
-
-.reader-page-content {
-    width: min(900px, 100%);
-    height: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
-    touch-action: pan-x;
-    overscroll-behavior: none;
-    font-family: Georgia, 'Times New Roman', serif;
-    font-size: 18px;
-    line-height: 1.75;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-.reader-page-content p,
-.reader-page-content .story p {
-    margin: 0 0 1em 0;
-    font-size: 18px;
-    line-height: 1.75;
-    color: #333;
-}
-
-.reader-page-content h1,
-.page-chapter-title {
-    margin: 0 0 20px;
-    padding: 0;
-    font-size: 28px;
-    line-height: 1.3;
-    color: #222;
-    font-weight: 700;
-}
-
-.reader-ad-space {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 70px;
-    z-index: 900;
-    pointer-events: none;
-}
-
-/* ---------- READER — MOBILE (<= 768px) ---------- */
-@media (max-width: 768px) {
-    .reader-header {
-        height: 56px;
-        padding: 0 14px;
-    }
-    .reading-progress {
-        top: 56px;
-    }
-    .reader-container {
-        top: 56px;
-        bottom: 60px;
-        padding: 16px 16px 6px;
-    }
-    .reader-page-content {
-        font-size: 17px;
-    }
-    .reader-page-content p,
-    .reader-page-content .story p {
-        font-size: 17px;
-        line-height: 1.7;
-    }
-    .reader-page-content h1,
-    .page-chapter-title {
-        font-size: 24px;
-        margin-bottom: 16px;
-    }
-    .reader-ad-space {
-        height: 60px;
-    }
-}
-
-/* ---------- READER — SMALL MOBILE (<= 480px) ---------- */
-@media (max-width: 480px) {
-    .reader-header {
-        height: 50px;
-        padding: 0 10px;
-    }
-    .reading-progress {
-        top: 50px;
-    }
-    .reader-container {
-        top: 50px;
-        bottom: 54px;
-        padding: 12px 12px 6px;
-    }
-    .reader-page-content {
-        font-size: 16px;
-    }
-    .reader-page-content p,
-    .reader-page-content .story p {
-        font-size: 16px;
-        line-height: 1.7;
-    }
-    .reader-page-content h1,
-    .page-chapter-title {
-        font-size: 22px;
-        margin-bottom: 14px;
-    }
-    .reader-ad-space {
-        height: 54px;
-    }
-}
-
-/* ---------- READER — LARGE SCREENS (>= 1100px) ---------- */
-@media (min-width: 1100px) {
-    .reader-container {
-        padding: 32px 40px 8px;
-    }
-    .reader-page-content {
-        font-size: 19px;
-    }
-    .reader-page-content p,
-    .reader-page-content .story p {
-        font-size: 19px;
-        line-height: 1.8;
-    }
-    .reader-page-content h1,
-    .page-chapter-title {
-        font-size: 32px;
-        margin-bottom: 24px;
     }
 }
 
