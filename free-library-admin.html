@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Free Library Admin — StoryNest</title>
+
+    <link rel="icon" type="image/png" href="image/fav.png">
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* =====================================================
+           FREE LIBRARY ADMIN — Page specific styles
+           ===================================================== */
+
+        .fl-wrap {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 50px 24px 100px;
+        }
+
+        /* ---------- Header ---------- */
+        .fl-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 12px;
+        }
+
+        .fl-header-icon {
+            width: 56px;
+            height: 56px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #9b5cff, #5e32a8);
+            font-size: 26px;
+            box-shadow: 0 8px 24px rgba(155, 92, 255, 0.25);
+        }
+
+        .fl-header-text h1 {
+            font-size: 32px;
+            line-height: 1.15;
+            margin-bottom: 4px;
+        }
+
+        .fl-header-text p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        /* ---------- Card ---------- */
+        .fl-card {
+            background: #17171f;
+            border: 1px solid #292932;
+            border-radius: 18px;
+            padding: 36px 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ---------- Notice ---------- */
+        .fl-notice {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            padding: 16px 18px;
+            margin-bottom: 32px;
+            border-radius: 12px;
+            background: rgba(155, 92, 255, 0.08);
+            border: 1px solid rgba(155, 92, 255, 0.25);
+        }
+
+        .fl-notice-icon {
+            font-size: 20px;
+            line-height: 1.2;
+            flex-shrink: 0;
+        }
+
+        .fl-notice strong {
+            display: block;
+            color: #c39aff;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .fl-notice p {
+            color: #b8b8c4;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ---------- Section divider ---------- */
+        .fl-section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 28px 0 20px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #85858f;
+        }
+
+        .fl-section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, #2a2a34, transparent);
+        }
+
+        /* ---------- Form ---------- */
+        .fl-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .fl-form-grid .fl-full {
+            grid-column: 1 / -1;
+        }
+
+        .fl-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fl-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #d0d0d8;
+            margin-bottom: 8px;
+        }
+
+        .fl-req {
+            color: #ff6b6b;
+            font-size: 15px;
+            line-height: 1;
+        }
+
+        .fl-group input,
+        .fl-group textarea,
+        .fl-group select {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #2f2f3a;
+            border-radius: 10px;
+            background: #0d0d12;
+            color: #f0f0f5;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+
+        .fl-group input::placeholder,
+        .fl-group textarea::placeholder {
+            color: #555;
+        }
+
+        .fl-group input:focus,
+        .fl-group textarea:focus,
+        .fl-group select:focus {
+            border-color: #9b5cff;
+            box-shadow: 0 0 0 3px rgba(155, 92, 255, 0.15);
+        }
+
+        .fl-group textarea {
+            min-height: 130px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .fl-hint {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #6c6c78;
+        }
+
+        /* ---------- Publish button ---------- */
+        .fl-submit-row {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 10px;
+            border-top: 1px solid #23232c;
+            margin-top: 10px;
+        }
+
+        .fl-publish-btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #9b5cff, #7c3aed);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            box-shadow: 0 8px 24px rgba(155, 92, 255, 0.28);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fl-publish-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(155, 92, 255, 0.4);
+        }
+
+        .fl-publish-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* ---------- Message ---------- */
+        .fl-message {
+            display: none;
+            margin-top: 24px;
+            padding: 16px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .fl-message.success {
+            display: block;
+            background: rgba(39, 174, 96, 0.12);
+            border: 1px solid rgba(39, 174, 96, 0.35);
+            color: #7bd89b;
+        }
+
+        .fl-message.error {
+            display: block;
+            background: rgba(231, 76, 60, 0.12);
+            border: 1px solid rgba(231, 76, 60, 0.35);
+            color: #ff8a80;
+        }
+
+        .fl-message button {
+            display: block;
+            width: 100%;
+            margin-top: 14px;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            background: #16a34a;
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .fl-message button:hover {
+            background: #15803d;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 720px) {
+            .fl-wrap { padding: 30px 16px 80px; }
+            .fl-card { padding: 26px 20px; border-radius: 14px; }
+            .fl-form-grid { grid-template-columns: 1fr; gap: 16px; }
+            .fl-header-icon { width: 48px; height: 48px; font-size: 22px; }
+            .fl-header-text h1 { font-size: 24px; }
+            .fl-publish-btn { width: 100%; justify-content: center; }
+            .fl-submit-row { justify-content: stretch; }
+        }
+    </style>
+</head>
+
+<body class="author-page">
+
+<div class="fl-wrap">
+
+    <!-- Header -->
+    <div class="fl-header">
+        <div class="fl-header-icon">📚</div>
+        <div class="fl-header-text">
+            <h1>Free Library</h1>
+            <p>Publish public-domain or appropriately licensed books on StoryNest.</p>
+        </div>
+    </div>
+
+    <!-- Card -->
+    <div class="fl-card">
+
+        <div class="fl-notice">
+            <div class="fl-notice-icon">⚠️</div>
+            <div>
+                <strong>Important</strong>
+                <p>Only publish books that you have verified are legally available for redistribution.</p>
+            </div>
+        </div>
+
+        <form id="freeLibraryForm">
+
+            <div class="fl-section-title">Book Information</div>
+
+            <div class="fl-form-grid">
+
+                <div class="fl-group fl-full">
+                    <label for="title">
+                        Book Title <span class="fl-req">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="title"
+                        placeholder="e.g. Pride and Prejudice"
+                        required
+                    >
+                </div>
+
+                <div class="fl-group">
+                    <label for="originalAuthor">
+                        Original Author <span class="fl-req">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="originalAuthor"
+                        placeholder="e.g. Jane Austen"
+                        required
+                    >
+                </div>
+
+                <div class="fl-group">
+                    <label for="genre">Genre</label>
+                    <input
+                        type="text"
+                        id="genre"
+                        placeholder="e.g. Romance, Classic"
+                    >
+                </div>
+
+                <div class="fl-group">
+                    <label for="license">
+                        Copyright / License Status <span class="fl-req">*</span>
+                    </label>
+                    <select id="license" required>
+                        <option value="">Select status</option>
+                        <option value="Public Domain">Public Domain</option>
+                        <option value="CC0">CC0</option>
+                        <option value="Creative Commons">Creative Commons</option>
+                        <option value="Other Permitted License">Other Permitted License</option>
+                    </select>
+                </div>
+
+                <div class="fl-group">
+                    <label for="sourceName">Source</label>
+                    <input
+                        type="text"
+                        id="sourceName"
+                        placeholder="e.g. Project Gutenberg"
+                    >
+                </div>
+
+                <div class="fl-group fl-full">
+                    <label for="sourceUrl">Source URL</label>
+                    <input
+                        type="url"
+                        id="sourceUrl"
+                        placeholder="https://..."
+                    >
+                </div>
+
+                <div class="fl-group fl-full">
+                    <label for="coverUrl">Cover Image URL</label>
+                    <input
+                        type="url"
+                        id="coverUrl"
+                        placeholder="https://..."
+                    >
+                    <div class="fl-hint">Optional. A cover image displayed on the book page.</div>
+                </div>
+
+                <div class="fl-group fl-full">
+                    <label for="description">
+                        Description <span class="fl-req">*</span>
+                    </label>
+                    <textarea
+                        id="description"
+                        placeholder="Write a short description of the book…"
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="fl-group fl-full">
+                    <label for="attribution">Public Domain / License Notice</label>
+                    <textarea
+                        id="attribution"
+                        placeholder="e.g. This work is in the public domain. StoryNest has formatted this edition for online reading."
+                    ></textarea>
+                    <div class="fl-hint">Shown to readers on the book page. If left blank, a default notice is used.</div>
+                </div>
+
+                <div class="fl-submit-row">
+                    <button type="submit" class="fl-publish-btn" id="publishBtn">
+                        🚀 Publish to Free Library
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+        <div id="message" class="fl-message"></div>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+    import { supabase } from "./js/supabase.js";
+
+    const form = document.getElementById("freeLibraryForm");
+    const message = document.getElementById("message");
+    const publishBtn = document.getElementById("publishBtn");
+
+    function showMessage(text, type) {
+        message.textContent = text;
+        message.className = "fl-message " + type;
+    }
+
+    form.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        publishBtn.disabled = true;
+        publishBtn.textContent = "Publishing…";
+
+        message.style.display = "none";
+
+        const title = document.getElementById("title").value.trim();
+        const originalAuthor = document.getElementById("originalAuthor").value.trim();
+        const genre = document.getElementById("genre").value.trim();
+        const license = document.getElementById("license").value;
+        const sourceName = document.getElementById("sourceName").value.trim();
+        const sourceUrl = document.getElementById("sourceUrl").value.trim();
+        const coverUrl = document.getElementById("coverUrl").value.trim();
+        const description = document.getElementById("description").value.trim();
+        const attribution = document.getElementById("attribution").value.trim();
+
+        try {
+
+            const { data: userData, error: userError } = await supabase.auth.getUser();
+            if (userError) throw userError;
+
+            const user = userData.user;
+            if (!user) throw new Error("You must be logged in to publish a book.");
+
+            const { data, error } = await supabase
+                .from("novels")
+                .insert({
+                    author_id: user.id,
+                    title: title,
+                    description: description,
+                    genre: genre || null,
+                    cover_url: coverUrl || null,
+                    status: "published",
+                    source_type: "public_domain",
+                    license: license,
+                    original_author: originalAuthor,
+                    source_name: sourceName || null,
+                    source_url: sourceUrl || null,
+                    attribution: attribution || "This work is being provided under the license/public-domain status indicated above. StoryNest has formatted this edition for online reading."
+                })
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            showMessage("✅ Book published successfully!", "success");
+            form.reset();
+
+            const addChaptersButton = document.createElement("button");
+            addChaptersButton.type = "button";
+            addChaptersButton.textContent = "📖 Add Chapters →";
+            addChaptersButton.onclick = () => {
+                window.location.href = `free-library-chapters.html?id=${data.id}`;
+            };
+
+            message.appendChild(addChaptersButton);
+
+            console.log("Published Free Library book:", data);
+
+        } catch (error) {
+            console.error(error);
+            showMessage("❌ Publishing failed: " + error.message, "error");
+        }
+
+        publishBtn.disabled = false;
+        publishBtn.textContent = "🚀 Publish to Free Library";
+    });
+
+</script>
+
+</body>
+</html>
