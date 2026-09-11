@@ -1,5 +1,5 @@
 /* =====================================================
-   STORYNEST — PAGE BASED READER
+   STORYNEST — PAGE BASED READER (FINAL)
    ===================================================== */
 
 const params = new URLSearchParams(window.location.search);
@@ -22,7 +22,7 @@ const readerPageContent = document.getElementById("readerPageContent");
 const progressBar = document.getElementById("readingProgress");
 
 /* =====================================================
-   SCROLL LOCK — keep content pinned at top
+   SCROLL LOCK
    ===================================================== */
 
 function lockContentScroll() {
@@ -30,20 +30,17 @@ function lockContentScroll() {
     readerPageContent.scrollTop = 0;
     readerPageContent.scrollLeft = 0;
 
-    // If any ancestor scrolls, snap it back
     let el = readerPageContent.parentElement;
     while (el) {
         if (el.scrollTop) el.scrollTop = 0;
         if (el.scrollLeft) el.scrollLeft = 0;
         el = el.parentElement;
     }
-    // And document itself
     window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
 }
 
-// Snap back on any scroll attempt (wheel, touch, keyboard, programmatic)
 window.addEventListener('scroll', lockContentScroll, { passive: true });
 document.addEventListener('scroll', lockContentScroll, { passive: true, capture: true });
 
@@ -129,148 +126,141 @@ function displayChapter() {
 }
 
 /* =====================================================
-   BUILD PAGES — LINE COUNTING METHOD
+   BUILD PAGES — MEASURE ON REAL ELEMENT
    ===================================================== */
 
-// How many lines to sacrifice per page as a safety margin
+// Safety margin: reserve this many lines at the bottom of every page
 const LINE_SAFETY_MARGIN = 4;
 
 function buildPages(chapter) {
     pages = [];
     const content = chapter.content || "";
 
-    const contentEl = document.querySelector(".reader-page-content");
+    const contentEl = readerPageContent;
     if (!contentEl) return;
 
-    // Reset for measurement
+    // Apply the user's font size before measuring
+    const savedSize = localStorage.getItem('readerFontSize');
+    const fontSize = savedSize ? parseInt(savedSize) : 18;
+    contentEl.style.fontSize = fontSize + 'px';
+
+    // Reset
     contentEl.innerHTML = "";
 
-    // ---- 1. Chapter title ----
-    const titleEl = document.createElement("h1");
-    titleEl.className = "page-chapter-title";
-    titleEl.textContent = chapter.title || "";
-    contentEl.appendChild(titleEl);
+    // ---- Compute the visible height in lines (for safety margin) ----
+    const cs = getComputedStyle(contentEl);
+    const fontSizePx = parseFloat(cs.fontSize) || 18;
+    const lineHeightRaw = parseFloat(cs.lineHeight);
+    const lineHeightPx = isNaN(lineHeightRaw) ? fontSizePx * 1.75 : lineHeightRaw;
+    const safetyPx = lineHeightPx * LINE_SAFETY_MARGIN;
 
-    // ---- 2. Paragraphs ----
+    // The real, visible height of the content box
+    const visibleHeight = contentEl.clientHeight;
+
+    // Maximum allowed content height per page
+    const maxContentHeight = Math.max(lineHeightPx * 3, visibleHeight - safetyPx);
+
+    // ---- Paragraphs ----
     const paragraphs = content
         .split(/\n\s*\n/)
         .map(p => p.trim())
         .filter(Boolean);
 
-    for (const para of paragraphs) {
-        const p = document.createElement("p");
-        const words = para.split(/\s+/).filter(Boolean);
-        words.forEach((word, i) => {
-            const span = document.createElement("span");
-            span.textContent = word;
-            p.appendChild(span);
-            if (i < words.length - 1) {
-                p.appendChild(document.createTextNode(" "));
-            }
-        });
-        contentEl.appendChild(p);
+    // ---- Helper: does current DOM fit? ----
+    function fits() {
+        return contentEl.scrollHeight <= maxContentHeight;
     }
 
-    // ---- 3. Available height in LINES ----
-    const cs = getComputedStyle(contentEl);
-    const lineHeightPx = parseFloat(cs.lineHeight);
-    const fontSizePx   = parseFloat(cs.fontSize);
-    const realLineHeight = isNaN(lineHeightPx) ? fontSizePx * 1.75 : lineHeightPx;
-
-    const padTop    = parseFloat(cs.paddingTop)    || 0;
-    const padBottom = parseFloat(cs.paddingBottom) || 0;
-    const boxHeight = contentEl.getBoundingClientRect().height - padTop - padBottom;
-
-    const maxLines = Math.max(
-        3,
-        Math.floor(boxHeight / realLineHeight) - LINE_SAFETY_MARGIN
-    );
-
-    // ---- 4. Distribute words across pages ----
-    contentEl.innerHTML = "";
-
-    let currentPageBlocks = [];
-    let currentPageLines = 0;
-
-    if (chapter.title) {
-        currentPageBlocks.push({ type: "title", text: chapter.title });
-        currentPageLines += 2; // title conservatively = 2 lines
+    // ---- Helper: snapshot current DOM as a page string ----
+    function snapshot() {
+        return contentEl.innerHTML;
     }
 
-    function countLines(text, isTitle) {
-        const probe = document.createElement(isTitle ? "h1" : "p");
-        if (isTitle) probe.className = "page-chapter-title";
-        probe.style.cssText = "visibility:hidden;position:absolute;left:-99999px;top:0;";
-        probe.style.width = contentEl.clientWidth + "px";
-        probe.style.fontSize = cs.fontSize;
-        probe.style.lineHeight = cs.lineHeight;
-        probe.style.fontFamily = cs.fontFamily;
-        probe.textContent = text;
-        document.body.appendChild(probe);
+    // ---- Page 1 starts with the chapter title ----
+    const titleText = chapter.title || "";
+    contentEl.innerHTML = titleText
+        ? `<h1 class="page-chapter-title">${escapeHTML(titleText)}</h1>`
+        : "";
 
-        const range = document.createRange();
-        range.selectNodeContents(probe);
-        const rects = range.getClientRects();
-        const tops = new Set();
-        for (const r of rects) {
-            if (r.height > 0) tops.add(Math.round(r.top));
-        }
-        const lineCount = Math.max(1, tops.size);
+    let currentPageHTML = snapshot();
 
-        probe.remove();
-        return lineCount;
+    // ---- Helper: finalize current page and start a new one ----
+    function flushCurrentPage() {
+        pages.push(currentPageHTML);
     }
 
-    function renderBlocks(blocks) {
-        return blocks.map(b => {
-            if (b.type === "title") {
-                return `<h1 class="page-chapter-title">${escapeHTML(b.text)}</h1>`;
-            }
-            return `<p>${escapeHTML(b.text)}</p>`;
-        }).join("");
+    function startNewPage() {
+        contentEl.innerHTML = "";
+        currentPageHTML = "";
     }
 
-    function flushPage() {
-        if (currentPageBlocks.length === 0) return;
-        pages.push(renderBlocks(currentPageBlocks));
-        currentPageBlocks = [];
-        currentPageLines = 0;
-    }
-
+    // ---- Main loop: append paragraph by paragraph, word by word ----
     for (const para of paragraphs) {
         const words = para.split(/\s+/).filter(Boolean);
         let buffer = "";
-        let bufferLines = 0;
+
+        // First: try to append the whole paragraph at once (fast path)
+        const wholeHTML = `<p>${escapeHTML(para)}</p>`;
+        const before = contentEl.innerHTML;
+        contentEl.innerHTML = before + wholeHTML;
+
+        if (fits()) {
+            // Whole paragraph fits — commit it
+            currentPageHTML = snapshot();
+            continue;
+        }
+
+        // Doesn't fit — fall back to word-by-word within this paragraph
+        contentEl.innerHTML = before;
 
         for (let i = 0; i < words.length; i++) {
-            const candidate = buffer ? buffer + " " + words[i] : words[i];
-            const candidateLines = countLines(candidate, false);
+            const word = words[i];
+            const candidate = buffer ? buffer + " " + word : word;
+            const candidateHTML = `<p>${escapeHTML(candidate)}</p>`;
 
-            if (currentPageLines + candidateLines <= maxLines) {
+            contentEl.innerHTML = currentPageHTML + candidateHTML;
+
+            if (fits()) {
                 buffer = candidate;
-                bufferLines = candidateLines;
             } else {
+                // Candidate doesn't fit.
+                // 1. Commit buffer (if any) to this page
                 if (buffer) {
-                    currentPageBlocks.push({ type: "para", text: buffer });
-                    currentPageLines += bufferLines;
+                    currentPageHTML += `<p>${escapeHTML(buffer)}</p>`;
+                    contentEl.innerHTML = currentPageHTML;
                 }
-                flushPage();
 
-                buffer = words[i];
-                bufferLines = countLines(buffer, false);
-                currentPageLines = bufferLines;
+                // 2. Flush the page
+                flushCurrentPage();
+                startNewPage();
+
+                // 3. Start new page with this word
+                buffer = word;
+                currentPageHTML = `<p>${escapeHTML(word)}</p>`;
+                contentEl.innerHTML = currentPageHTML;
             }
         }
 
+        // Commit the paragraph's buffer to the current page
         if (buffer) {
-            currentPageBlocks.push({ type: "para", text: buffer });
-            currentPageLines += bufferLines;
+            // If currentPageHTML doesn't already include it, add it
+            const tail = `<p>${escapeHTML(buffer)}</p>`;
+            if (!currentPageHTML.endsWith(tail)) {
+                currentPageHTML += tail;
+                contentEl.innerHTML = currentPageHTML;
+            }
         }
     }
 
-    flushPage();
+    // ---- Flush the last page ----
+    if (currentPageHTML && currentPageHTML.trim()) {
+        pages.push(currentPageHTML);
+    }
 
-    // ---- 5. Fallback ----
+    // ---- Clear content element ----
+    contentEl.innerHTML = "";
+
+    // ---- Fallback ----
     if (pages.length === 0) {
         pages.push(
             `<h1 class="page-chapter-title">${escapeHTML(chapter.title || "")}</h1>` +
@@ -292,9 +282,7 @@ function showPage() {
     readerPageContent.style.fontSize = fontSize + 'px';
     readerPageContent.innerHTML = pages[currentPage];
 
-    // HARD LOCK — force content to top
     lockContentScroll();
-    // And again next frame in case layout shifted
     requestAnimationFrame(lockContentScroll);
 
     if (progressBar) {
@@ -309,7 +297,7 @@ function showPage() {
 }
 
 /* =====================================================
-   REBUILD (used by font-size changes)
+   REBUILD (for font-size changes)
    ===================================================== */
 
 window.rebuildReaderPages = function () {

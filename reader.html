@@ -74,13 +74,10 @@
     <!-- Reader Menu & Controls -->
     <script>
         // =====================================================
-        // SCROLL LOCK (hard)
+        // SCROLL LOCK
         // =====================================================
-        // Some mobile browsers ignore overflow:hidden on body.
-        // This keeps the reader pinned so only page-turn gestures work.
 
         (function lockScrolling() {
-            // Lock document scroll
             document.documentElement.style.overflow = 'hidden';
             document.documentElement.style.height = '100%';
             document.body.style.overflow = 'hidden';
@@ -93,27 +90,20 @@
             document.body.style.bottom = '0';
             document.body.style.overscrollBehavior = 'none';
 
-            // Prevent wheel scrolling entirely
             window.addEventListener('wheel', function (e) {
-                // Only block if the wheel is over the reader content area
                 if (e.target.closest('.reader-page-content, .reader-container')) {
                     e.preventDefault();
                 }
             }, { passive: false });
 
-            // Prevent touchmove scrolling inside the reader
             window.addEventListener('touchmove', function (e) {
                 if (e.target.closest('.reader-page-content, .reader-container, .reader-ad-space')) {
-                    // Allow horizontal swipes (page turns) but block vertical
                     const t = e.touches[0];
                     if (!t) return;
-                    // If we can't detect direction here, just block.
-                    // Horizontal swipe detection happens in touchend in reader.js.
                     e.preventDefault();
                 }
             }, { passive: false });
 
-            // Prevent keyboard scroll keys from moving the page
             window.addEventListener('keydown', function (e) {
                 const scrollKeys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '];
                 if (scrollKeys.includes(e.key)) {
@@ -189,12 +179,11 @@
         function applyFontSize(size) {
             const content = document.querySelector('.reader-page-content');
             if (content) content.style.fontSize = size + 'px';
-            // Rebuild pages with new font size so line counts stay correct
             if (window.rebuildReaderPages) window.rebuildReaderPages();
         }
 
         // =====================================================
-        // THEME (Dark / Light)
+        // THEME
         // =====================================================
 
         let currentTheme = localStorage.getItem('readerTheme') || 'light';
