@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Free Library Chapters — StoryNest</title>
+
+    <link rel="icon" type="image/png" href="image/fav.png">
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* =====================================================
+           FREE LIBRARY CHAPTERS — Page specific styles
+           ===================================================== */
+
+        .flc-wrap {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 50px 24px 100px;
+        }
+
+        /* ---------- Header ---------- */
+        .flc-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 12px;
+        }
+
+        .flc-header-icon {
+            width: 56px;
+            height: 56px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #9b5cff, #5e32a8);
+            font-size: 26px;
+            box-shadow: 0 8px 24px rgba(155, 92, 255, 0.25);
+        }
+
+        .flc-header-text h1 {
+            font-size: 32px;
+            line-height: 1.15;
+            margin-bottom: 4px;
+        }
+
+        .flc-header-text p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        /* ---------- Book pill ---------- */
+        .flc-book-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            margin-bottom: 28px;
+            border-radius: 30px;
+            background: rgba(155, 92, 255, 0.1);
+            border: 1px solid rgba(155, 92, 255, 0.3);
+            color: #c39aff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .flc-book-pill .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #9b5cff;
+            box-shadow: 0 0 8px #9b5cff;
+        }
+
+        /* ---------- Cards ---------- */
+        .flc-card {
+            background: #17171f;
+            border: 1px solid #292932;
+            border-radius: 18px;
+            padding: 32px 36px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .flc-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .flc-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .flc-card-title .badge {
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: rgba(155, 92, 255, 0.15);
+            color: #c39aff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* ---------- Form ---------- */
+        .flc-form-grid {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 18px;
+        }
+
+        .flc-form-grid .flc-full {
+            grid-column: 1 / -1;
+        }
+
+        .flc-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flc-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #d0d0d8;
+            margin-bottom: 8px;
+        }
+
+        .flc-group input,
+        .flc-group textarea {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #2f2f3a;
+            border-radius: 10px;
+            background: #0d0d12;
+            color: #f0f0f5;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+
+        .flc-group input::placeholder,
+        .flc-group textarea::placeholder {
+            color: #555;
+        }
+
+        .flc-group input:focus,
+        .flc-group textarea:focus {
+            border-color: #9b5cff;
+            box-shadow: 0 0 0 3px rgba(155, 92, 255, 0.15);
+        }
+
+        .flc-group textarea {
+            min-height: 380px;
+            resize: vertical;
+            line-height: 1.7;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 15px;
+        }
+
+        .flc-hint {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #6c6c78;
+        }
+
+        /* ---------- Save button ---------- */
+        .flc-submit-row {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 10px;
+            border-top: 1px solid #23232c;
+            margin-top: 10px;
+        }
+
+        .flc-save-btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #9b5cff, #7c3aed);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            box-shadow: 0 8px 24px rgba(155, 92, 255, 0.28);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flc-save-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(155, 92, 255, 0.4);
+        }
+
+        .flc-save-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* ---------- Message ---------- */
+        .flc-message {
+            display: none;
+            margin-top: 20px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .flc-message.success {
+            display: block;
+            background: rgba(39, 174, 96, 0.12);
+            border: 1px solid rgba(39, 174, 96, 0.35);
+            color: #7bd89b;
+        }
+
+        .flc-message.error {
+            display: block;
+            background: rgba(231, 76, 60, 0.12);
+            border: 1px solid rgba(231, 76, 60, 0.35);
+            color: #ff8a80;
+        }
+
+        /* ---------- Chapters list ---------- */
+        .flc-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .flc-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            background: #1c1c25;
+            border: 1px solid #26262f;
+            transition: border-color 0.2s, transform 0.2s, background 0.2s;
+        }
+
+        .flc-item:hover {
+            border-color: #493263;
+            background: #20202a;
+            transform: translateX(3px);
+        }
+
+        .flc-item-num {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(155, 92, 255, 0.15);
+            color: #c39aff;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .flc-item-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .flc-item-body strong {
+            display: block;
+            font-size: 15px;
+            color: #e8e8ee;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .flc-item-body span {
+            font-size: 12px;
+            color: #7a7a86;
+        }
+
+        .flc-empty {
+            padding: 40px 20px;
+            text-align: center;
+            border: 1px dashed #333;
+            border-radius: 12px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .flc-empty-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            opacity: 0.6;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 720px) {
+            .flc-wrap { padding: 30px 16px 80px; }
+            .flc-card { padding: 22px 18px; border-radius: 14px; }
+            .flc-form-grid { grid-template-columns: 1fr; gap: 16px; }
+            .flc-header-icon { width: 48px; height: 48px; font-size: 22px; }
+            .flc-header-text h1 { font-size: 24px; }
+            .flc-save-btn { width: 100%; justify-content: center; }
+            .flc-submit-row { justify-content: stretch; }
+            .flc-group textarea { min-height: 280px; }
+        }
+    </style>
+</head>
+
+<body class="author-page">
+
+<div class="flc-wrap">
+
+    <!-- Header -->
+    <div class="flc-header">
+        <div class="flc-header-icon">📖</div>
+        <div class="flc-header-text">
+            <h1>Add Chapters</h1>
+            <p>Paste the chapter text below to add it to your Free Library book.</p>
+        </div>
+    </div>
+
+    <!-- Book pill -->
+    <div class="flc-book-pill" id="bookTitle">
+        <span class="dot"></span>
+        <span>Loading book…</span>
+    </div>
+
+    <!-- Form card -->
+    <div class="flc-card">
+
+        <div class="flc-card-header">
+            <div class="flc-card-title">
+                ✍️ New Chapter
+            </div>
+        </div>
+
+        <form id="chapterForm">
+
+            <div class="flc-form-grid">
+
+                <div class="flc-group">
+                    <label for="chapterNumber">Chapter #</label>
+                    <input
+                        type="number"
+                        id="chapterNumber"
+                        min="1"
+                        value="1"
+                        required
+                    >
+                </div>
+
+                <div class="flc-group">
+                    <label for="chapterTitle">Chapter Title</label>
+                    <input
+                        type="text"
+                        id="chapterTitle"
+                        placeholder="e.g. Chapter One"
+                        required
+                    >
+                </div>
+
+                <div class="flc-group flc-full">
+                    <label for="chapterContent">Chapter Content</label>
+                    <textarea
+                        id="chapterContent"
+                        placeholder="Paste the full chapter text here…"
+                        required
+                    ></textarea>
+                    <div class="flc-hint">Separate paragraphs with a blank line so they render nicely in the reader.</div>
+                </div>
+
+                <div class="flc-submit-row">
+                    <button type="submit" id="saveButton" class="flc-save-btn">
+                        💾 Save Chapter
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+        <div id="message" class="flc-message"></div>
+
+    </div>
+
+    <!-- Existing chapters card -->
+    <div class="flc-card">
+
+        <div class="flc-card-header">
+            <div class="flc-card-title">
+                📚 Published Chapters
+                <span class="badge" id="chapterCountBadge">0</span>
+            </div>
+        </div>
+
+        <div id="chaptersList" class="flc-list">
+            <div class="flc-empty">Loading chapters…</div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+    import { supabase } from "./js/supabase.js";
+
+    const params = new URLSearchParams(window.location.search);
+    const novelId = params.get("id");
+
+    const bookTitle = document.getElementById("bookTitle");
+    const chapterForm = document.getElementById("chapterForm");
+    const chapterNumber = document.getElementById("chapterNumber");
+    const chapterTitle = document.getElementById("chapterTitle");
+    const chapterContent = document.getElementById("chapterContent");
+    const saveButton = document.getElementById("saveButton");
+    const message = document.getElementById("message");
+    const chaptersList = document.getElementById("chaptersList");
+    const chapterCountBadge = document.getElementById("chapterCountBadge");
+
+    function showMessage(text, type) {
+        message.textContent = text;
+        message.className = "flc-message " + type;
+    }
+
+    function setBookPill(title, ok = true) {
+        bookTitle.innerHTML =
+            `<span class="dot"></span><span>${title}</span>`;
+        if (!ok) {
+            bookTitle.style.background = "rgba(231, 76, 60, 0.1)";
+            bookTitle.style.borderColor = "rgba(231, 76, 60, 0.3)";
+            bookTitle.style.color = "#ff8a80";
+        }
+    }
+
+    async function loadBook() {
+
+        if (!novelId) {
+            setBookPill("No book selected", false);
+            chapterForm.style.display = "none";
+            showMessage("No novel ID was provided in the URL.", "error");
+            return;
+        }
+
+        const { data, error } = await supabase
+            .from("novels")
+            .select("id, title, source_type")
+            .eq("id", novelId)
+            .single();
+
+        if (error) {
+            console.error(error);
+            setBookPill("Unable to load book", false);
+            showMessage("Could not load the selected book: " + error.message, "error");
+            return;
+        }
+
+        setBookPill(data.title);
+
+        if (data.source_type !== "public_domain") {
+            showMessage("Warning: this is not marked as a Free Library book.", "error");
+        }
+    }
+
+    async function loadChapters() {
+
+        if (!novelId) return;
+
+        const { data, error } = await supabase
+            .from("chapters")
+            .select("*")
+            .eq("novel_id", novelId)
+            .order("chapter_number", { ascending: true });
+
+        if (error) {
+            console.error(error);
+            chaptersList.innerHTML = `<div class="flc-empty">Unable to load chapters.</div>`;
+            chapterCountBadge.textContent = "0";
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            chaptersList.innerHTML = `
+                <div class="flc-empty">
+                    <div class="flc-empty-icon">📭</div>
+                    No chapters have been added yet.
+                </div>
+            `;
+            chapterCountBadge.textContent = "0";
+            return;
+        }
+
+        chapterCountBadge.textContent = data.length;
+        chaptersList.innerHTML = "";
+
+        data.forEach(chapter => {
+
+            const item = document.createElement("div");
+            item.className = "flc-item";
+
+            const chars = (chapter.content || "").length.toLocaleString();
+            const safeTitle = (chapter.title || "Untitled").replace(/</g, "&lt;");
+
+            item.innerHTML = `
+                <div class="flc-item-num">${chapter.chapter_number}</div>
+                <div class="flc-item-body">
+                    <strong>${safeTitle}</strong>
+                    <span>${chars} characters</span>
+                </div>
+            `;
+
+            chaptersList.appendChild(item);
+        });
+    }
+
+    chapterForm.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        if (!novelId) {
+            showMessage("No book selected.", "error");
+            return;
+        }
+
+        saveButton.disabled = true;
+        saveButton.textContent = "Saving…";
+
+        const number = Number(chapterNumber.value);
+        const title = chapterTitle.value.trim();
+        const content = chapterContent.value.trim();
+
+        try {
+
+            const { data: userData, error: userError } = await supabase.auth.getUser();
+            if (userError) throw userError;
+            if (!userData.user) throw new Error("You must be logged in.");
+
+            const { error } = await supabase
+                .from("chapters")
+                .insert({
+                    novel_id: novelId,
+                    chapter_number: number,
+                    title: title,
+                    content: content
+                });
+
+            if (error) throw error;
+
+            showMessage("✅ Chapter saved successfully!", "success");
+
+            chapterContent.value = "";
+            chapterTitle.value = "";
+            chapterNumber.value = number + 1;
+
+            await loadChapters();
+
+        } catch (error) {
+            console.error(error);
+            showMessage("❌ Could not save chapter: " + error.message, "error");
+        }
+
+        saveButton.disabled = false;
+        saveButton.textContent = "💾 Save Chapter";
+    });
+
+    loadBook();
+    loadChapters();
+
+</script>
+
+</body>
+</html>

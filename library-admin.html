@@ -197,36 +197,51 @@
 
 
         <label for="bookUrl">
-            Standard Ebooks book page or EPUB URL
+            Direct EPUB URL
         </label>
 
         <input
             id="bookUrl"
             type="url"
-            placeholder="https://standardebooks.org/ebooks/author/book"
+            placeholder="https://example.com/book.epub"
         >
 
 
         <label for="sourceName">
-            Verified source
+            Source
         </label>
 
         <input
             id="sourceName"
             type="text"
             value="Standard Ebooks"
-            readonly
+            placeholder="Example: Standard Ebooks"
         >
 
-        <label>
-            License
+
+        <label for="sourceType">
+            License type
         </label>
 
-        <input
-            type="text"
-            value="CC0 1.0 Universal — Standard Ebooks production"
-            readonly
-        >
+        <select id="sourceType">
+
+            <option value="cc0">
+                CC0
+            </option>
+
+            <option value="public_domain">
+                Public Domain
+            </option>
+
+            <option value="cc_by">
+                CC BY
+            </option>
+
+            <option value="cc_by_sa">
+                CC BY-SA
+            </option>
+
+        </select>
 
 
         <button
@@ -234,14 +249,6 @@
             class="import-button"
         >
             Import Book
-        </button>
-
-        <button
-            id="starterImportButton"
-            class="import-button"
-            style="margin-top:12px;background:transparent;color:inherit;border:1px solid rgba(128,128,128,.3);"
-        >
-            Import Starter Collection
         </button>
 
 
@@ -257,10 +264,10 @@
 
         <strong>Important:</strong>
 
-        StoryNest currently accepts only verified CC0 editions
-        from Standard Ebooks. Do not paste links from other
-        websites. The server verifies the source and records
-        the license information with every imported book.
+        Only import books whose license/public-domain
+        status you have verified and whose source permits
+        the intended redistribution. The importer does not
+        determine copyright status for you.
 
     </div>
 
