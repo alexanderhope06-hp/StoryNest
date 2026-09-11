@@ -1,5 +1,5 @@
 /* =====================================================
-   STORYNEST — PAGE BASED READER (FINAL)
+   STORYNEST — PAGE BASED READER
    ===================================================== */
 
 const params = new URLSearchParams(window.location.search);
@@ -20,29 +20,6 @@ const chapterHeader = document.getElementById("chapterHeader");
 const chapterTitle = document.getElementById("chapterTitle");
 const readerPageContent = document.getElementById("readerPageContent");
 const progressBar = document.getElementById("readingProgress");
-
-/* =====================================================
-   SCROLL LOCK
-   ===================================================== */
-
-function lockContentScroll() {
-    if (!readerPageContent) return;
-    readerPageContent.scrollTop = 0;
-    readerPageContent.scrollLeft = 0;
-
-    let el = readerPageContent.parentElement;
-    while (el) {
-        if (el.scrollTop) el.scrollTop = 0;
-        if (el.scrollLeft) el.scrollLeft = 0;
-        el = el.parentElement;
-    }
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-}
-
-window.addEventListener('scroll', lockContentScroll, { passive: true });
-document.addEventListener('scroll', lockContentScroll, { passive: true, capture: true });
 
 /* =====================================================
    START
@@ -94,6 +71,7 @@ async function loadNovel() {
             return;
         }
 
+        // Ensure valid chapter number
         if (chapterNumber < 1 || chapterNumber > chapters.length) {
             chapterNumber = 1;
         }
@@ -126,136 +104,106 @@ function displayChapter() {
 }
 
 /* =====================================================
-   BUILD PAGES — FINAL WORKING VERSION
+   BUILD PAGES
    ===================================================== */
-
-// Reserve this many lines at the bottom of every page as safety
-const LINE_SAFETY_MARGIN = 3;
 
 function buildPages(chapter) {
     pages = [];
     const content = chapter.content || "";
 
-    const contentEl = readerPageContent;
-    if (!contentEl) return;
+    // Get available height
+    const header = document.querySelector(".reader-header");
+    const headerHeight = header ? header.getBoundingClientRect().height : 64;
+    const bottomSpace = 70; // Ad space
+    const paddingSpace = 48;
+    const availableHeight = Math.max(
+        200,
+        window.innerHeight - headerHeight - bottomSpace - paddingSpace
+    );
 
-    // Apply the user's font size BEFORE measuring
-    const savedSize = localStorage.getItem('readerFontSize');
-    const fontSize = savedSize ? parseInt(savedSize) : 18;
-    contentEl.style.fontSize = fontSize + 'px';
+    // Create measurement container
+    const measure = document.createElement("div");
+    measure.className = "reader-measure";
+    measure.style.cssText = `
+        position: fixed;
+        left: -100000px;
+        top: 0;
+        width: min(900px, calc(100vw - 48px));
+        height: ${availableHeight}px;
+        visibility: hidden;
+        overflow: hidden;
+        box-sizing: border-box;
+        font-size: 18px;
+        line-height: 1.75;
+        font-family: Georgia, 'Times New Roman', serif;
+    `;
+    document.body.appendChild(measure);
 
-    // Clear
-    contentEl.innerHTML = "";
+    // Add chapter title
+    const titleEl = document.createElement("h1");
+    titleEl.className = "page-chapter-title";
+    titleEl.textContent = chapter.title || "";
+    measure.appendChild(titleEl);
 
-    // ---- Compute the max height we allow per page ----
-    const cs = getComputedStyle(contentEl);
-    const fontSizePx = parseFloat(cs.fontSize) || 18;
-    const lineHeightRaw = parseFloat(cs.lineHeight);
-    const lineHeightPx = isNaN(lineHeightRaw) ? fontSizePx * 1.75 : lineHeightRaw;
-    const safetyPx = lineHeightPx * LINE_SAFETY_MARGIN;
-
-    const visibleHeight = contentEl.clientHeight;
-    const maxContentHeight = Math.max(lineHeightPx * 3, visibleHeight - safetyPx);
-
-    // ---- Paragraphs ----
+    // Split into paragraphs
     const paragraphs = content
         .split(/\n\s*\n/)
         .map(p => p.trim())
         .filter(Boolean);
 
-    // ---- Page 1 starts with the chapter title ----
-    const titleText = chapter.title || "";
-    let currentPageHTML = titleText
-        ? `<h1 class="page-chapter-title">${escapeHTML(titleText)}</h1>`
-        : "";
+    let currentPageHTML = titleEl.outerHTML;
+    const testPage = document.createElement("div");
+    testPage.style.cssText = "width:100%;overflow:hidden;box-sizing:border-box;";
+    measure.innerHTML = "";
+    measure.appendChild(testPage);
+    testPage.innerHTML = currentPageHTML;
 
-    // ---- Helper: does the current DOM fit? ----
-    function fits() {
-        return contentEl.scrollHeight <= maxContentHeight;
-    }
-
-    // ---- Helper: flush current page, start fresh ----
-    function flushAndStartNew() {
-        if (currentPageHTML && currentPageHTML.trim()) {
-            pages.push(currentPageHTML);
-        }
-        currentPageHTML = "";
-    }
-
-    // ---- Main loop ----
-    for (const para of paragraphs) {
-        const words = para.split(/\s+/).filter(Boolean);
-
-        // --- Fast path: try the whole paragraph at once ---
-        const candidate = currentPageHTML + `<p>${escapeHTML(para)}</p>`;
-        contentEl.innerHTML = candidate;
-
-        if (fits()) {
-            currentPageHTML = candidate;
-            continue;
-        }
-
-        // --- Slow path: paragraph doesn't fit. Split word-by-word. ---
-        // First, see if the paragraph has ANY room on the current page.
-        contentEl.innerHTML = currentPageHTML;
-
-        let buffer = "";
+    for (const paragraph of paragraphs) {
+        const words = paragraph.split(/\s+/);
+        let currentParagraph = "";
 
         for (let i = 0; i < words.length; i++) {
             const word = words[i];
-            const candidateBuffer = buffer ? buffer + " " + word : word;
-            const candidateHTML = currentPageHTML + `<p>${escapeHTML(candidateBuffer)}</p>`;
+            const candidate = currentParagraph ? currentParagraph + " " + word : word;
+            const candidateHTML = `<p>${escapeHTML(candidate)}</p>`;
+            testPage.innerHTML = currentPageHTML + candidateHTML;
 
-            contentEl.innerHTML = candidateHTML;
-
-            if (fits()) {
-                buffer = candidateBuffer;
+            if (testPage.scrollHeight <= availableHeight) {
+                currentParagraph = candidate;
             } else {
-                // The word doesn't fit on this page.
-
-                // 1. Commit the buffer (if any) to this page.
-                if (buffer) {
-                    currentPageHTML += `<p>${escapeHTML(buffer)}</p>`;
-                    contentEl.innerHTML = currentPageHTML;
+                if (currentParagraph) {
+                    currentPageHTML += `<p>${escapeHTML(currentParagraph)}</p>`;
                 }
-
-                // 2. Flush the page (current page is done)
-                flushAndStartNew();
-
-                // 3. Start the new page with this word
-                buffer = word;
-                currentPageHTML = `<p>${escapeHTML(word)}</p>`;
-                contentEl.innerHTML = currentPageHTML;
+                pages.push(currentPageHTML);
+                currentPageHTML = `<p>${escapeHTML(word)}`;
+                currentParagraph = word;
+                testPage.innerHTML = currentPageHTML + "</p>";
             }
         }
 
-        // Paragraph done — commit the leftover buffer to the current page.
-        if (buffer) {
-            const tail = `<p>${escapeHTML(buffer)}</p>`;
-            if (!currentPageHTML.endsWith(tail)) {
-                currentPageHTML += tail;
-                contentEl.innerHTML = currentPageHTML;
+        if (currentParagraph) {
+            const finalHTML = `<p>${escapeHTML(currentParagraph)}</p>`;
+            testPage.innerHTML = currentPageHTML + finalHTML;
+            if (testPage.scrollHeight <= availableHeight) {
+                currentPageHTML = testPage.innerHTML;
+            } else {
+                pages.push(currentPageHTML);
+                currentPageHTML = finalHTML;
             }
         }
     }
 
-    // ---- Flush the last page ----
-    if (currentPageHTML && currentPageHTML.trim()) {
+    if (currentPageHTML.trim()) {
         pages.push(currentPageHTML);
     }
 
-    // ---- Clear ----
-    contentEl.innerHTML = "";
+    measure.remove();
 
-    // ---- Fallback ----
+    // Safety fallback
     if (pages.length === 0) {
-        pages.push(
-            `<h1 class="page-chapter-title">${escapeHTML(chapter.title || "")}</h1>` +
-            `<p>No content available.</p>`
-        );
+        pages.push(`<h1 class="page-chapter-title">${escapeHTML(chapter.title || "")}</h1><p>No content available.</p>`);
     }
 }
-
 
 /* =====================================================
    SHOW PAGE
@@ -264,39 +212,32 @@ function buildPages(chapter) {
 function showPage() {
     if (!pages.length) return;
 
+    // Apply current font size
     const savedSize = localStorage.getItem('readerFontSize');
     const fontSize = savedSize ? parseInt(savedSize) : 18;
 
-    readerPageContent.style.fontSize = fontSize + 'px';
     readerPageContent.innerHTML = pages[currentPage];
+    readerPageContent.style.fontSize = fontSize + 'px';
+    readerPageContent.scrollTop = 0;
 
-    lockContentScroll();
-    requestAnimationFrame(lockContentScroll);
+    // Apply font size to all paragraphs
+    const paragraphs = readerPageContent.querySelectorAll('p');
+    paragraphs.forEach(p => {
+        p.style.fontSize = fontSize + 'px';
+    });
 
+    // Progress bar
     if (progressBar) {
         const progress = ((currentPage + 1) / pages.length) * 100;
         progressBar.style.width = `${progress}%`;
     }
 
+    // Save position
     localStorage.setItem(
         `storynest-progress-${novelId}-${chapterNumber}`,
         currentPage
     );
 }
-
-/* =====================================================
-   REBUILD (for font-size changes)
-   ===================================================== */
-
-window.rebuildReaderPages = function () {
-    if (!chapters.length) return;
-    const chapter = chapters[chapterNumber - 1];
-    if (!chapter) return;
-    const savedPage = currentPage;
-    buildPages(chapter);
-    currentPage = Math.min(savedPage, pages.length - 1);
-    showPage();
-};
 
 /* =====================================================
    NAVIGATION
@@ -315,6 +256,7 @@ function nextPage() {
         return;
     }
 
+    // End of novel - go to details
     window.location.href = `novel.html?id=${encodeURIComponent(novelId)}`;
 }
 
@@ -439,6 +381,20 @@ window.addEventListener("popstate", function() {
 
 let positionRestored = false;
 
+function restorePosition() {
+    if (positionRestored) return;
+    const saved = localStorage.getItem(`storynest-progress-${novelId}-${chapterNumber}`);
+    if (saved !== null) {
+        const pos = parseInt(saved);
+        if (pos >= 0 && pos < pages.length) {
+            currentPage = pos;
+            showPage();
+            positionRestored = true;
+        }
+    }
+}
+
+// Override showPage to restore position
 const originalShowPage = showPage;
 showPage = function() {
     originalShowPage();

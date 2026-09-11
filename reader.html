@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reading — StoryNest</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/png" href="image/fav.png">
@@ -16,9 +16,6 @@
     ===================================================== -->
 
     <header class="reader-header">
-        <a href="index.html" class="logo">
-            <img src="image/fav.png" alt="StoryNest" class="logo-icon">
-        </a>
         <div class="reader-header-left">
             <a href="index.html" class="reader-back" title="Home">←</a>
             <div class="reader-header-info">
@@ -74,51 +71,165 @@
     <!-- Reader Menu & Controls -->
     <script>
         // =====================================================
-        // SCROLL LOCK (hard)
+        // MENU TOGGLE
         // =====================================================
-        // Some mobile browsers ignore overflow:hidden on body.
-        // This keeps the reader pinned so only page-turn gestures work.
 
-        (function lockScrolling() {
-            // Lock document scroll
-            document.documentElement.style.overflow = 'hidden';
-            document.documentElement.style.height = '100%';
-            document.body.style.overflow = 'hidden';
-            document.body.style.height = '100%';
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
-            document.body.style.top = '0';
-            document.body.style.left = '0';
-            document.body.style.right = '0';
-            document.body.style.bottom = '0';
-            document.body.style.overscrollBehavior = 'none';
+        function toggleReaderMenu(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('readerDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('active');
+            }
+        }
 
-            // Prevent wheel scrolling entirely
-            window.addEventListener('wheel', function (e) {
-                // Only block if the wheel is over the reader content area
-                if (e.target.closest('.reader-page-content, .reader-container')) {
-                    e.preventDefault();
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('readerDropdown');
+            const menuBtn = document.getElementById('readerMenuBtn');
+            if (dropdown && menuBtn && !dropdown.contains(e.target) && e.target !== menuBtn) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // =====================================================
+        // NAVIGATION
+        // =====================================================
+
+        function goToNovelDetails() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if (id) {
+                window.location.href = 'novel.html?id=' + id;
+            }
+        }
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        // =====================================================
+        // FONT SIZE
+        // =====================================================
+
+        let currentFontSize = parseInt(localStorage.getItem('readerFontSize')) || 18;
+
+        function toggleFontSize() {
+            const sizes = [16, 18, 20, 22, 24, 26];
+            let index = sizes.indexOf(currentFontSize);
+            if (index === -1 || index === sizes.length - 1) {
+                currentFontSize = sizes[0];
+            } else {
+                currentFontSize = sizes[index + 1];
+            }
+
+            applyFontSize(currentFontSize);
+            localStorage.setItem('readerFontSize', currentFontSize);
+
+            // Update menu text
+            const btn = document.getElementById('fontSizeBtn');
+            if (btn) {
+                btn.textContent = '🔤 ' + currentFontSize + 'px';
+                setTimeout(() => {
+                    btn.textContent = '🔤 ' + currentFontSize + 'px';
+                }, 100);
+            }
+        }
+
+        function applyFontSize(size) {
+            const content = document.querySelector('.reader-page-content');
+            const story = document.querySelector('.story');
+            const paragraphs = document.querySelectorAll('.reader-page-content p, .story p');
+
+            if (content) {
+                content.style.fontSize = size + 'px';
+            }
+            if (story) {
+                story.style.fontSize = size + 'px';
+            }
+            paragraphs.forEach(p => {
+                p.style.fontSize = size + 'px';
+            });
+        }
+
+        // =====================================================
+        // THEME (Dark / Light)
+        // =====================================================
+
+        let currentTheme = localStorage.getItem('readerTheme') || 'light';
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+
+            if (currentTheme === 'light') {
+                body.classList.add('dark-theme');
+                currentTheme = 'dark';
+                if (btn) btn.textContent = '☀️ Light Mode';
+            } else {
+                body.classList.remove('dark-theme');
+                currentTheme = 'light';
+                if (btn) btn.textContent = '🌙 Dark Mode';
+            }
+
+            localStorage.setItem('readerTheme', currentTheme);
+        }
+
+        function applyTheme(theme) {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+
+            if (theme === 'dark') {
+                body.classList.add('dark-theme');
+                if (btn) btn.textContent = '☀️ Light Mode';
+            } else {
+                body.classList.remove('dark-theme');
+                if (btn) btn.textContent = '🌙 Dark Mode';
+            }
+            currentTheme = theme;
+        }
+
+        // =====================================================
+        // RESTORE PREFERENCES
+        // =====================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Restore font size
+            const savedSize = localStorage.getItem('readerFontSize');
+            if (savedSize) {
+                currentFontSize = parseInt(savedSize);
+                applyFontSize(currentFontSize);
+                const btn = document.getElementById('fontSizeBtn');
+                if (btn) {
+                    btn.textContent = '🔤 ' + currentFontSize + 'px';
                 }
-            }, { passive: false });
+            }
 
-            // Prevent touchmove scrolling inside the reader
-            window.addEventListener('touchmove', function (e) {
-                if (e.target.closest('.reader-page-content, .reader-container, .reader-ad-space')) {
-                    // Allow horizontal swipes (page turns) but block vertical
-                    const t = e.touches[0];
-                    if (!t) return;
-                    // If we can't detect direction here, just block.
-                    // Horizontal swipe detection happens in touchend in reader.js.
-                    e.preventDefault();
+            // Restore theme
+            const savedTheme = localStorage.getItem('readerTheme');
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            }
+
+            // Hide chapter progress counter on mobile
+            const progressEl = document.querySelector('.chapter-progress');
+            if (progressEl && window.innerWidth < 768) {
+                progressEl.style.display = 'none';
+            }
+        });
+
+        // Handle resize for chapter progress visibility
+        window.addEventListener('resize', function() {
+            const progressEl = document.querySelector('.chapter-progress');
+            if (progressEl) {
+                if (window.innerWidth < 768) {
+                    progressEl.style.display = 'none';
+                } else {
+                    progressEl.style.display = 'block';
                 }
-            }, { passive: false });
+            }
+        });
 
-            // Prevent keyboard scroll keys from moving the page
-            window.addEventListener('keydown', function (e) {
-                const scrollKeys = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '];
-                if (scrollKeys.includes(e.key)) {
-                    const el = document.activeElement;
-                    const tag = el ? el.tagName : '';
-                    if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
-                        e.preventDefault();
-                    }
+        console.log('📖 Reader controls loaded successfully.');
+    </script>
+
+</body>
+</html>
