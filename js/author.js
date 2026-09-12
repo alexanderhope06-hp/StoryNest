@@ -420,3 +420,74 @@ function escapeHTML(value) {
     div.textContent = value ?? '';
     return div.innerHTML;
 }
+
+
+
+
+
+
+
+
+// ============================================
+// SHOW WISDOM STUDIO FOR ADMIN ONLY
+// ============================================
+
+async function checkWisdomStudioAccess() {
+
+    const wisdomButton =
+        document.getElementById("wisdomStudioButton");
+
+    if (!wisdomButton) return;
+
+    try {
+
+        const {
+            data: { user },
+            error
+        } = await supabase.auth.getUser();
+
+
+        if (error || !user) {
+            return;
+        }
+
+
+        const {
+            data,
+            error: adminError
+        } = await supabase.rpc(
+            "is_wisdom_admin"
+        );
+
+
+        if (adminError) {
+
+            console.error(
+                "Wisdom admin check failed:",
+                adminError
+            );
+
+            return;
+        }
+
+
+        if (data === true) {
+
+            wisdomButton.style.display =
+                "inline-block";
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Wisdom access error:",
+            error
+        );
+
+    }
+}
+
+
+// Run after Author Studio loads
+checkWisdomStudioAccess();

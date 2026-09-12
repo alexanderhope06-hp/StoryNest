@@ -1,4 +1,3 @@
-```javascript
 // ============================================
 // STORYNEST WISDOM STUDIO
 // ============================================
@@ -632,4 +631,3 @@ function showMessage(text, type) {
     await loadPosts();
 
 })();
-```
