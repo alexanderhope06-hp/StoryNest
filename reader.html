@@ -68,168 +68,134 @@
     <script src="js/supabase.js"></script>
     <script src="js/reader.js"></script>
 
-    <!-- Reader Menu & Controls -->
-    <script>
-        // =====================================================
-        // MENU TOGGLE
-        // =====================================================
+<!-- Reader Menu & Controls -->
+<script>
+    // =====================================================
+    // MENU TOGGLE
+    // =====================================================
 
-        function toggleReaderMenu(event) {
-            event.stopPropagation();
-            const dropdown = document.getElementById('readerDropdown');
-            if (dropdown) {
-                dropdown.classList.toggle('active');
-            }
+    function toggleReaderMenu(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('readerDropdown');
+        if (dropdown) {
+            dropdown.classList.toggle('active');
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        const dropdown = document.getElementById('readerDropdown');
+        const menuBtn = document.getElementById('readerMenuBtn');
+        if (dropdown && menuBtn && !dropdown.contains(e.target) && e.target !== menuBtn) {
+            dropdown.classList.remove('active');
+        }
+    });
+
+    // =====================================================
+    // NAVIGATION
+    // =====================================================
+
+    function goToNovelDetails() {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        if (id) {
+            window.location.href = 'novel.html?id=' + id;
+        }
+    }
+
+    function goHome() {
+        window.location.href = 'index.html';
+    }
+
+    // =====================================================
+    // FONT SIZE
+    // =====================================================
+
+    let currentFontSize = parseInt(localStorage.getItem('readerFontSize')) || 18;
+
+    function toggleFontSize() {
+        const sizes = [16, 18, 20, 22, 24, 26];
+        let index = sizes.indexOf(currentFontSize);
+        if (index === -1 || index === sizes.length - 1) {
+            currentFontSize = sizes[0];
+        } else {
+            currentFontSize = sizes[index + 1];
         }
 
-        document.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('readerDropdown');
-            const menuBtn = document.getElementById('readerMenuBtn');
-            if (dropdown && menuBtn && !dropdown.contains(e.target) && e.target !== menuBtn) {
-                dropdown.classList.remove('active');
-            }
-        });
+        applyFontSize(currentFontSize);
+        localStorage.setItem('readerFontSize', currentFontSize);
 
-        // =====================================================
-        // NAVIGATION
-        // =====================================================
+        const btn = document.getElementById('fontSizeBtn');
+        if (btn) {
+            btn.textContent = '🔤 ' + currentFontSize + 'px';
+        }
+    }
 
-        function goToNovelDetails() {
-            const params = new URLSearchParams(window.location.search);
-            const id = params.get('id');
-            if (id) {
-                window.location.href = 'novel.html?id=' + id;
-            }
+    function applyFontSize(size) {
+        const content = document.querySelector('.reader-page-content');
+        const story = document.querySelector('.story');
+        const paragraphs = document.querySelectorAll('.reader-page-content p, .story p');
+
+        if (content) content.style.fontSize = size + 'px';
+        if (story) story.style.fontSize = size + 'px';
+        paragraphs.forEach(p => p.style.fontSize = size + 'px');
+    }
+
+    // =====================================================
+    // THEME (Dark / Light)
+    // =====================================================
+
+    let currentTheme = localStorage.getItem('readerTheme') || 'light';
+
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.getElementById('themeBtn');
+
+        if (currentTheme === 'light') {
+            body.classList.add('dark-theme');
+            currentTheme = 'dark';
+            if (btn) btn.textContent = '☀️ Light Mode';
+        } else {
+            body.classList.remove('dark-theme');
+            currentTheme = 'light';
+            if (btn) btn.textContent = '🌙 Dark Mode';
         }
 
-        function goHome() {
-            window.location.href = 'index.html';
+        localStorage.setItem('readerTheme', currentTheme);
+    }
+
+    function applyTheme(theme) {
+        const body = document.body;
+        const btn = document.getElementById('themeBtn');
+
+        if (theme === 'dark') {
+            body.classList.add('dark-theme');
+            if (btn) btn.textContent = '☀️ Light Mode';
+        } else {
+            body.classList.remove('dark-theme');
+            if (btn) btn.textContent = '🌙 Dark Mode';
         }
+        currentTheme = theme;
+    }
 
-        // =====================================================
-        // FONT SIZE
-        // =====================================================
+    // =====================================================
+    // RESTORE PREFERENCES
+    // =====================================================
 
-        let currentFontSize = parseInt(localStorage.getItem('readerFontSize')) || 18;
-
-        function toggleFontSize() {
-            const sizes = [16, 18, 20, 22, 24, 26];
-            let index = sizes.indexOf(currentFontSize);
-            if (index === -1 || index === sizes.length - 1) {
-                currentFontSize = sizes[0];
-            } else {
-                currentFontSize = sizes[index + 1];
-            }
-
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedSize = localStorage.getItem('readerFontSize');
+        if (savedSize) {
+            currentFontSize = parseInt(savedSize);
             applyFontSize(currentFontSize);
-            localStorage.setItem('readerFontSize', currentFontSize);
-
-            // Update menu text
             const btn = document.getElementById('fontSizeBtn');
-            if (btn) {
-                btn.textContent = '🔤 ' + currentFontSize + 'px';
-                setTimeout(() => {
-                    btn.textContent = '🔤 ' + currentFontSize + 'px';
-                }, 100);
-            }
+            if (btn) btn.textContent = '🔤 ' + currentFontSize + 'px';
         }
 
-        function applyFontSize(size) {
-            const content = document.querySelector('.reader-page-content');
-            const story = document.querySelector('.story');
-            const paragraphs = document.querySelectorAll('.reader-page-content p, .story p');
+        const savedTheme = localStorage.getItem('readerTheme');
+        if (savedTheme) applyTheme(savedTheme);
+    });
 
-            if (content) {
-                content.style.fontSize = size + 'px';
-            }
-            if (story) {
-                story.style.fontSize = size + 'px';
-            }
-            paragraphs.forEach(p => {
-                p.style.fontSize = size + 'px';
-            });
-        }
-
-        // =====================================================
-        // THEME (Dark / Light)
-        // =====================================================
-
-        let currentTheme = localStorage.getItem('readerTheme') || 'light';
-
-        function toggleTheme() {
-            const body = document.body;
-            const btn = document.getElementById('themeBtn');
-
-            if (currentTheme === 'light') {
-                body.classList.add('dark-theme');
-                currentTheme = 'dark';
-                if (btn) btn.textContent = '☀️ Light Mode';
-            } else {
-                body.classList.remove('dark-theme');
-                currentTheme = 'light';
-                if (btn) btn.textContent = '🌙 Dark Mode';
-            }
-
-            localStorage.setItem('readerTheme', currentTheme);
-        }
-
-        function applyTheme(theme) {
-            const body = document.body;
-            const btn = document.getElementById('themeBtn');
-
-            if (theme === 'dark') {
-                body.classList.add('dark-theme');
-                if (btn) btn.textContent = '☀️ Light Mode';
-            } else {
-                body.classList.remove('dark-theme');
-                if (btn) btn.textContent = '🌙 Dark Mode';
-            }
-            currentTheme = theme;
-        }
-
-        // =====================================================
-        // RESTORE PREFERENCES
-        // =====================================================
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Restore font size
-            const savedSize = localStorage.getItem('readerFontSize');
-            if (savedSize) {
-                currentFontSize = parseInt(savedSize);
-                applyFontSize(currentFontSize);
-                const btn = document.getElementById('fontSizeBtn');
-                if (btn) {
-                    btn.textContent = '🔤 ' + currentFontSize + 'px';
-                }
-            }
-
-            // Restore theme
-            const savedTheme = localStorage.getItem('readerTheme');
-            if (savedTheme) {
-                applyTheme(savedTheme);
-            }
-
-            // Hide chapter progress counter on mobile
-            const progressEl = document.querySelector('.chapter-progress');
-            if (progressEl && window.innerWidth < 768) {
-                progressEl.style.display = 'none';
-            }
-        });
-
-        // Handle resize for chapter progress visibility
-        window.addEventListener('resize', function() {
-            const progressEl = document.querySelector('.chapter-progress');
-            if (progressEl) {
-                if (window.innerWidth < 768) {
-                    progressEl.style.display = 'none';
-                } else {
-                    progressEl.style.display = 'block';
-                }
-            }
-        });
-
-        console.log('📖 Reader controls loaded successfully.');
-    </script>
+    console.log('📖 Reader controls loaded successfully.');
+</script>
 
 </body>
 </html>

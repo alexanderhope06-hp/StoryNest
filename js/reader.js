@@ -1,5 +1,5 @@
 /* =====================================================
-   STORYNEST — PAGE BASED READER
+   STORYNEST — SCROLLING READER WITH CHAPTER NAVIGATION
    ===================================================== */
 
 const params = new URLSearchParams(window.location.search);
@@ -8,8 +8,7 @@ let chapterNumber = Number(params.get("chapter")) || 1;
 
 let novel = null;
 let chapters = [];
-let pages = [];
-let currentPage = 0;
+let currentChapterData = null;
 
 /* =====================================================
    ELEMENTS
@@ -86,259 +85,249 @@ async function loadNovel() {
 }
 
 /* =====================================================
-   DISPLAY CHAPTER
+   DISPLAY CHAPTER (Full scrollable content)
    ===================================================== */
 
 function displayChapter() {
     const chapter = chapters[chapterNumber - 1];
     if (!chapter) return;
 
+    currentChapterData = chapter;
+
     chapterHeader.textContent = `Chapter ${chapter.chapter_number}`;
     chapterTitle.textContent = chapter.title || "";
     document.title = `${chapter.title} — ${novel.title}`;
 
-    buildPages(chapter);
-    currentPage = 0;
-    updateURL();
-    showPage();
-}
-
-/* =====================================================
-   BUILD PAGES
-   ===================================================== */
-
-function buildPages(chapter) {
-    pages = [];
+    // Build the full chapter HTML
     const content = chapter.content || "";
-
-    // Get available height
-    const header = document.querySelector(".reader-header");
-    const headerHeight = header ? header.getBoundingClientRect().height : 64;
-    const bottomSpace = 70; // Ad space
-    const paddingSpace = 48;
-    const availableHeight = Math.max(
-        200,
-        window.innerHeight - headerHeight - bottomSpace - paddingSpace
-    );
-
-    // Create measurement container
-    const measure = document.createElement("div");
-    measure.className = "reader-measure";
-    measure.style.cssText = `
-        position: fixed;
-        left: -100000px;
-        top: 0;
-        width: min(900px, calc(100vw - 48px));
-        height: ${availableHeight}px;
-        visibility: hidden;
-        overflow: hidden;
-        box-sizing: border-box;
-        font-size: 18px;
-        line-height: 1.75;
-        font-family: Georgia, 'Times New Roman', serif;
-    `;
-    document.body.appendChild(measure);
-
-    // Add chapter title
-    const titleEl = document.createElement("h1");
-    titleEl.className = "page-chapter-title";
-    titleEl.textContent = chapter.title || "";
-    measure.appendChild(titleEl);
-
-    // Split into paragraphs
     const paragraphs = content
         .split(/\n\s*\n/)
         .map(p => p.trim())
         .filter(Boolean);
 
-    let currentPageHTML = titleEl.outerHTML;
-    const testPage = document.createElement("div");
-    testPage.style.cssText = "width:100%;overflow:hidden;box-sizing:border-box;";
-    measure.innerHTML = "";
-    measure.appendChild(testPage);
-    testPage.innerHTML = currentPageHTML;
+    let html = `<h1 id="chapterTitle">${escapeHTML(chapter.title || "")}</h1>`;
+    html += `<div class="story" id="storyContent">`;
+    paragraphs.forEach(p => {
+        html += `<p>${escapeHTML(p)}</p>`;
+    });
+    html += `</div>`;
 
-    for (const paragraph of paragraphs) {
-        const words = paragraph.split(/\s+/);
-        let currentParagraph = "";
+    readerPageContent.innerHTML = html;
 
-        for (let i = 0; i < words.length; i++) {
-            const word = words[i];
-            const candidate = currentParagraph ? currentParagraph + " " + word : word;
-            const candidateHTML = `<p>${escapeHTML(candidate)}</p>`;
-            testPage.innerHTML = currentPageHTML + candidateHTML;
-
-            if (testPage.scrollHeight <= availableHeight) {
-                currentParagraph = candidate;
-            } else {
-                if (currentParagraph) {
-                    currentPageHTML += `<p>${escapeHTML(currentParagraph)}</p>`;
-                }
-                pages.push(currentPageHTML);
-                currentPageHTML = `<p>${escapeHTML(word)}`;
-                currentParagraph = word;
-                testPage.innerHTML = currentPageHTML + "</p>";
-            }
-        }
-
-        if (currentParagraph) {
-            const finalHTML = `<p>${escapeHTML(currentParagraph)}</p>`;
-            testPage.innerHTML = currentPageHTML + finalHTML;
-            if (testPage.scrollHeight <= availableHeight) {
-                currentPageHTML = testPage.innerHTML;
-            } else {
-                pages.push(currentPageHTML);
-                currentPageHTML = finalHTML;
-            }
-        }
-    }
-
-    if (currentPageHTML.trim()) {
-        pages.push(currentPageHTML);
-    }
-
-    measure.remove();
-
-    // Safety fallback
-    if (pages.length === 0) {
-        pages.push(`<h1 class="page-chapter-title">${escapeHTML(chapter.title || "")}</h1><p>No content available.</p>`);
-    }
-}
-
-/* =====================================================
-   SHOW PAGE
-   ===================================================== */
-
-function showPage() {
-    if (!pages.length) return;
-
-    // Apply current font size
+    // Apply saved font size
     const savedSize = localStorage.getItem('readerFontSize');
     const fontSize = savedSize ? parseInt(savedSize) : 18;
-
-    readerPageContent.innerHTML = pages[currentPage];
     readerPageContent.style.fontSize = fontSize + 'px';
-    readerPageContent.scrollTop = 0;
-
-    // Apply font size to all paragraphs
-    const paragraphs = readerPageContent.querySelectorAll('p');
-    paragraphs.forEach(p => {
+    readerPageContent.querySelectorAll('p').forEach(p => {
         p.style.fontSize = fontSize + 'px';
     });
 
-    // Progress bar
-    if (progressBar) {
-        const progress = ((currentPage + 1) / pages.length) * 100;
-        progressBar.style.width = `${progress}%`;
-    }
+    // Update URL
+    updateURL();
 
-    // Save position
+    // Restore scroll position
+    restoreScrollPosition();
+
+    // Update progress bar on scroll
+    updateProgressBar();
+
+    // Scroll to top if new chapter
+    window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+/* =====================================================
+   SCROLL POSITION MANAGEMENT
+   ===================================================== */
+
+function saveScrollPosition() {
+    if (!novelId || !currentChapterData) return;
+    const scrollY = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const percent = maxScroll > 0 ? scrollY / maxScroll : 0;
+
     localStorage.setItem(
-        `storynest-progress-${novelId}-${chapterNumber}`,
-        currentPage
+        `storynest-scroll-${novelId}-${chapterNumber}`,
+        JSON.stringify({ scrollY, percent, timestamp: Date.now() })
     );
 }
 
+function restoreScrollPosition() {
+    if (!novelId) return;
+
+    const saved = localStorage.getItem(`storynest-scroll-${novelId}-${chapterNumber}`);
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            // Only restore if saved recently (within 30 days)
+            if (data.timestamp && Date.now() - data.timestamp < 30 * 24 * 60 * 60 * 1000) {
+                requestAnimationFrame(() => {
+                    if (data.percent !== undefined && data.percent > 0) {
+                        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                        window.scrollTo({ top: data.percent * maxScroll, behavior: 'instant' });
+                    } else if (data.scrollY) {
+                        window.scrollTo({ top: data.scrollY, behavior: 'instant' });
+                    }
+                });
+            }
+        } catch (e) {
+            // Ignore parse errors
+        }
+    }
+}
+
 /* =====================================================
-   NAVIGATION
+   PROGRESS BAR
    ===================================================== */
 
-function nextPage() {
-    if (currentPage < pages.length - 1) {
-        currentPage++;
-        showPage();
-        return;
-    }
+function updateProgressBar() {
+    if (!progressBar) return;
+    const scrollY = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = maxScroll > 0 ? (scrollY / maxScroll) * 100 : 100;
+    progressBar.style.width = `${progress}%`;
+}
 
+/* =====================================================
+   CHAPTER NAVIGATION
+   ===================================================== */
+
+function nextChapter() {
     if (chapterNumber < chapters.length) {
         chapterNumber++;
         displayChapter();
-        return;
+    } else {
+        // At last chapter - go to novel details
+        window.location.href = `novel.html?id=${encodeURIComponent(novelId)}`;
     }
-
-    // End of novel - go to details
-    window.location.href = `novel.html?id=${encodeURIComponent(novelId)}`;
 }
 
-function previousPage() {
-    if (currentPage > 0) {
-        currentPage--;
-        showPage();
-        return;
-    }
-
+function previousChapter() {
     if (chapterNumber > 1) {
         chapterNumber--;
         displayChapter();
-        setTimeout(() => {
-            currentPage = pages.length - 1;
-            showPage();
-        }, 50);
     }
 }
 
 /* =====================================================
-   KEYBOARD
+   KEYBOARD NAVIGATION (Arrow keys for chapters)
    ===================================================== */
 
 document.addEventListener("keydown", function(event) {
     if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA") return;
 
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+    // Left arrow / Up arrow = previous chapter
+    if (event.key === "ArrowLeft") {
         event.preventDefault();
-        nextPage();
+        previousChapter();
     }
 
-    if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+    // Right arrow / Down arrow = next chapter
+    if (event.key === "ArrowRight") {
         event.preventDefault();
-        previousPage();
+        nextChapter();
     }
 
-    if (event.key === " " && event.target === document.body) {
-        event.preventDefault();
-        nextPage();
+    // PageUp / PageDown still work for scrolling
+    if (event.key === "PageUp" || event.key === "PageDown") {
+        // Let default scrolling happen
+        return;
     }
 });
 
 /* =====================================================
-   TOUCH / SWIPE
+   SWIPE NAVIGATION (Horizontal swipe = chapter change)
    ===================================================== */
 
 let touchStartX = 0;
 let touchStartY = 0;
+let touchStartTime = 0;
+let isSwiping = false;
 
 document.addEventListener("touchstart", function(event) {
     if (!event.touches.length) return;
     touchStartX = event.touches[0].clientX;
     touchStartY = event.touches[0].clientY;
+    touchStartTime = Date.now();
+    isSwiping = false;
+}, { passive: true });
+
+document.addEventListener("touchmove", function(event) {
+    if (!event.touches.length) return;
+    
+    const deltaX = Math.abs(event.touches[0].clientX - touchStartX);
+    const deltaY = Math.abs(event.touches[0].clientY - touchStartY);
+    
+    // If horizontal movement is greater than vertical, it's a swipe
+    if (deltaX > deltaY && deltaX > 10) {
+        isSwiping = true;
+    }
 }, { passive: true });
 
 document.addEventListener("touchend", function(event) {
     if (!event.changedTouches.length) return;
+    
     const touch = event.changedTouches[0];
     const deltaX = touch.clientX - touchStartX;
     const deltaY = touch.clientY - touchStartY;
-
-    if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY)) return;
-
-    if (deltaX < 0) nextPage();
-    if (deltaX > 0) previousPage();
+    const deltaTime = Date.now() - touchStartTime;
+    
+    // Only trigger if it's a quick horizontal swipe
+    if (deltaTime > 500) return; // Too slow, probably scrolling
+    if (Math.abs(deltaX) < 50) return; // Too small
+    if (Math.abs(deltaX) < Math.abs(deltaY)) return; // Mostly vertical
+    
+    // Prevent default only for horizontal swipes
+    if (isSwiping) {
+        if (deltaX < 0) {
+            // Swiped left = next chapter
+            nextChapter();
+        } else {
+            // Swiped right = previous chapter
+            previousChapter();
+        }
+    }
 }, { passive: true });
 
 /* =====================================================
-   TAP
+   BUTTON NAVIGATION (for desktop)
    ===================================================== */
 
-document.addEventListener("click", function(event) {
-    if (event.target.closest("button, a, .reader-dropdown, .reader-menu-btn")) return;
+// Add navigation buttons if they don't exist
+function createNavigationButtons() {
+    const existing = document.querySelector('.chapter-nav-buttons');
+    if (existing) return;
 
-    const width = window.innerWidth;
-    if (event.clientX < width * 0.30) {
-        previousPage();
-    } else if (event.clientX > width * 0.70) {
-        nextPage();
+    const nav = document.createElement('div');
+    nav.className = 'chapter-nav-buttons';
+    nav.innerHTML = `
+        <button class="chapter-nav-btn prev-btn" onclick="previousChapter()" title="Previous Chapter (←)">
+            ← Previous
+        </button>
+        <button class="chapter-nav-btn next-btn" onclick="nextChapter()" title="Next Chapter (→)">
+            Next →
+        </button>
+    `;
+    
+    // Insert after the reader container
+    const container = document.querySelector('.reader-container');
+    if (container) {
+        container.appendChild(nav);
     }
-});
+}
+
+/* =====================================================
+   SCROLL LISTENER
+   ===================================================== */
+
+let scrollTimeout;
+window.addEventListener('scroll', function() {
+    // Update progress bar immediately
+    updateProgressBar();
+    
+    // Debounce save scroll position
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(saveScrollPosition, 200);
+}, { passive: true });
 
 /* =====================================================
    RESIZE
@@ -348,13 +337,17 @@ let resizeTimer;
 window.addEventListener("resize", function() {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function() {
-        const oldPage = currentPage;
-        displayChapter();
-        if (pages.length) {
-            currentPage = Math.min(oldPage, pages.length - 1);
-            showPage();
+        // Re-apply font size on resize
+        const savedSize = localStorage.getItem('readerFontSize');
+        const fontSize = savedSize ? parseInt(savedSize) : 18;
+        if (readerPageContent) {
+            readerPageContent.style.fontSize = fontSize + 'px';
+            readerPageContent.querySelectorAll('p').forEach(p => {
+                p.style.fontSize = fontSize + 'px';
+            });
         }
-    }, 300);
+        updateProgressBar();
+    }, 200);
 });
 
 /* =====================================================
@@ -376,46 +369,13 @@ window.addEventListener("popstate", function() {
 });
 
 /* =====================================================
-   RESTORE POSITION
+   INITIALIZATION
    ===================================================== */
 
-let positionRestored = false;
-
-function restorePosition() {
-    if (positionRestored) return;
-    const saved = localStorage.getItem(`storynest-progress-${novelId}-${chapterNumber}`);
-    if (saved !== null) {
-        const pos = parseInt(saved);
-        if (pos >= 0 && pos < pages.length) {
-            currentPage = pos;
-            showPage();
-            positionRestored = true;
-        }
-    }
-}
-
-// Override showPage to restore position
-const originalShowPage = showPage;
-showPage = function() {
-    originalShowPage();
-    if (!positionRestored) {
-        const saved = localStorage.getItem(`storynest-progress-${novelId}-${chapterNumber}`);
-        if (saved !== null) {
-            const pos = parseInt(saved);
-            if (pos >= 0 && pos < pages.length && pos !== currentPage) {
-                setTimeout(() => {
-                    currentPage = pos;
-                    originalShowPage();
-                    positionRestored = true;
-                }, 100);
-            } else {
-                positionRestored = true;
-            }
-        } else {
-            positionRestored = true;
-        }
-    }
-};
+document.addEventListener('DOMContentLoaded', function() {
+    // Create navigation buttons
+    setTimeout(createNavigationButtons, 100);
+});
 
 /* =====================================================
    ERROR
@@ -428,7 +388,7 @@ function showError(message) {
         readerPageContent.innerHTML = `
             <div style="text-align:center;padding:80px 20px;">
                 <div style="font-size:4rem;margin-bottom:20px;">📖</div>
-                <h3 style="font-size:1.5rem;margin-bottom:12px;color:#222;">Something went wrong</h3>
+                <h3 style="font-size:1.5rem;margin-bottom:12px;">Something went wrong</h3>
                 <p style="color:#888;margin-bottom:16px;">${escapeHTML(message)}</p>
                 <a href="index.html" class="primary-btn" style="display:inline-block;">Return Home</a>
             </div>
@@ -445,3 +405,7 @@ function escapeHTML(value) {
     div.textContent = value ?? "";
     return div.innerHTML;
 }
+
+// Make functions globally available
+window.nextChapter = nextChapter;
+window.previousChapter = previousChapter;
