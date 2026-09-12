@@ -4,16 +4,24 @@ const novelsContainer = document.getElementById("allNovels");
 const novelCount = document.getElementById("novelCount");
 const emptyState = document.getElementById("emptyState");
 
-const genreButtons = document.querySelectorAll(".novel-filters .genre-btn");
+const genreButtons = document.querySelectorAll(
+    ".novel-filters .genre-btn"
+);
+
+const searchBtn = document.getElementById("searchBtn");
+const searchPanel = document.getElementById("searchPanel");
+const searchInput = document.getElementById("searchInput");
 
 let allNovels = [];
 
 
 // =====================================================
-// LOAD ALL PUBLISHED NOVELS
+// LOAD PUBLISHED NOVELS
 // =====================================================
 
 async function loadNovels() {
+
+    console.log("Loading published novels...");
 
     novelsContainer.innerHTML = `
         <div class="loading-message">
@@ -25,25 +33,30 @@ async function loadNovels() {
         .from("novels")
         .select("*")
         .eq("status", "published")
-        .order("created_at", { ascending: false });
+        .order("created_at", {
+            ascending: false
+        });
 
 
     if (error) {
 
-        console.error("Error loading novels:", error);
+        console.error("SUPABASE ERROR:", error);
 
         novelsContainer.innerHTML = `
             <div class="loading-message">
-                Unable to load novels right now.
-                Please try again later.
+                Unable to load novels.
+                <br><br>
+                ${escapeHTML(error.message)}
             </div>
         `;
 
-        novelCount.textContent = "Unable to load novels";
+        novelCount.textContent = "Error loading novels";
 
         return;
     }
 
+
+    console.log("Published novels:", data);
 
     allNovels = data || [];
 
@@ -59,8 +72,13 @@ function displayNovels(novels) {
 
     novelsContainer.innerHTML = "";
 
+
     novelCount.textContent =
-        `${novels.length} ${novels.length === 1 ? "novel" : "novels"} available`;
+        `${novels.length} ${
+            novels.length === 1
+                ? "novel"
+                : "novels"
+        } available`;
 
 
     if (novels.length === 0) {
@@ -94,7 +112,9 @@ function displayNovels(novels) {
 
                 <img
                     src="${escapeHTML(cover)}"
-                    alt="${escapeHTML(novel.title || "Novel")}"
+                    alt="${escapeHTML(
+                        novel.title || "Novel"
+                    )}"
                     loading="lazy"
                 >
 
@@ -104,15 +124,19 @@ function displayNovels(novels) {
             <div class="novel-info">
 
                 <h3>
-                    ${escapeHTML(novel.title || "Untitled Novel")}
+                    ${escapeHTML(
+                        novel.title || "Untitled Novel"
+                    )}
                 </h3>
 
                 <p class="novel-author">
-                    ${escapeHTML(novel.author_name || "StoryNest Author")}
+                    StoryNest Author
                 </p>
 
                 <span class="novel-genre">
-                    ${escapeHTML(novel.genre || "General")}
+                    ${escapeHTML(
+                        novel.genre || "General"
+                    )}
                 </span>
 
             </div>
@@ -155,9 +179,11 @@ genreButtons.forEach(button => {
 
 
         const filteredNovels =
-            allNovels.filter(novel =>
-                novel.genre === selectedGenre
-            );
+            allNovels.filter(novel => {
+
+                return novel.genre === selectedGenre;
+
+            });
 
 
         displayNovels(filteredNovels);
@@ -168,13 +194,8 @@ genreButtons.forEach(button => {
 
 
 // =====================================================
-// SEARCH
+// SEARCH BUTTON
 // =====================================================
-
-const searchBtn = document.getElementById("searchBtn");
-const searchPanel = document.getElementById("searchPanel");
-const searchInput = document.getElementById("searchInput");
-
 
 if (searchBtn) {
 
@@ -182,14 +203,23 @@ if (searchBtn) {
 
         searchPanel.classList.toggle("active");
 
-        if (searchPanel.classList.contains("active")) {
+        if (
+            searchPanel.classList.contains("active")
+            && searchInput
+        ) {
+
             searchInput.focus();
+
         }
 
     });
 
 }
 
+
+// =====================================================
+// SEARCH NOVELS
+// =====================================================
 
 if (searchInput) {
 
@@ -213,13 +243,17 @@ if (searchInput) {
             allNovels.filter(novel => {
 
                 const title =
-                    (novel.title || "").toLowerCase();
+                    (novel.title || "")
+                        .toLowerCase();
 
                 const genre =
-                    (novel.genre || "").toLowerCase();
+                    (novel.genre || "")
+                        .toLowerCase();
 
                 const description =
-                    (novel.description || "").toLowerCase();
+                    (novel.description || "")
+                        .toLowerCase();
+
 
                 return (
                     title.includes(searchTerm) ||
@@ -238,7 +272,7 @@ if (searchInput) {
 
 
 // =====================================================
-// BASIC HTML ESCAPING
+// ESCAPE HTML
 // =====================================================
 
 function escapeHTML(value) {

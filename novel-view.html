@@ -18,24 +18,62 @@
     <header class="navbar">
 
         <a href="index.html" class="logo">
-            <img src="image/fav.png" alt="StoryNest" class="logo-icon">
+            <img
+                src="image/fav.png"
+                alt="StoryNest"
+                class="logo-icon"
+            >
+
             Story<span>Nest</span>
         </a>
 
+
         <nav class="nav-links">
-            <a href="index.html#home">Home</a>
-            <a href="index.html#trending">Trending</a>
-            <a href="index.html#wisdom">Wisdom</a>
-            <a href="index.html#genres">Genres</a>
-            <a href="index.html#new">New Releases</a>
+
+            <a href="index.html#home">
+                Home
+            </a>
+
+            <a href="index.html#trending">
+                Trending
+            </a>
+
+            <a href="index.html#wisdom">
+                Wisdom
+            </a>
+
+            <a href="index.html#genres">
+                Genres
+            </a>
+
+            <a href="index.html#new">
+                New Releases
+            </a>
+
         </nav>
 
+
         <div class="nav-actions">
-            <button class="search-btn" id="searchBtn">🔍</button>
+
+            <button
+                class="search-btn"
+                id="searchBtn"
+                type="button"
+                aria-label="Search"
+            >
+                🔍
+            </button>
+
 
             <a href="login.html">
-                <button class="login-btn">Login</button>
+                <button
+                    class="login-btn"
+                    type="button"
+                >
+                    Login
+                </button>
             </a>
+
         </div>
 
     </header>
@@ -43,88 +81,153 @@
 
     <!-- ================= SEARCH ================= -->
 
-    <div class="search-panel" id="searchPanel">
+    <div
+        class="search-panel"
+        id="searchPanel"
+    >
 
         <input
             type="text"
             id="searchInput"
-            placeholder="Search novels by title, author, genre..."
+            placeholder="Search novels by title, genre..."
             autocomplete="off"
         >
 
     </div>
 
 
-    <!-- ================= PAGE HEADER ================= -->
+    <!-- ================= MAIN CONTENT ================= -->
 
     <main>
 
-        <section class="section novels-page">
+        <section
+            class="section novels-page"
+            id="novelsLibrary"
+        >
+
+
+            <!-- ================= PAGE HEADER ================= -->
 
             <div class="section-heading">
 
                 <div>
-                    <p class="section-label">STORYNEST LIBRARY</p>
 
-                    <h1>All Novels</h1>
+                    <p class="section-label">
+                        STORYNEST LIBRARY
+                    </p>
+
+                    <h1>
+                        All Novels
+                    </h1>
 
                     <p class="page-description">
-                        Discover every published novel available on StoryNest.
-                        Find your next adventure, mystery, romance, fantasy and more.
+                        Discover every published novel available
+                        on StoryNest. Find your next adventure,
+                        mystery, romance, fantasy and more.
                     </p>
+
                 </div>
 
             </div>
 
 
-            <!-- ================= FILTERS ================= -->
+            <!-- ================= GENRE FILTERS ================= -->
 
             <div class="novel-filters">
 
-                <button class="genre-btn active" data-genre="all">
+                <button
+                    class="genre-btn active"
+                    data-genre="all"
+                    type="button"
+                >
                     ✨ All
                 </button>
 
-                <button class="genre-btn" data-genre="Romance">
+
+                <button
+                    class="genre-btn"
+                    data-genre="Romance"
+                    type="button"
+                >
                     ❤️ Romance
                 </button>
 
-                <button class="genre-btn" data-genre="Fantasy">
+
+                <button
+                    class="genre-btn"
+                    data-genre="Fantasy"
+                    type="button"
+                >
                     🧙 Fantasy
                 </button>
 
-                <button class="genre-btn" data-genre="Thriller">
+
+                <button
+                    class="genre-btn"
+                    data-genre="Thriller"
+                    type="button"
+                >
                     🔪 Thriller
                 </button>
 
-                <button class="genre-btn" data-genre="Mystery">
+
+                <button
+                    class="genre-btn"
+                    data-genre="Mystery"
+                    type="button"
+                >
                     👻 Mystery
                 </button>
 
-                <button class="genre-btn" data-genre="Science Fiction">
+
+                <button
+                    class="genre-btn"
+                    data-genre="Science Fiction"
+                    type="button"
+                >
                     🚀 Sci-Fi
                 </button>
 
-                <button class="genre-btn" data-genre="Comedy">
+
+                <button
+                    class="genre-btn"
+                    data-genre="Comedy"
+                    type="button"
+                >
                     😂 Comedy
                 </button>
 
-                <button class="genre-btn" data-genre="Drama">
+
+                <button
+                    class="genre-btn"
+                    data-genre="Drama"
+                    type="button"
+                >
                     🎭 Drama
                 </button>
 
-                <button class="genre-btn" data-genre="Historical">
+
+                <button
+                    class="genre-btn"
+                    data-genre="Historical"
+                    type="button"
+                >
                     🏛️ Historical
                 </button>
 
-                <button class="genre-btn" data-genre="Adventure">
+
+                <button
+                    class="genre-btn"
+                    data-genre="Adventure"
+                    type="button"
+                >
                     ⚔️ Adventure
                 </button>
 
             </div>
 
 
-            <!-- ================= NOVEL COUNT ================= -->
+            <!-- ================= LIBRARY INFORMATION ================= -->
 
             <div class="novel-library-info">
 
@@ -143,7 +246,11 @@
             >
 
                 <div class="loading-message">
-                    Loading published novels...
+
+                    <p>
+                        Loading published novels...
+                    </p>
+
                 </div>
 
             </div>
@@ -154,21 +261,24 @@
             <div
                 id="emptyState"
                 class="empty-state"
-                style="display:none;"
+                style="display: none;"
             >
 
                 <div class="empty-icon">
                     📚
                 </div>
 
-                <h2>No novels found</h2>
+                <h2>
+                    No novels found
+                </h2>
 
                 <p>
-                    There are no published novels in this category yet.
-                    Try another genre.
+                    There are no published novels in this
+                    category yet. Try another genre.
                 </p>
 
             </div>
+
 
         </section>
 
@@ -187,17 +297,39 @@
             Discover. Read. Imagine.
         </p>
 
+
         <div class="footer-links">
 
-            <a href="about.html">About</a>
-            <a href="contact.html">Contact</a>
-            <a href="privacy.html">Privacy</a>
-            <a href="terms.html">Terms</a>
-            <a href="faq.html">FAQ</a>
-            <a href="guidelines.html">Guidelines</a>
-            <a href="sitemap.html">Sitemap</a>
+            <a href="about.html">
+                About
+            </a>
+
+            <a href="contact.html">
+                Contact
+            </a>
+
+            <a href="privacy.html">
+                Privacy
+            </a>
+
+            <a href="terms.html">
+                Terms
+            </a>
+
+            <a href="faq.html">
+                FAQ
+            </a>
+
+            <a href="guidelines.html">
+                Guidelines
+            </a>
+
+            <a href="sitemap.html">
+                Sitemap
+            </a>
 
         </div>
+
 
         <p class="copyright">
             © 2026 StoryNest. All rights reserved.
@@ -208,11 +340,22 @@
 
     <!-- ================= SCRIPTS ================= -->
 
+    <!-- Supabase library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="js/supabase.js"></script>
 
-    <script src="js/novel-view.js"></script>
+    <!--
+        IMPORTANT:
+        novel-view.js uses:
+        import { supabase } from "./supabase.js";
+
+        Therefore it MUST be loaded as a module.
+    -->
+
+    <script
+        type="module"
+        src="js/novel-view.js"
+    ></script>
 
 </body>
 </html>
