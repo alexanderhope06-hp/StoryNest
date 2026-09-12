@@ -6,148 +6,526 @@
 
     <title>Life & Wisdom — StoryNest</title>
 
-    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/style1.css">
-
+<link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="image/fav.png">
 </head>
 
 <body>
 
-<header>
-    <div class="container">
+    <!-- ================= NAVIGATION ================= -->
+
+    <header class="navbar">
 
         <a href="index.html" class="logo">
-            StoryNest
+            <img src="image/fav.png" alt="StoryNest" class="logo-icon">
+            Story<span>Nest</span>
         </a>
 
-        <nav>
+        <nav class="nav-links">
             <a href="index.html">Home</a>
-            <a href="wisdom.html">Life & Wisdom</a>
+            <a href="free-library.html">Free-Library</a>
+            <a href="index.html#trending">Trending</a>
+            <a href="index.html#genres">Genres</a>
+            <a href="index.html#new">New Releases</a>
         </nav>
 
-    </div>
-</header>
+        <div class="nav-actions">
+            <a href="login.html">
+                <button class="login-btn">Login</button>
+            </a>
+        </div>
+
+    </header>
 
 
-<main>
+    <!-- ================= MAIN ================= -->
 
-    <section class="wisdom-hero">
+    <main class="wisdom-page">
 
-        <h1>🧠 Life & Wisdom</h1>
+        <!-- HERO -->
 
-        <p>
-            Short lessons, funny truths, relationship advice,
-            friendship stories and thoughts that make you stop,
-            laugh and think.
-        </p>
+        <section class="wisdom-hero">
 
-    </section>
+            <p class="section-label">
+                SHORT READS • BIG IDEAS
+            </p>
+
+            <h1>
+                Life & <span>Wisdom</span>
+            </h1>
+
+            <p>
+                Funny truths, difficult lessons, relationship advice,
+                confidence, money, and observations about life.
+                Sometimes you'll laugh. Sometimes you'll disagree.
+                Sometimes you'll think about it all day.
+            </p>
+
+        </section>
 
 
-    <div class="wisdom-container">
+        <!-- ================= CATEGORIES ================= -->
 
-        <div id="categoryFilters" class="category-filters">
+        <div class="wisdom-categories">
 
-            <button
-                class="category-btn active"
-                data-category="all"
-            >
-                All
+            <button class="wisdom-filter active" data-category="all">
+                ✨ All
             </button>
 
-            <button
-                class="category-btn"
-                data-category="my-son"
-            >
-                My Son
+            <button class="wisdom-filter" data-category="my-son">
+                👨‍👦 My Son
             </button>
 
-            <button
-                class="category-btn"
-                data-category="my-daughter"
-            >
-                My Daughter
+            <button class="wisdom-filter" data-category="my-daughter">
+                👨‍👧 My Daughter
             </button>
 
-            <button
-                class="category-btn"
-                data-category="my-friend"
-            >
-                My Friend
+            <button class="wisdom-filter" data-category="things-nobody-tells-you">
+                🤫 Things Nobody Tells You
             </button>
 
-            <button
-                class="category-btn"
-                data-category="my-enemy"
-            >
-                My Enemy
+            <button class="wisdom-filter" data-category="life-is-funny">
+                😂 Life Is Funny
             </button>
 
-            <button
-                class="category-btn"
-                data-category="things-nobody-tells-you"
-            >
-                Things Nobody Tells You
+            <button class="wisdom-filter" data-category="hard-truths">
+                🔥 Hard Truths
             </button>
 
-            <button
-                class="category-btn"
-                data-category="life-is-funny"
-            >
-                Life Is Funny
+            <button class="wisdom-filter" data-category="before-you-love-someone">
+                ❤️ Before You Love Someone
             </button>
 
-            <button
-                class="category-btn"
-                data-category="hard-truths"
-            >
-                Hard Truths
+            <button class="wisdom-filter" data-category="one-minute-wisdom">
+                ⏱️ One Minute Wisdom
             </button>
 
-            <button
-                class="category-btn"
-                data-category="before-you-love-someone"
-            >
-                Before You Love Someone
-            </button>
+	    <button class="wisdom-filter" data-category="my-friend">
+    	        🤝 My Friend
+	    </button>
 
-            <button
-                class="category-btn"
-                data-category="one-minute-wisdom"
-            >
-                One Minute Wisdom
-            </button>
+	    <button class="wisdom-filter" data-category="my-enemy">
+    		🥀 My Enemy
+	    </button>
+
 
         </div>
 
 
-        <section
-            id="wisdomPosts"
-            class="wisdom-posts"
-        >
+        <!-- ================= POSTS ================= -->
 
-            <div class="loading-state">
-                Loading wisdom...
-            </div>
+        <section class="wisdom-posts" id="wisdomPosts">
+
+
+            <!-- POST 1 -->
+
+            <article
+                class="wisdom-post"
+                data-category="my-son"
+            >
+
+                <span class="post-category">
+                    My Son
+                </span>
+
+                <h2>
+                    Dear Son, Build Yourself First
+                </h2>
+
+                <p>
+                    Dear son, don't spend your entire youth trying to
+                    convince someone that you're worthy of their love.
+                    Build your skills, protect your peace and learn
+                    how to stand on your own.
+                </p>
+
+                <a
+                    href="wisdom-post.html?id=1"
+                    class="read-post"
+                >
+                    Read More →
+                </a>
+
+            </article>
+
+
+            <!-- POST 2 -->
+
+            <article
+                class="wisdom-post"
+                data-category="my-daughter"
+            >
+
+                <span class="post-category">
+                    My Daughter
+                </span>
+
+                <h2>
+                    Dear Daughter, Never Beg for Respect
+                </h2>
+
+                <p>
+                    Dear daughter, never shrink yourself just because
+                    someone is uncomfortable with your confidence.
+                    The right people won't require you to become smaller
+                    so they can feel bigger.
+                </p>
+
+                <a
+                    href="wisdom-post.html?id=2"
+                    class="read-post"
+                >
+                    Read More →
+                </a>
+
+            </article>
+
+
+            <!-- POST 3 -->
+
+            <article
+                class="wisdom-post"
+                data-category="things-nobody-tells-you"
+            >
+
+                <span class="post-category">
+                    Things Nobody Tells You
+                </span>
+
+                <h2>
+                    Nobody Is Coming to Save Your Future
+                </h2>
+
+                <p>
+                    One of the hardest lessons in life is realizing that
+                    your future is mostly built from the small decisions
+                    you keep making when nobody is watching.
+                </p>
+
+                <a
+                    href="wisdom-post.html?id=3"
+                    class="read-post"
+                >
+                    Read More →
+                </a>
+
+            </article>
+
+
+            <!-- POST 4 -->
+
+            <article
+                class="wisdom-post"
+                data-category="life-is-funny"
+            >
+
+                <span class="post-category">
+                    Life Is Funny
+                </span>
+
+                <h2>
+                    Life Has a Strange Sense of Humor 😂
+                </h2>
+
+                <p>
+                    When you are young, you dream about having money.
+                    When you finally get a little money, suddenly everyone
+                    remembers your phone number.
+                </p>
+
+                <a
+                    href="wisdom-post.html?id=4"
+                    class="read-post"
+                >
+                    Read More →
+                </a>
+
+            </article>
+
+
+            <!-- POST 5 -->
+
+            <article
+                class="wisdom-post"
+                data-category="hard-truths"
+            >
+
+                <span class="post-category">
+                    Hard Truths
+                </span>
+
+                <h2>
+                    Not Everyone Wants You to Win
+                </h2>
+
+                <p>
+                    Some people will celebrate your success.
+                    Others will become strangely quiet.
+                    Learn the difference without becoming bitter.
+                </p>
+
+                <a
+                    href="wisdom-post.html?id=5"
+                    class="read-post"
+                >
+                    Read More →
+                </a>
+
+            </article>
+
+
+            <!-- POST 6 -->
+
+            <article
+                class="wisdom-post"
+                data-category="before-you-love-someone"
+            >
+
+                <span class="post-category">
+                    Before You Love Someone
+                </span>
+
+                <h2>
+                    Love Is Not Enough
+                </h2>
+
+                <p>
+                    Before you give someone your whole heart,
+                    make sure you understand their character,
+                    their values and how they treat people
+                    when they have nothing to gain.
+                </p>
+
+                <a
+                    href="wisdom-post.html?id=6"
+                    class="read-post"
+                >
+                    Read More →
+                </a>
+
+            </article>
+
+
+            <!-- POST 7 -->
+
+            <article
+                class="wisdom-post"
+                data-category="one-minute-wisdom"
+            >
+
+                <span class="post-category">
+                    One Minute Wisdom
+                </span>
+
+                <h2>
+                    Your Time Is Expensive
+                </h2>
+
+                <p>
+                    Money can sometimes be recovered.
+                    Time cannot.
+                    Be careful who and what receives the most valuable
+                    resource you own.
+                </p>
+
+                <a
+                    href="wisdom-post.html?id=7"
+                    class="read-post"
+                >
+                    Read More →
+                </a>
+
+            </article>
+
+
+<!-- MY FRIEND -->
+
+<article
+    class="wisdom-post"
+    data-category="my-friend"
+>
+
+    <span class="post-category">
+        My Friend
+    </span>
+
+    <h2>
+        Dear Friend, Don't Confuse History With Loyalty
+    </h2>
+
+    <p>
+        Knowing someone for years does not automatically mean
+        they deserve access to your future.
+    </p>
+
+    <a
+        href="wisdom-post.html?id=8"
+        class="read-post"
+    >
+        Read More →
+    </a>
+
+</article>
+
+
+<!-- MY ENEMY -->
+
+<article
+    class="wisdom-post"
+    data-category="my-enemy"
+>
+
+    <span class="post-category">
+        My Enemy
+    </span>
+
+    <h2>
+        Dear Enemy, Thank You for the Lesson
+    </h2>
+
+    <p>
+        Sometimes the person who challenges you the most
+        teaches you the lesson you needed the most.
+    </p>
+
+    <a
+        href="wisdom-post.html?id=9"
+        class="read-post"
+    >
+        Read More →
+    </a>
+
+</article>
+
 
         </section>
 
-    </div>
 
-</main>
+        <!-- ================= EMPTY STATE ================= -->
+
+        <div class="wisdom-empty" id="wisdomEmpty">
+
+            <h2>No posts yet.</h2>
+
+            <p>
+                New wisdom is coming soon. Check back again.
+            </p>
+
+        </div>
+
+    </main>
 
 
-<footer>
-    <div class="container">
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-logo">
+            📖 StoryNest
+        </div>
+
         <p>
-            © 2026 StoryNest — Stories Without Borders
+            Discover. Read. Imagine.
         </p>
-    </div>
-</footer>
+
+        <div class="footer-links">
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+            <a href="faq.html">FAQ</a>
+            <a href="guidelines.html">Guidelines</a>
+            <a href="sitemap.html">Sitemap</a>
+        </div>
+
+        <p class="copyright">
+            © 2026 StoryNest. All rights reserved.
+        </p>
+
+    </footer>
 
 
-<script src="js/supabase.js"></script>
-<script src="js/wisdom.js"></script>
+    <!-- ================= FILTER SCRIPT ================= -->
+
+    <script>
+
+        const filters = document.querySelectorAll(".wisdom-filter");
+        const posts = document.querySelectorAll(".wisdom-post");
+        const emptyMessage = document.getElementById("wisdomEmpty");
+
+        function filterPosts(category) {
+
+            let visiblePosts = 0;
+
+            posts.forEach(post => {
+
+                const postCategory = post.dataset.category;
+
+                if (category === "all" || postCategory === category) {
+
+                    post.style.display = "";
+
+                    visiblePosts++;
+
+                } else {
+
+                    post.style.display = "none";
+
+                }
+
+            });
+
+            emptyMessage.style.display =
+                visiblePosts === 0 ? "block" : "none";
+        }
+
+
+        filters.forEach(filter => {
+
+            filter.addEventListener("click", () => {
+
+                filters.forEach(button =>
+                    button.classList.remove("active")
+                );
+
+                filter.classList.add("active");
+
+                filterPosts(filter.dataset.category);
+
+            });
+
+        });
+
+
+        /* ================= URL CATEGORY ================= */
+
+        const params = new URLSearchParams(window.location.search);
+
+        const selectedCategory = params.get("category");
+
+        if (selectedCategory) {
+
+            const matchingFilter =
+                document.querySelector(
+                    `.wisdom-filter[data-category="${selectedCategory}"]`
+                );
+
+            if (matchingFilter) {
+
+                filters.forEach(button =>
+                    button.classList.remove("active")
+                );
+
+                matchingFilter.classList.add("active");
+
+                filterPosts(selectedCategory);
+
+            }
+
+        }
+
+    </script>
 
 </body>
 </html>
