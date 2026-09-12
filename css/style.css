@@ -1337,7 +1337,7 @@ footer > p {
     color: #d0d0d0;
 }
 
-/* ================= AD SPACE (thin fixed bottom strip) ================= */
+/* ================= AD SPACE (thin fixed bottom strip) ================= 
 .reader-ad-space {
     position: fixed;
     left: 0;
@@ -1355,8 +1355,19 @@ footer > p {
     border-top-color: rgba(255, 255, 255, 0.05);
 }
 
+.reader-ad-space {
+    width: 100%;
+    min-height: 70px;
+    background: rgba(247, 244, 237, 0.98);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
 
-/* =====================================================
+.reader-page.dark-theme .reader-ad-space {
+    background: rgba(17, 17, 19, 0.98);
+    border-top-color: rgba(255, 255, 255, 0.05);
+}
+
+ =====================================================
    AUTHOR DASHBOARD
    ===================================================== */
 
@@ -3999,7 +4010,7 @@ footer > p {
             font-size: 36px;
             margin-bottom: 28px;
         }
-    }
+}
 
 /* =====================================================
    REDUCED MOTION
