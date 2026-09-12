@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>All Novels — StoryNest</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style1.css">
+    <link rel="icon" type="image/png" href="image/fav.png">
+</head>
+
+<body>
+
+    <!-- ================= NAVIGATION ================= -->
+
+    <header class="navbar">
+
+        <a href="index.html" class="logo">
+            <img src="image/fav.png" alt="StoryNest" class="logo-icon">
+            Story<span>Nest</span>
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html#home">Home</a>
+            <a href="index.html#trending">Trending</a>
+            <a href="index.html#wisdom">Wisdom</a>
+            <a href="index.html#genres">Genres</a>
+            <a href="index.html#new">New Releases</a>
+        </nav>
+
+        <div class="nav-actions">
+            <button class="search-btn" id="searchBtn">🔍</button>
+
+            <a href="login.html">
+                <button class="login-btn">Login</button>
+            </a>
+        </div>
+
+    </header>
+
+
+    <!-- ================= SEARCH ================= -->
+
+    <div class="search-panel" id="searchPanel">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search novels by title, author, genre..."
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <!-- ================= PAGE HEADER ================= -->
+
+    <main>
+
+        <section class="section novels-page">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-label">STORYNEST LIBRARY</p>
+
+                    <h1>All Novels</h1>
+
+                    <p class="page-description">
+                        Discover every published novel available on StoryNest.
+                        Find your next adventure, mystery, romance, fantasy and more.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- ================= FILTERS ================= -->
+
+            <div class="novel-filters">
+
+                <button class="genre-btn active" data-genre="all">
+                    ✨ All
+                </button>
+
+                <button class="genre-btn" data-genre="Romance">
+                    ❤️ Romance
+                </button>
+
+                <button class="genre-btn" data-genre="Fantasy">
+                    🧙 Fantasy
+                </button>
+
+                <button class="genre-btn" data-genre="Thriller">
+                    🔪 Thriller
+                </button>
+
+                <button class="genre-btn" data-genre="Mystery">
+                    👻 Mystery
+                </button>
+
+                <button class="genre-btn" data-genre="Science Fiction">
+                    🚀 Sci-Fi
+                </button>
+
+                <button class="genre-btn" data-genre="Comedy">
+                    😂 Comedy
+                </button>
+
+                <button class="genre-btn" data-genre="Drama">
+                    🎭 Drama
+                </button>
+
+                <button class="genre-btn" data-genre="Historical">
+                    🏛️ Historical
+                </button>
+
+                <button class="genre-btn" data-genre="Adventure">
+                    ⚔️ Adventure
+                </button>
+
+            </div>
+
+
+            <!-- ================= NOVEL COUNT ================= -->
+
+            <div class="novel-library-info">
+
+                <span id="novelCount">
+                    Loading novels...
+                </span>
+
+            </div>
+
+
+            <!-- ================= NOVEL GRID ================= -->
+
+            <div
+                class="novel-grid"
+                id="allNovels"
+            >
+
+                <div class="loading-message">
+                    Loading published novels...
+                </div>
+
+            </div>
+
+
+            <!-- ================= EMPTY STATE ================= -->
+
+            <div
+                id="emptyState"
+                class="empty-state"
+                style="display:none;"
+            >
+
+                <div class="empty-icon">
+                    📚
+                </div>
+
+                <h2>No novels found</h2>
+
+                <p>
+                    There are no published novels in this category yet.
+                    Try another genre.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-logo">
+            📖 StoryNest
+        </div>
+
+        <p>
+            Discover. Read. Imagine.
+        </p>
+
+        <div class="footer-links">
+
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+            <a href="faq.html">FAQ</a>
+            <a href="guidelines.html">Guidelines</a>
+            <a href="sitemap.html">Sitemap</a>
+
+        </div>
+
+        <p class="copyright">
+            © 2026 StoryNest. All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- ================= SCRIPTS ================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/novel-view.js"></script>
+
+</body>
+</html>
