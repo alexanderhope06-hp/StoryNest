@@ -1,27 +1,53 @@
-import { supabase } from "./supabase.js";
+/* =====================================================
+   STORYNEST — ALL PUBLISHED NOVELS
+   ===================================================== */
+
 
 const novelsContainer = document.getElementById("allNovels");
 const novelCount = document.getElementById("novelCount");
 const emptyState = document.getElementById("emptyState");
 
-const genreButtons = document.querySelectorAll(
-    ".novel-filters .genre-btn"
-);
+const genreButtons =
+    document.querySelectorAll(".novel-filters .genre-btn");
 
-const searchBtn = document.getElementById("searchBtn");
-const searchPanel = document.getElementById("searchPanel");
-const searchInput = document.getElementById("searchInput");
+const searchBtn =
+    document.getElementById("searchBtn");
+
+const searchPanel =
+    document.getElementById("searchPanel");
+
+const searchInput =
+    document.getElementById("searchInput");
+
 
 let allNovels = [];
 
 
 // =====================================================
-// LOAD PUBLISHED NOVELS
+// START
+// =====================================================
+
+loadNovels();
+
+
+// =====================================================
+// LOAD ALL PUBLISHED NOVELS
 // =====================================================
 
 async function loadNovels() {
 
-    console.log("Loading published novels...");
+    console.log("StoryNest: Loading published novels...");
+
+
+    if (!novelsContainer) {
+
+        console.error(
+            "StoryNest: #allNovels was not found."
+        );
+
+        return;
+    }
+
 
     novelsContainer.innerHTML = `
         <div class="loading-message">
@@ -29,38 +55,114 @@ async function loadNovels() {
         </div>
     `;
 
-    const { data, error } = await supabase
-        .from("novels")
-        .select("*")
-        .eq("status", "published")
-        .order("created_at", {
-            ascending: false
-        });
+
+    try {
+
+        const {
+            data: novelData,
+            error: novelError
+        } = await supabaseClient
+
+            .from("novels")
+
+            .select("*")
+
+            .eq("status", "published")
+
+            .order("created_at", {
+                ascending: false
+            });
 
 
-    if (error) {
+        // =================================================
+        // ERROR
+        // =================================================
 
-        console.error("SUPABASE ERROR:", error);
+        if (novelError) {
+
+            console.error(
+                "StoryNest Novel Error:",
+                novelError
+            );
+
+
+            novelsContainer.innerHTML = `
+                <div class="loading-message">
+
+                    <p>
+                        Unable to load novels.
+                    </p>
+
+                    <small>
+                        ${escapeHTML(
+                            novelError.message ||
+                            "Unknown Supabase error"
+                        )}
+                    </small>
+
+                </div>
+            `;
+
+
+            if (novelCount) {
+                novelCount.textContent =
+                    "Unable to load novels";
+            }
+
+
+            return;
+        }
+
+
+        // =================================================
+        // SAVE DATA
+        // =================================================
+
+        allNovels = novelData || [];
+
+
+        console.log(
+            "StoryNest: Published novels:",
+            allNovels
+        );
+
+
+        displayNovels(allNovels);
+
+
+    } catch (error) {
+
+        console.error(
+            "StoryNest: Unexpected error:",
+            error
+        );
+
 
         novelsContainer.innerHTML = `
             <div class="loading-message">
-                Unable to load novels.
-                <br><br>
-                ${escapeHTML(error.message)}
+
+                <p>
+                    Something went wrong.
+                </p>
+
+                <small>
+                    ${escapeHTML(
+                        error.message ||
+                        "Unknown error"
+                    )}
+                </small>
+
             </div>
         `;
 
-        novelCount.textContent = "Error loading novels";
 
-        return;
+        if (novelCount) {
+            novelCount.textContent =
+                "Unable to load novels";
+        }
+
     }
 
-
-    console.log("Published novels:", data);
-
-    allNovels = data || [];
-
-    displayNovels(allNovels);
 }
 
 
@@ -73,37 +175,59 @@ function displayNovels(novels) {
     novelsContainer.innerHTML = "";
 
 
-    novelCount.textContent =
-        `${novels.length} ${
-            novels.length === 1
-                ? "novel"
-                : "novels"
-        } available`;
+    if (novelCount) {
 
+        novelCount.textContent =
+            `${novels.length} ${
+                novels.length === 1
+                    ? "novel"
+                    : "novels"
+            } available`;
+
+    }
+
+
+    // =================================================
+    // NO NOVELS
+    // =================================================
 
     if (novels.length === 0) {
 
-        emptyState.style.display = "block";
+        if (emptyState) {
+            emptyState.style.display = "block";
+        }
 
         return;
     }
 
 
-    emptyState.style.display = "none";
+    if (emptyState) {
+        emptyState.style.display = "none";
+    }
 
+
+    // =================================================
+    // CREATE NOVEL CARDS
+    // =================================================
 
     novels.forEach(novel => {
 
-        const card = document.createElement("a");
+        const card =
+            document.createElement("a");
+
 
         card.className = "novel-card";
 
-        card.href = `novel.html?id=${novel.id}`;
+
+        card.href =
+            `novel.html?id=${encodeURIComponent(
+                novel.id
+            )}`;
 
 
-        const cover = novel.cover_url
-            ? novel.cover_url
-            : "image/fav.png";
+        const cover =
+            novel.cover_url ||
+            "image/fav.png";
 
 
         card.innerHTML = `
@@ -113,7 +237,8 @@ function displayNovels(novels) {
                 <img
                     src="${escapeHTML(cover)}"
                     alt="${escapeHTML(
-                        novel.title || "Novel"
+                        novel.title ||
+                        "StoryNest Novel"
                     )}"
                     loading="lazy"
                 >
@@ -125,17 +250,21 @@ function displayNovels(novels) {
 
                 <h3>
                     ${escapeHTML(
-                        novel.title || "Untitled Novel"
+                        novel.title ||
+                        "Untitled Novel"
                     )}
                 </h3>
+
 
                 <p class="novel-author">
                     StoryNest Author
                 </p>
 
+
                 <span class="novel-genre">
                     ${escapeHTML(
-                        novel.genre || "General"
+                        novel.genre ||
+                        "General"
                     )}
                 </span>
 
@@ -157,38 +286,55 @@ function displayNovels(novels) {
 
 genreButtons.forEach(button => {
 
-    button.addEventListener("click", () => {
+    button.addEventListener(
+        "click",
+        function () {
 
-        genreButtons.forEach(btn => {
-            btn.classList.remove("active");
-        });
+            // Remove active from all buttons
 
-        button.classList.add("active");
+            genreButtons.forEach(btn => {
 
-
-        const selectedGenre =
-            button.dataset.genre;
-
-
-        if (selectedGenre === "all") {
-
-            displayNovels(allNovels);
-
-            return;
-        }
-
-
-        const filteredNovels =
-            allNovels.filter(novel => {
-
-                return novel.genre === selectedGenre;
+                btn.classList.remove("active");
 
             });
 
 
-        displayNovels(filteredNovels);
+            // Activate selected button
 
-    });
+            this.classList.add("active");
+
+
+            const selectedGenre =
+                this.dataset.genre;
+
+
+            // ALL
+
+            if (selectedGenre === "all") {
+
+                displayNovels(allNovels);
+
+                return;
+            }
+
+
+            // FILTER
+
+            const filteredNovels =
+                allNovels.filter(novel => {
+
+                    return (
+                        novel.genre ===
+                        selectedGenre
+                    );
+
+                });
+
+
+            displayNovels(filteredNovels);
+
+        }
+    );
 
 });
 
@@ -197,98 +343,132 @@ genreButtons.forEach(button => {
 // SEARCH BUTTON
 // =====================================================
 
-if (searchBtn) {
+if (searchBtn && searchPanel) {
 
-    searchBtn.addEventListener("click", () => {
+    searchBtn.addEventListener(
+        "click",
+        function () {
 
-        searchPanel.classList.toggle("active");
+            searchPanel.classList.toggle(
+                "active"
+            );
 
-        if (
-            searchPanel.classList.contains("active")
-            && searchInput
-        ) {
 
-            searchInput.focus();
+            if (
+                searchPanel.classList.contains(
+                    "active"
+                )
+            ) {
+
+                if (searchInput) {
+                    searchInput.focus();
+                }
+
+            }
 
         }
-
-    });
+    );
 
 }
 
 
 // =====================================================
-// SEARCH NOVELS
+// SEARCH
 // =====================================================
 
 if (searchInput) {
 
-    searchInput.addEventListener("input", () => {
+    searchInput.addEventListener(
+        "input",
+        function () {
 
-        const searchTerm =
-            searchInput.value
-                .toLowerCase()
-                .trim();
+            const searchTerm =
+                this.value
+                    .toLowerCase()
+                    .trim();
 
 
-        if (!searchTerm) {
+            // Empty search
 
-            displayNovels(allNovels);
+            if (!searchTerm) {
 
-            return;
+                displayNovels(allNovels);
+
+                return;
+            }
+
+
+            // Search title, genre and description
+
+            const results =
+                allNovels.filter(novel => {
+
+                    const title =
+                        (
+                            novel.title ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const genre =
+                        (
+                            novel.genre ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const description =
+                        (
+                            novel.description ||
+                            ""
+                        ).toLowerCase();
+
+
+                    return (
+
+                        title.includes(
+                            searchTerm
+                        )
+
+                        ||
+
+                        genre.includes(
+                            searchTerm
+                        )
+
+                        ||
+
+                        description.includes(
+                            searchTerm
+                        )
+
+                    );
+
+                });
+
+
+            displayNovels(results);
+
         }
-
-
-        const results =
-            allNovels.filter(novel => {
-
-                const title =
-                    (novel.title || "")
-                        .toLowerCase();
-
-                const genre =
-                    (novel.genre || "")
-                        .toLowerCase();
-
-                const description =
-                    (novel.description || "")
-                        .toLowerCase();
-
-
-                return (
-                    title.includes(searchTerm) ||
-                    genre.includes(searchTerm) ||
-                    description.includes(searchTerm)
-                );
-
-            });
-
-
-        displayNovels(results);
-
-    });
+    );
 
 }
 
 
 // =====================================================
-// ESCAPE HTML
+// HTML SAFETY
 // =====================================================
 
 function escapeHTML(value) {
 
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    const div =
+        document.createElement("div");
+
+
+    div.textContent =
+        value ?? "";
+
+
+    return div.innerHTML;
 
 }
-
-
-// =====================================================
-// START
-// =====================================================
-
-loadNovels();
