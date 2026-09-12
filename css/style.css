@@ -1097,16 +1097,17 @@ footer > p {
 }
 
 /* =====================================================
-   READER PAGE
+   READER PAGE — SCROLLING
    ===================================================== */
 
 .reader-page {
     background: #f7f4ed;
     color: #222;
-    overflow: hidden;
-    height: 100dvh;
     margin: 0;
+    min-height: 100vh;
     font-family: Georgia, 'Times New Roman', serif;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .reader-page.dark-theme {
@@ -1288,29 +1289,20 @@ footer > p {
     box-shadow: 0 0 8px rgba(155, 92, 255, 0.5);
 }
 
-/* ================= READER CONTAINER ================= */
+/* ================= READER CONTAINER (scrolls with page) ================= */
 .reader-container {
-    position: fixed;
-    top: 64px;
-    left: 0;
-    right: 0;
-    bottom: 70px;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 88px 24px 120px;   /* top clears fixed header, bottom clears ad space */
     box-sizing: border-box;
-    padding: 24px 24px 0;
 }
 
 .reader-page-content {
-    width: min(900px, 100%);
-    height: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
-    touch-action: pan-y;
+    width: 100%;
     font-size: 18px;
     line-height: 1.75;
     color: #333;
+    touch-action: pan-y;
 }
 
 .reader-page.dark-theme .reader-page-content {
@@ -1319,7 +1311,7 @@ footer > p {
 
 .reader-page-content h1,
 .page-chapter-title {
-    margin: 0 0 20px;
+    margin: 0 0 24px;
     padding: 0;
     font-size: clamp(24px, 3vw, 34px);
     line-height: 1.25;
@@ -1345,7 +1337,7 @@ footer > p {
     color: #d0d0d0;
 }
 
-/* ================= AD SPACE ================= */
+/* ================= AD SPACE (thin fixed bottom strip) ================= */
 .reader-ad-space {
     position: fixed;
     left: 0;
@@ -1362,6 +1354,7 @@ footer > p {
     background: rgba(17, 17, 19, 0.98);
     border-top-color: rgba(255, 255, 255, 0.05);
 }
+
 
 /* =====================================================
    AUTHOR DASHBOARD
@@ -3987,26 +3980,26 @@ footer > p {
    ===================================================== */
 
 @media (min-width: 1100px) {
-    .reader-container {
-        padding: 32px 40px 0;
-    }
+        .reader-container {
+            padding: 96px 40px 130px;
+        }
 
-    .reader-page-content {
-        font-size: 19px;
-    }
+        .reader-page-content {
+            font-size: 19px;
+        }
 
-    .reader-page-content p,
-    .reader-page-content .story p {
-        font-size: 19px;
-        line-height: 1.8;
-    }
+        .reader-page-content p,
+        .reader-page-content .story p {
+            font-size: 19px;
+            line-height: 1.8;
+        }
 
-    .reader-page-content h1,
-    .page-chapter-title {
-        font-size: 36px;
-        margin-bottom: 28px;
+        .reader-page-content h1,
+        .page-chapter-title {
+            font-size: 36px;
+            margin-bottom: 28px;
+        }
     }
-}
 
 /* =====================================================
    REDUCED MOTION
@@ -4322,3 +4315,122 @@ footer > p {
         line-height: 1.6;
     }
 }
+
+
+    /* Reader mobile */
+    .reader-header {
+        height: 56px;
+        padding: 0 14px;
+    }
+
+    .reading-progress {
+        top: 56px;
+    }
+
+    .reader-container {
+        padding: 76px 16px 90px;
+    }
+
+    .reader-page-content {
+        font-size: 17px;
+    }
+
+    .reader-page-content h1,
+    .page-chapter-title {
+        font-size: 22px;
+        margin-bottom: 16px;
+    }
+
+    .reader-page-content p,
+    .reader-page-content .story p {
+        font-size: 17px;
+        line-height: 1.7;
+    }
+
+    .reader-ad-space {
+        height: 60px;
+    }
+
+    .reader-header-info strong {
+        font-size: 14px;
+        max-width: 120px;
+    }
+
+    .reader-header-info span {
+        font-size: 12px;
+    }
+
+    .reader-back {
+        font-size: 24px;
+    }
+
+    .reader-menu-btn {
+        padding: 7px 12px;
+        font-size: 18px;
+    }
+
+    .reader-dropdown {
+        min-width: 160px;
+        top: 44px;
+        right: -4px;
+    }
+
+    .reader-dropdown a {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+
+
+    .reader-container {
+        padding: 68px 12px 84px;
+    }
+
+    .reader-page-content h1,
+    .page-chapter-title {
+        font-size: 20px;
+        margin-bottom: 14px;
+    }
+
+    .reader-page-content p {
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+    .reader-header {
+        padding: 0 10px;
+        height: 50px;
+    }
+
+    .reading-progress {
+        top: 50px;
+    }
+
+    .reader-header-info strong {
+        font-size: 13px;
+        max-width: 80px;
+    }
+
+    .reader-header-info span {
+        font-size: 11px;
+    }
+
+    .reader-back {
+        font-size: 22px;
+    }
+
+    .reader-menu-btn {
+        padding: 6px 10px;
+        font-size: 16px;
+    }
+
+    .reader-dropdown {
+        min-width: 140px;
+        top: 40px;
+        padding: 4px;
+    }
+
+    .reader-dropdown a {
+        font-size: 12px;
+        padding: 7px 10px;
+    }
+
