@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Story Nest — Stories Without Borders</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style1.css">
     <link rel="icon" type="image/png" href="image/fav.png">
 </head>
 
@@ -12,14 +13,14 @@
     <!-- ================= NAVIGATION ================= -->
     <header class="navbar">
         <a href="index.html" class="logo">
-    <img src="image/fav.png" alt="StoryNest" class="logo-icon">
-    Story<span>Nest</span>
-</a>
+            <img src="image/fav.png" alt="StoryNest" class="logo-icon">
+             Story<span>Nest</span>
+        </a>
 
         <nav class="nav-links">
             <a href="#home">Home</a>
             <a href="#trending">Trending</a>
-           <a href="free-library-admin.html">Admin</a>
+	    <a href="#wisdom">Wisdom</a>
             <a href="#genres">Genres</a>
             <a href="#new">New Releases</a>
         </nav>
@@ -47,18 +48,22 @@
         <section class="hero" id="home">
             <div class="hero-content">
                 <p class="hero-label">WELCOME TO Story Nest</p>
+
                 <h1>
                     Discover Your
                     <span>Next Story.</span>
                 </h1>
+
                 <p class="hero-description">
                     Explore stories from new and established writers.
                     Discover unforgettable characters, worlds and adventures.
                 </p>
+
                 <div class="hero-buttons">
                     <button class="primary-btn" id="exploreBtn">
                         Explore Novels →
                     </button>
+
                     <a href="signup.html">
                         <button class="secondary-btn">
                             Become an Author
@@ -66,6 +71,7 @@
                     </a>
                 </div>
             </div>
+
             <div class="hero-art">
                 <div class="book-card book-back">
                     <div class="book-cover">
@@ -73,6 +79,7 @@
                         <strong>READ<br>IMAGINE</strong>
                     </div>
                 </div>
+
                 <div class="book-card book-front">
                     <div class="book-cover">
                         <span>STORY</span>
@@ -89,10 +96,12 @@
                 <strong>1,000+</strong>
                 <span>Stories</span>
             </div>
+
             <div>
                 <strong>500+</strong>
                 <span>Authors</span>
             </div>
+
             <div>
                 <strong>50K+</strong>
                 <span>Readers</span>
@@ -111,21 +120,153 @@
                     <p class="section-label">WHAT PEOPLE ARE READING</p>
                     <h2>🔥 Trending Novels</h2>
                 </div>
+
                 <button class="view-all">View All →</button>
             </div>
+
             <div class="novel-grid" id="trendingNovels">
                 <!-- JavaScript inserts novels here -->
             </div>
         </section>
 
+
+        <!-- ================= LIFE & WISDOM ================= -->
+        <section class="section wisdom-section" id="wisdom">
+
+            <div class="section-heading">
+                <div>
+                    <p class="section-label">SHORT READS • BIG IDEAS</p>
+                    <h2>💭 Life & Wisdom</h2>
+                </div>
+
+                <a href="wisdom.html" class="view-all">
+                    Explore All →
+                </a>
+            </div>
+
+            <div class="wisdom-grid">
+
+                <!-- MY SON -->
+                <a href="wisdom.html?category=my-son" class="wisdom-card">
+                    <div class="wisdom-icon">👨‍👦</div>
+                    <div class="wisdom-content">
+                        <h3>My Son</h3>
+                        <p>
+                            Men's life lessons, confidence, money,
+                            discipline and wisdom.
+                        </p>
+                    </div>
+                </a>
+
+                <!-- MY DAUGHTER -->
+                <a href="wisdom.html?category=my-daughter" class="wisdom-card">
+                    <div class="wisdom-icon">👨‍👧</div>
+                    <div class="wisdom-content">
+                        <h3>My Daughter</h3>
+                        <p>
+                            Life lessons, confidence, relationships,
+                            self-respect and wisdom for women.
+                        </p>
+                    </div>
+                </a>
+
+                <!-- THINGS NOBODY TELLS YOU -->
+                <a href="wisdom.html?category=things-nobody-tells-you" class="wisdom-card">
+                    <div class="wisdom-icon">🤫</div>
+                    <div class="wisdom-content">
+                        <h3>Things Nobody Tells You</h3>
+                        <p>
+                            General wisdom and lessons about life
+                            that people often learn too late.
+                        </p>
+                    </div>
+                </a>
+
+                <!-- LIFE IS FUNNY -->
+                <a href="wisdom.html?category=life-is-funny" class="wisdom-card">
+                    <div class="wisdom-icon">😂</div>
+                    <div class="wisdom-content">
+                        <h3>Life Is Funny</h3>
+                        <p>
+                            Funny observations, ridiculous situations
+                            and lessons hidden inside laughter.
+                        </p>
+                    </div>
+                </a>
+
+                <!-- HARD TRUTHS -->
+                <a href="wisdom.html?category=hard-truths" class="wisdom-card">
+                    <div class="wisdom-icon">🔥</div>
+                    <div class="wisdom-content">
+                        <h3>Hard Truths</h3>
+                        <p>
+                            Uncomfortable observations about life,
+                            people, money and relationships.
+                        </p>
+                    </div>
+                </a>
+
+                <!-- BEFORE YOU LOVE SOMEONE -->
+                <a href="wisdom.html?category=before-you-love-someone" class="wisdom-card">
+                    <div class="wisdom-icon">❤️</div>
+                    <div class="wisdom-content">
+                        <h3>Before You Love Someone</h3>
+                        <p>
+                            Thoughts and lessons about relationships,
+                            love, boundaries and self-worth.
+                        </p>
+                    </div>
+                </a>
+
+                <!-- ONE MINUTE WISDOM -->
+                <a href="wisdom.html?category=one-minute-wisdom" class="wisdom-card">
+                    <div class="wisdom-icon">⏱️</div>
+                    <div class="wisdom-content">
+                        <h3>One Minute Wisdom</h3>
+                        <p>
+                            Short lessons you can read in less
+                            than a minute and remember for years.
+                        </p>
+                    </div>
+                </a>
+
+<a href="wisdom.html?category=my-friend" class="wisdom-card">
+    <div class="wisdom-icon">🤝</div>
+    <div class="wisdom-content">
+        <h3>My Friend</h3>
+        <p>
+            Friendship, loyalty, trust, betrayal and the people
+            who walk through life with us.
+        </p>
+    </div>
+</a>
+
+<a href="wisdom.html?category=my-enemy" class="wisdom-card">
+    <div class="wisdom-icon">🥀</div>
+    <div class="wisdom-content">
+        <h3>My Enemy</h3>
+        <p>
+            Lessons about rivals, difficult people, jealousy,
+            boundaries and overcoming opposition.
+        </p>
+    </div>
+</a>
+
+
+            </div>
+        </section>
+
+
         <!-- ================= GENRES ================= -->
         <section class="section genres-section" id="genres">
+
             <div class="section-heading">
                 <div>
                     <p class="section-label">FIND YOUR VIBE</p>
                     <h2>Explore Genres</h2>
                 </div>
             </div>
+
             <div class="genres">
                 <button class="genre-btn" data-genre="all">✨ All</button>
                 <button class="genre-btn" data-genre="Romance">❤️ Romance</button>
@@ -140,40 +281,55 @@
             </div>
         </section>
 
+
         <!-- ================= NEW RELEASES ================= -->
         <section class="section" id="new">
+
             <div class="section-heading">
                 <div>
                     <p class="section-label">JUST ARRIVED</p>
                     <h2>New Releases</h2>
                 </div>
+
                 <button class="view-all">View All →</button>
             </div>
+
             <div class="novel-list" id="newNovels">
                 <!-- JavaScript inserts novels here -->
             </div>
+
         </section>
     </main>
 
+
     <!-- ================= FOOTER ================= -->
 
-<footer>
-    <div class="footer-logo">📖 StoryNest</div>
-    <p>Discover. Read. Imagine.</p>
-    <div class="footer-links">
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-        <a href="faq.html">FAQ</a>
-        <a href="guidelines.html">Guidelines</a>
-        <a href="sitemap.html">Sitemap</a>
-    </div>
-    <p class="copyright">© 2026 StoryNest. All rights reserved.</p>
-</footer>
+    <footer>
+        <div class="footer-logo">📖 StoryNest</div>
+
+        <p>Discover. Read. Imagine.</p>
+
+        <div class="footer-links">
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+            <a href="faq.html">FAQ</a>
+            <a href="guidelines.html">Guidelines</a>
+            <a href="sitemap.html">Sitemap</a>
+        </div>
+
+        <p class="copyright">
+            © 2026 StoryNest. All rights reserved.
+        </p>
+    </footer>
+
+
+    <!-- ================= SCRIPTS ================= -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
     <script src="js/app.js"></script>
+
 </body>
 </html>
