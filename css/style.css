@@ -4049,3 +4049,276 @@ footer > p {
         background: #fff !important;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =====================================================
+   STORYNEST — HOME PAGE: LIFE & WISDOM SECTION
+   Matches style.css (dark theme, accent #9b5cff)
+   ===================================================== */
+
+/* ================= SECTION WRAPPER ================= */
+
+.wisdom-section {
+    background: var(--bg-primary);
+    position: relative;
+    overflow: hidden;
+}
+
+.wisdom-section::before {
+    content: "";
+    position: absolute;
+    top: -30%;
+    right: -15%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(
+        circle,
+        rgba(155, 92, 255, 0.07) 0%,
+        transparent 70%
+    );
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Section heading — matches other sections on the home page */
+
+.wisdom-section .section-heading h2 {
+    color: var(--text-primary);
+}
+
+.wisdom-section .section-heading .section-label {
+    color: var(--accent-light);
+}
+
+.wisdom-section .view-all {
+    color: var(--accent-light);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all var(--transition);
+}
+
+.wisdom-section .view-all:hover {
+    color: #c39aff;
+    background: rgba(155, 92, 255, 0.08);
+    transform: translateX(4px);
+}
+
+/* ================= GRID ================= */
+
+.wisdom-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* ================= CARD ================= */
+
+.wisdom-card {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 26px 24px;
+    background: var(--bg-card);
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    transition: transform 0.35s ease,
+                border-color 0.35s ease,
+                box-shadow 0.35s ease,
+                background 0.35s ease;
+}
+
+/* Soft purple glow on hover (matches novel-card hover) */
+
+.wisdom-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(155, 92, 255, 0.08) 0%,
+        transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+}
+
+.wisdom-card:hover {
+    transform: translateY(-8px);
+    border-color: #2a1f3a;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+}
+
+.wisdom-card:hover::after {
+    opacity: 1;
+}
+
+/* Thin accent bar at top, revealed on hover (like novel-card feel) */
+
+.wisdom-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(
+        90deg,
+        var(--accent) 0%,
+        var(--accent-dark) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.wisdom-card:hover::before {
+    opacity: 1;
+}
+
+/* ================= ICON ================= */
+
+.wisdom-icon {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    line-height: 1;
+    border-radius: var(--radius-md);
+    background: rgba(155, 92, 255, 0.12);
+    border: 1px solid rgba(155, 92, 255, 0.18);
+    transition: transform 0.35s ease,
+                background 0.35s ease,
+                border-color 0.35s ease;
+}
+
+.wisdom-card:hover .wisdom-icon {
+    transform: scale(1.08) rotate(-4deg);
+    background: rgba(155, 92, 255, 0.2);
+    border-color: rgba(155, 92, 255, 0.35);
+}
+
+/* ================= CONTENT ================= */
+
+.wisdom-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.wisdom-content h3 {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+    transition: color var(--transition);
+}
+
+.wisdom-card:hover .wisdom-content h3 {
+    color: #c39aff;
+}
+
+.wisdom-content p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1024px) {
+    .wisdom-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 800px) {
+    .wisdom-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .wisdom-card {
+        padding: 22px 20px;
+        gap: 14px;
+    }
+
+    .wisdom-icon {
+        width: 46px;
+        height: 46px;
+        font-size: 22px;
+    }
+
+    .wisdom-content h3 {
+        font-size: 15.5px;
+    }
+
+    .wisdom-content p {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 650px) {
+    .wisdom-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .wisdom-card {
+        padding: 20px 18px;
+    }
+
+    .wisdom-content h3 {
+        font-size: 15px;
+    }
+
+    .wisdom-content p {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .wisdom-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+    }
+
+    .wisdom-content h3 {
+        font-size: 14.5px;
+    }
+
+    .wisdom-content p {
+        font-size: 12.5px;
+        line-height: 1.6;
+    }
+}
